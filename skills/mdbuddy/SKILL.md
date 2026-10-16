@@ -60,7 +60,8 @@ compact table, and ask them to confirm or change it. Do not ask one question at 
 | Box | auto: protein + 3 nm lipid per side, 2.5 nm water above/below | |
 | Production | 1000 ns, 20 fs | |
 
-Read `references/decisions.md` for the science behind each choice (elastic
+If the user asks about simulation parameters, `references/mdp_parameters.md` explains every mdp line
+and how it differs from the lab's reference files. Read `references/decisions.md` for the science behind each choice (elastic
 parameters, Go vs elastic, Martini 2 vs 3, lipid names per force field, leaflet
 orientation). Read `references/spec_reference.md` for every spec key.
 
@@ -100,8 +101,8 @@ The build prints a summary after each stage. Act on it:
 - **gromacs**: report bead count and net charge (should be 0). Any validation error
   (atom count, atom names, undefined molecule) stops the build. Read the message, fix
   the spec, and resume.
-- **check**: `gmx grompp` on the minimisation input with `-maxwarn 0`. If it fails, read
-  `gromacs/.check/grompp_check.log` and explain the error.
+- **check**: `gmx grompp` with `-maxwarn 0` on the soft-core minimisation, the first NPT stage and
+  production. If it fails, read `gromacs/.check/grompp_<stage>.log` and explain the error.
 
 Resume after fixing a later stage instead of rebuilding everything:
 `mdbuddy build <name>.yaml --from martinize` (stages: `mdbuddy stages`).

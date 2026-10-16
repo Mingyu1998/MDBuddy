@@ -45,6 +45,6 @@ message says which, and points to the log).
   `solvent.cation/anion`.
 
 ## check (grompp)
-- Read `gromacs/.check/grompp_check.log`. Common causes: GROMACS < 2021 (no
+- Read `gromacs/.check/grompp_<stage>.log`. Common causes: GROMACS < 2021 (no
   C-rescale), a duplicated moleculetype from an `extra_itps` file, or `#include` of a
   file that also defines `[ defaults ]`.

@@ -65,7 +65,9 @@ simulation:
   pressure: 1.0            # bar
   production_ns: 1000
   equilibration: standard  # see decisions.md
-  coupling_groups: [SOLU_MEMB, SOLV]   # or [PROT, MEMB, SOLV] or [System]
+  output_ps: 500           # production output interval (xtc, energies, log); multiple of 2 ps
+  coupling_groups: [Protein, MEMBRANE, SOLVENT]   # tc-grps; or [SOLU_MEMB, SOLVENT] or [System]
+  comm_groups: [SOLU_MEMB, SOLVENT]  # comm-grps; or [System]
   gromacs_maxwarn: 0       # -maxwarn written into run.sh
 ```
 
@@ -81,7 +83,7 @@ simulation:
   02_cg/                   martinize2 inputs/outputs, martinize2_cmd.sh, martinize2.log
   03_membrane/             coby_build.py (re-runnable), coby.log, system.gro/pdb
   gromacs/                 the folder to copy to the cluster
-    step5_input.gro/.pdb, topol.top, toppar/, index.ndx,
-    step6.0_minimization.mdp, step6.1-6.6_equilibration.mdp, step7_production.mdp,
+    step5_input.gro/.pdb, topol.top, toppar/, index.ndx (System, Protein, MEMBRANE, SOLU_MEMB, SOLVENT, BB),
+    step6.0 (soft-core) and step6.1 _minimization.mdp, step6.2-6.7_equilibration.mdp, step7_production.mdp,
     run.sh, README.md
 ```

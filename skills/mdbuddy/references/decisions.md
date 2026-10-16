@@ -58,20 +58,20 @@ a height of protein height + 2 × `water_padding` (2.5 nm), at least `min_box_z`
 (10 nm), rounded up to 0.5 nm. For oligomerisation or lipid-protein studies, increase
 `lipid_padding`. Periodic images of the protein should be at least ~4 nm apart.
 
-## Equilibration ladder (fixed in this version)
+## Equilibration protocol (fixed in this version)
 
 | Step | Integrator | dt | Backbone restraint (kJ/mol/nm²) | Steps |
 |---|---|---|---|---|
-| 6.0 | steepest descent | – | 1000 | 5000 |
-| 6.1 | md, C-rescale, gen-vel | 2 fs | 1000 | 25 000 |
-| 6.2 | md, C-rescale | 5 fs | 500 | 25 000 |
-| 6.3 | md, C-rescale | 10 fs | 250 | 25 000 |
-| 6.4 | md, C-rescale | 15 fs | 100 | 25 000 |
-| 6.5 | md, C-rescale | 20 fs | 50 | 25 000 |
-| 6.6 | md, C-rescale | 20 fs | 10 | 50 000 |
-| 7 | md, Parrinello-Rahman (tau 12 ps) | 20 fs | none | production_ns |
+| 6.0 | steepest descent, soft-core, -DFLEXIBLE | – | 1000 | 5000 |
+| 6.1 | steepest descent, -DFLEXIBLE | – | 1000 | 5000 |
+| 6.2 | md, C-rescale, gen-vel | 2 fs | 1000 | 25 000 (50 ps) |
+| 6.3 | md, C-rescale | 5 fs | 500 | 25 000 |
+| 6.4 | md, C-rescale | 10 fs | 250 | 25 000 |
+| 6.5 | md, C-rescale | 15 fs | 100 | 25 000 |
+| 6.6 | md, C-rescale | 20 fs | 50 | 25 000 |
+| 6.7 | md, C-rescale | 20 fs | 10 | 250 000 (5 ns) |
+| 7 | md, Parrinello-Rahman (tau 12 ps) | 20 fs | none | production_ns, output every output_ps |
 
-Non-bonded settings: Verlet, reaction field, epsilon_r 15, 1.1 nm cut-offs,
-semi-isotropic pressure coupling at 1 bar (de Jong et al. 2016 recommendations).
-Restraints use martinize2's `POSRES` / `POSRES_FC` blocks with the backbone (`-p backbone`).
+The parameters follow the lab's Martini mdp files. Every line, and every deviation from those files, is explained in
+`mdp_parameters.md`. Restraints use martinize2's `POSRES` / `POSRES_FC` blocks on the backbone (`-p backbone`).
 Lipids are not restrained.

@@ -41,13 +41,14 @@ def test_full_build_with_stand_in_tools(tmp_path, opm_pdb, fake_tools):
 
     # GROMACS folder
     for f in ["step5_input.gro", "topol.top", "index.ndx", "run.sh", "README.md",
-              "step6.0_minimization.mdp", "step6.6_equilibration.mdp", "step7_production.mdp",
+              "step6.0_minimization.mdp", "step6.1_minimization.mdp", "step6.7_equilibration.mdp",
+              "step7_production.mdp",
               "toppar/protein_0.itp", "toppar/martini_v3.0.0.itp"]:
         assert (gmx / f).exists(), f
     info = topology.parse(gmx / "topol.top")
     assert info.molecules == [("protein_0", 1), ("POPC", 4), ("W", 10), ("NA", 2), ("CL", 4)]
     ndx = (gmx / "index.ndx").read_text()
-    for g in ("[ PROT ]", "[ MEMB ]", "[ SOLU_MEMB ]", "[ SOLV ]", "[ BB ]"):
+    for g in ("[ Protein ]", "[ MEMBRANE ]", "[ SOLU_MEMB ]", "[ SOLVENT ]", "[ BB ]"):
         assert g in ndx
 
     # provenance
@@ -66,7 +67,7 @@ def test_resume_from_stage(tmp_path, opm_pdb, fake_tools):
     pipeline.build(s, log=lambda m: None)
     s2 = make_spec(tmp_path, opm_pdb, position_restraints="none")
     pipeline.build(s2, from_stage="gromacs", log=lambda m: None)
-    eq = (s2.output_dir() / "gromacs" / "step6.1_equilibration.mdp").read_text()
+    eq = (s2.output_dir() / "gromacs" / "step6.2_equilibration.mdp").read_text()
     assert "POSRES" not in eq
 
 

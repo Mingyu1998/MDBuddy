@@ -190,25 +190,62 @@ def test_merge_consecutive():
 def test_mdp_ladder_and_production_length():
     s = mkspec(simulation={"production_ns": 500})
     st = mdp.stages(s)
-    assert [x.name for x in st][0] == "step6.0_minimization" and st[-1].name == "step7_production"
+    assert [x.name for x in st][:2] == ["step6.0_minimization", "step6.1_minimization"]
+    assert st[-1].name == "step7_production"
     assert st[-1].nsteps == 25_000_000
     fcs = [x.posres_fc for x in st if x.posres_fc]
     assert fcs == sorted(fcs, reverse=True)
 
 
-def test_mdp_content():
+def mdp_params(text):
+    """Parse an mdp into {key: value}, dropping comments."""
+    out = {}
+    for line in text.splitlines():
+        line = line.split(";", 1)[0].strip()
+        if line:
+            k, v = (x.strip() for x in line.split("=", 1))
+            assert k not in out, f"duplicate key {k}"
+            out[k] = v
+    return out
+
+
+def test_mdp_martini_nonbonded_in_every_stage():
+    s = mkspec()
+    for st in mdp.stages(s):
+        p = mdp_params(mdp.render(st, s, posres_enabled=True))
+        assert p["coulombtype"] == "reaction-field"
+        assert p["epsilon_r"] == "15" and p["epsilon_rf"] == "0"
+        assert p["rcoulomb"] == p["rvdw"] == "1.1"
+        assert p["vdw-modifier"] == "Potential-shift" and p["cutoff-scheme"] == "Verlet"
+        for obsolete in ("title", "ns-type", "ns_type"):
+            assert obsolete not in p
+
+
+def test_mdp_stage_details():
     s = mkspec()
     st = {x.name: x for x in mdp.stages(s)}
-    eq = mdp.render(st["step6.1_equilibration"], s, posres_enabled=True)
-    assert "define                   = -DPOSRES -DPOSRES_FC=1000" in eq
-    assert "epsilon_r                = 15" in eq and "reaction-field" in eq
-    assert "tc-grps                  = SOLU_MEMB SOLV" in eq
-    assert "gen-seed                 = 2026" in eq
-    assert "refcoord-scaling         = com" in eq
-    prod = mdp.render(st["step7_production"], s, posres_enabled=True)
-    assert "POSRES" not in prod and "Parrinello-Rahman" in prod and "semiisotropic" in prod
-    em = mdp.render(st["step6.0_minimization"], s, posres_enabled=False)
-    assert "define" not in em and "integrator               = steep" in em
+    soft = mdp_params(mdp.render(st["step6.0_minimization"], s, posres_enabled=True))
+    assert soft["define"] == "-DPOSRES -DPOSRES_FC=1000 -DFLEXIBLE"
+    assert soft["free-energy"] == "yes" and soft["couple-moltype"] == "system"
+    em = mdp_params(mdp.render(st["step6.1_minimization"], s, posres_enabled=False))
+    assert em["define"] == "-DFLEXIBLE" and "free-energy" not in em and "tcoupl" not in em
+    eq = mdp_params(mdp.render(st["step6.2_equilibration"], s, posres_enabled=True))
+    assert eq["define"] == "-DPOSRES -DPOSRES_FC=1000"
+    assert eq["tc-grps"] == "Protein MEMBRANE SOLVENT" and eq["ref-t"] == "310 310 310"
+    assert eq["comm-grps"] == "SOLU_MEMB SOLVENT"
+    assert eq["pcoupl"] == "C-rescale" and eq["refcoord-scaling"] == "com"
+    assert eq["gen-vel"] == "yes" and eq["gen-seed"] == "2026" and eq["continuation"] == "no"
+    prod = mdp_params(mdp.render(st["step7_production"], s, posres_enabled=True))
+    assert prod["define"] == "" and "refcoord-scaling" not in prod
+    assert prod["pcoupl"] == "Parrinello-Rahman" and prod["tau-p"] == "12.0"
+    assert prod["nstxout-compressed"] == "25000" and prod["gen-vel"] == "no"
+
+
+def test_output_interval_validation():
+    assert mdp_params(mdp.render(mdp.production_stage(100), mkspec(simulation={"output_ps": 100}),
+                                 True))["nstxout-compressed"] == "5000"
+    with pytest.raises(spec.SpecError, match="output_ps"):
+        mkspec(simulation={"output_ps": 3})
 
 
 # --- validation -------------------------------------------------------------------

@@ -1,10 +1,15 @@
 """GROMACS .mdp files for Martini membrane systems.
 
-Non-bonded settings follow the recommended Martini parameters for GROMACS
-(de Jong et al., Comput. Phys. Commun. 2016): Verlet lists, reaction field
-with epsilon_r = 15, 1.1 nm cut-offs. The equilibration ladder is modelled on
-CHARMM-GUI Martini Maker: minimisation followed by NPT runs with a growing
-time step and shrinking backbone position restraints.
+Parameters follow the lab's Martini input files (DJ004/MolDynamics_gromacs,
+MDP_files/CGMD_*.mdp) and the Martini recommendations for GROMACS (de Jong
+et al., Comput. Phys. Commun. 2016): Verlet lists, reaction field with
+epsilon_r = 15 / epsilon_rf = 0, 1.1 nm cut-offs, v-rescale, semi-isotropic
+pressure coupling. Every line and every deviation from the lab files is
+explained in skills/mdbuddy/references/mdp_parameters.md.
+
+Protocol: soft-core minimisation -> minimisation -> NPT equilibration with a
+growing time step and shrinking backbone restraints (as in CHARMM-GUI Martini
+Maker) -> NPT production.
 """
 
 from __future__ import annotations
@@ -12,10 +17,13 @@ from __future__ import annotations
 from dataclasses import dataclass
 from typing import Optional
 
+PROD_DT = 0.020  # ps
+NSTCALCENERGY = 100  # GROMACS default; nstenergy/nstlog must be multiples of it
+
 
 @dataclass(frozen=True)
 class Stage:
-    name: str  # file stem, e.g. step6.1_equilibration
+    name: str  # file stem, e.g. step6.2_equilibration
     title: str
     integrator: str
     nsteps: int
@@ -23,23 +31,25 @@ class Stage:
     posres_fc: Optional[float]  # kJ/mol/nm^2, None = no restraints
     pcoupl: Optional[str]
     gen_vel: bool = False
+    softcore: bool = False
 
 
 EQUILIBRATION_STANDARD = (
-    Stage("step6.0_minimization", "Energy minimisation", "steep", 5000, None, 1000.0, None),
-    Stage("step6.1_equilibration", "NPT, dt 2 fs", "md", 25000, 0.002, 1000.0, "C-rescale", gen_vel=True),
-    Stage("step6.2_equilibration", "NPT, dt 5 fs", "md", 25000, 0.005, 500.0, "C-rescale"),
-    Stage("step6.3_equilibration", "NPT, dt 10 fs", "md", 25000, 0.010, 250.0, "C-rescale"),
-    Stage("step6.4_equilibration", "NPT, dt 15 fs", "md", 25000, 0.015, 100.0, "C-rescale"),
-    Stage("step6.5_equilibration", "NPT, dt 20 fs", "md", 25000, 0.020, 50.0, "C-rescale"),
-    Stage("step6.6_equilibration", "NPT, dt 20 fs", "md", 50000, 0.020, 10.0, "C-rescale"),
+    Stage("step6.0_minimization", "Soft-core energy minimisation", "steep", 5000, None, 1000.0, None,
+          softcore=True),
+    Stage("step6.1_minimization", "Energy minimisation", "steep", 5000, None, 1000.0, None),
+    Stage("step6.2_equilibration", "NPT, dt 2 fs", "md", 25000, 0.002, 1000.0, "C-rescale", gen_vel=True),
+    Stage("step6.3_equilibration", "NPT, dt 5 fs", "md", 25000, 0.005, 500.0, "C-rescale"),
+    Stage("step6.4_equilibration", "NPT, dt 10 fs", "md", 25000, 0.010, 250.0, "C-rescale"),
+    Stage("step6.5_equilibration", "NPT, dt 15 fs", "md", 25000, 0.015, 100.0, "C-rescale"),
+    Stage("step6.6_equilibration", "NPT, dt 20 fs", "md", 25000, 0.020, 50.0, "C-rescale"),
+    Stage("step6.7_equilibration", "NPT, dt 20 fs, 5 ns", "md", 250000, 0.020, 10.0, "C-rescale"),
 )
 
 
 def production_stage(production_ns: float) -> Stage:
-    dt = 0.020
-    nsteps = int(round(production_ns * 1000.0 / dt))
-    return Stage("step7_production", f"Production, {production_ns:g} ns", "md", nsteps, dt, None,
+    nsteps = int(round(production_ns * 1000.0 / PROD_DT))
+    return Stage("step7_production", f"NPT production, {production_ns:g} ns", "md", nsteps, PROD_DT, None,
                  "Parrinello-Rahman")
 
 
@@ -47,80 +57,155 @@ def stages(spec) -> list[Stage]:
     return [*EQUILIBRATION_STANDARD, production_stage(float(spec.sim["production_ns"]))]
 
 
-def _block(title: str, rows: list[tuple[str, object]]) -> list[str]:
+def production_output_steps(output_ps: float) -> int:
+    steps = int(round(output_ps / PROD_DT))
+    if steps <= 0 or steps % NSTCALCENERGY:
+        raise ValueError(f"simulation.output_ps must be a positive multiple of "
+                         f"{NSTCALCENERGY * PROD_DT:g} ps (got {output_ps})")
+    return steps
+
+
+Row = tuple  # (key, value) or (key, value, comment)
+
+
+def _block(title: str, rows: list[Row]) -> list[str]:
     out = [f"; {title}"]
-    out += [f"{k:<24} = {v}" for k, v in rows]
+    for row in rows:
+        key, value = row[0], row[1]
+        line = f"{key:<24} = {value}"
+        if len(row) > 2 and row[2]:
+            line = f"{line:<52} ; {row[2]}"
+        out.append(line)
     out.append("")
     return out
 
 
 def render(stage: Stage, spec, posres_enabled: bool) -> str:
     sim = spec.sim
-    groups = sim["coupling_groups"]
+    tc_groups = sim["coupling_groups"]
+    comm_groups = sim["comm_groups"]
     temp = float(sim["temperature"])
+    pressure = float(sim["pressure"])
+    is_em = stage.integrator == "steep"
+    restrained = posres_enabled and stage.posres_fc is not None
+
     lines = [
         f"; {stage.name}.mdp - {stage.title}",
-        f"; Generated by MDBuddy for '{spec.name}' ({spec.cg['forcefield']})",
+        f"; Generated by MDBuddy for '{spec.name}' ({spec.cg['forcefield']}).",
+        "; Every parameter is explained in skills/mdbuddy/references/mdp_parameters.md",
         "",
     ]
-    run = [("integrator", stage.integrator), ("nsteps", stage.nsteps)]
-    if posres_enabled and stage.posres_fc is not None:
-        run.insert(0, ("define", f"-DPOSRES -DPOSRES_FC={stage.posres_fc:g}"))
-    if stage.integrator == "steep":
-        run += [("emtol", 1000.0), ("emstep", 0.01)]
+
+    defines = []
+    if restrained:
+        defines += ["-DPOSRES", f"-DPOSRES_FC={stage.posres_fc:g}"]
+    if is_em:
+        defines.append("-DFLEXIBLE")
+    run: list[Row] = [("define", " ".join(defines),
+                       ("backbone restraints" if restrained else "")
+                       + ("; " if restrained and is_em else "")
+                       + ("harmonic bonds instead of constraints for EM" if is_em else ""))]
+    run += [("integrator", stage.integrator, "steepest descent" if is_em else "leap-frog"),
+            ("nsteps", stage.nsteps, _duration(stage))]
+    if is_em:
+        run += [("emtol", 1000.0, "stop when Fmax < 1000 kJ/mol/nm"), ("emstep", 0.01, "initial step, nm")]
     else:
-        run += [("dt", stage.dt), ("comm-mode", "Linear"), ("comm-grps", " ".join(groups))]
+        run += [("dt", stage.dt, f"{stage.dt * 1000:g} fs"),
+                ("nstcomm", 100, "remove centre-of-mass motion every 100 steps"),
+                ("comm-mode", "Linear"),
+                ("comm-grps", " ".join(comm_groups))]
     lines += _block("Run control", run)
 
-    if stage.integrator == "steep":
-        out = [("nstxout-compressed", 0), ("nstenergy", 100), ("nstlog", 100)]
+    if is_em:
+        out: list[Row] = [("nstxout", 0, "no .trr"), ("nstvout", 0), ("nstfout", 0),
+                          ("nstlog", 1000), ("nstenergy", 1000),
+                          ("nstxout-compressed", 1000), ("compressed-x-precision", 1000)]
     elif stage.name.startswith("step7"):
-        out = [("nstxout", 0), ("nstvout", 0), ("nstfout", 0), ("nstlog", 5000), ("nstenergy", 5000),
-               ("nstxout-compressed", 5000), ("compressed-x-precision", 100)]
+        n = production_output_steps(float(sim["output_ps"]))
+        every = f"every {n * PROD_DT:g} ps"
+        out = [("nstxout", 0, "no .trr (checkpoints are written anyway)"), ("nstvout", 0), ("nstfout", 0),
+               ("nstlog", n, every), ("nstenergy", n, every),
+               ("nstxout-compressed", n, every), ("compressed-x-precision", 100, "0.01 nm, enough for CG")]
     else:
-        out = [("nstxout", 0), ("nstvout", 0), ("nstfout", 0), ("nstlog", 5000), ("nstenergy", 1000),
-               ("nstxout-compressed", 5000)]
+        out = [("nstxout", 0, "no .trr"), ("nstvout", 0), ("nstfout", 0),
+               ("nstlog", 5000), ("nstenergy", 1000),
+               ("nstxout-compressed", 5000), ("compressed-x-precision", 100, "0.01 nm, enough for CG")]
     lines += _block("Output", out)
 
-    lines += _block("Neighbour searching and non-bonded interactions (Martini)", [
+    lines += _block("Neighbour searching", [
         ("cutoff-scheme", "Verlet"),
-        ("nstlist", 20),
+        ("nstlist", 20, "mdrun may increase this for performance"),
         ("pbc", "xyz"),
-        ("verlet-buffer-tolerance", 0.005),
+        ("verlet-buffer-tolerance", 0.005, "kJ/mol/ps per atom; GROMACS default"),
+    ])
+    lines += _block("Electrostatics and van der Waals (Martini)", [
         ("coulombtype", "reaction-field"),
-        ("rcoulomb", 1.1),
-        ("epsilon_r", 15),
-        ("epsilon_rf", 0),
+        ("rcoulomb", 1.1, "nm"),
+        ("epsilon_r", 15, "Martini relative dielectric (2.5 only with polarisable water)"),
+        ("epsilon_rf", 0, "0 = infinity, Martini standard for reaction-field"),
         ("vdw-type", "cutoff"),
-        ("vdw-modifier", "Potential-shift-verlet"),
-        ("rvdw", 1.1),
+        ("vdw-modifier", "Potential-shift", "LJ shifted to zero at the cut-off"),
+        ("rvdw", 1.1, "nm"),
     ])
 
-    if stage.integrator == "md":
+    if stage.softcore:
+        lines += _block("Soft-core minimisation: removes bead overlaps left by system building", [
+            ("free-energy", "yes"),
+            ("init-lambda", 0.01, "1% of the way to fully decoupled: interactions on, soft-cored"),
+            ("sc-alpha", 4),
+            ("sc-power", 2),
+            ("sc-coul", "yes", "soft-core for Coulomb too"),
+            ("nstdhdl", 0, "no dH/dl output"),
+            ("couple-moltype", "system", "special value: couple all molecule types"),
+            ("couple-lambda0", "vdw-q", "state A: all interactions on"),
+            ("couple-lambda1", "none", "state B: all interactions off"),
+            ("couple-intramol", "yes", "also soft-core intramolecular pairs (avoids pair-list errors)"),
+        ])
+
+    if not is_em:
         lines += _block("Temperature coupling", [
             ("tcoupl", "v-rescale"),
-            ("tc-grps", " ".join(groups)),
-            ("tau-t", " ".join(["1.0"] * len(groups))),
-            ("ref-t", " ".join([f"{temp:g}"] * len(groups))),
+            ("tc-grps", " ".join(tc_groups)),
+            ("tau-t", " ".join(["1.0"] * len(tc_groups)), "ps"),
+            ("ref-t", " ".join([f"{temp:g}"] * len(tc_groups)), "K"),
         ])
         if stage.pcoupl == "Parrinello-Rahman":
-            tau_p = 12.0
+            tau_p, why = 12.0, "ps; Parrinello-Rahman is more stable with a large tau-p"
         else:
-            tau_p = 4.0
-        p = float(sim["pressure"])
-        lines += _block("Pressure coupling (semi-isotropic for a bilayer)", [
+            tau_p, why = 4.0, "ps; C-rescale relaxes the box quickly during equilibration"
+        pc: list[Row] = [
             ("pcoupl", stage.pcoupl),
-            ("pcoupltype", "semiisotropic"),
-            ("tau-p", tau_p),
-            ("compressibility", "3e-4 3e-4"),
-            ("ref-p", f"{p:g} {p:g}"),
-            *([("refcoord-scaling", "com")] if posres_enabled and stage.posres_fc is not None else []),
-        ])
+            ("pcoupltype", "semiisotropic", "x/y and z coupled separately for a bilayer"),
+            ("tau-p", tau_p, why),
+            ("compressibility", "3e-4 3e-4", "bar^-1, Martini standard"),
+            ("ref-p", f"{pressure:g} {pressure:g}", "bar"),
+        ]
+        if restrained:
+            pc.append(("refcoord-scaling", "com", "scale restraint reference with the box"))
+        lines += _block("Pressure coupling", pc)
         if stage.gen_vel:
-            lines += _block("Velocities", [("gen-vel", "yes"), ("gen-temp", f"{temp:g}"),
-                                           ("gen-seed", spec.seed), ("continuation", "no")])
+            lines += _block("Velocities", [
+                ("gen-vel", "yes", "new velocities after minimisation"),
+                ("gen-temp", f"{temp:g}"),
+                ("gen-seed", spec.seed, "fixed seed from the spec (reproducible)"),
+                ("continuation", "no"),
+            ])
         else:
-            lines += _block("Velocities", [("gen-vel", "no"), ("continuation", "yes")])
-        lines += _block("Bonds", [("constraints", "none"), ("constraint-algorithm", "Lincs"),
-                                  ("lincs-order", 8), ("lincs-iter", 2)])
+            lines += _block("Velocities", [("gen-vel", "no", "velocities from the previous stage"),
+                                           ("continuation", "yes")])
+
+    lines += _block("Bonds", [
+        ("constraints", "none", "only the [ constraints ] written in the itps"),
+        ("constraint-algorithm", "Lincs"),
+        ("lincs-order", 8, "higher than default for vsite/constraint triangles (cholesterol) and EM"),
+        ("lincs-iter", 2),
+        ("lincs-warnangle", 30, "degrees, GROMACS default"),
+    ])
     return "\n".join(lines)
+
+
+def _duration(stage: Stage) -> str:
+    if stage.dt is None:
+        return "maximum number of minimisation steps"
+    ns = stage.nsteps * stage.dt / 1000.0
+    return f"{ns:g} ns" if ns >= 1 else f"{ns * 1000:g} ps"

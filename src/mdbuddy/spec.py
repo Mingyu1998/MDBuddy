@@ -30,6 +30,8 @@ PROTEIN_MODELS = ("elastic", "go", "none")
 SOURCES = ("opm", "rcsb", "file")
 ORIENTATIONS = ("opm", "as_is")
 POSRES = ("none", "backbone", "all")
+TC_GROUP_CHOICES = (["Protein", "MEMBRANE", "SOLVENT"], ["SOLU_MEMB", "SOLVENT"], ["System"])
+COMM_GROUP_CHOICES = (["SOLU_MEMB", "SOLVENT"], ["System"])
 
 DEFAULTS: dict[str, Any] = {
     "mdbuddy": SPEC_VERSION,
@@ -88,7 +90,9 @@ DEFAULTS: dict[str, Any] = {
         "pressure": 1.0,
         "production_ns": 1000.0,
         "equilibration": "standard",
-        "coupling_groups": ["SOLU_MEMB", "SOLV"],
+        "output_ps": 500.0,
+        "coupling_groups": ["Protein", "MEMBRANE", "SOLVENT"],
+        "comm_groups": ["SOLU_MEMB", "SOLVENT"],
         "gromacs_maxwarn": 0,
     },
 }
@@ -253,9 +257,17 @@ def _validate(d: dict, problems: list[str]) -> None:
         problems.append("simulation.equilibration: only 'standard' is available")
     if not isinstance(sim["production_ns"], (int, float)) or sim["production_ns"] <= 0:
         problems.append("simulation.production_ns must be > 0")
-    groups = sim["coupling_groups"]
-    if groups not in (["SOLU_MEMB", "SOLV"], ["PROT", "MEMB", "SOLV"], ["System"]):
-        problems.append("simulation.coupling_groups must be [SOLU_MEMB, SOLV], [PROT, MEMB, SOLV] or [System]")
+    if sim["coupling_groups"] not in TC_GROUP_CHOICES:
+        problems.append("simulation.coupling_groups must be one of "
+                        + ", ".join("[" + ", ".join(g) + "]" for g in TC_GROUP_CHOICES))
+    if sim["comm_groups"] not in COMM_GROUP_CHOICES:
+        problems.append("simulation.comm_groups must be one of "
+                        + ", ".join("[" + ", ".join(g) + "]" for g in COMM_GROUP_CHOICES))
+    out_ps = sim["output_ps"]
+    # production dt is 20 fs and energies are computed every 100 steps -> multiples of 2 ps
+    if (not isinstance(out_ps, (int, float)) or out_ps <= 0
+            or abs(out_ps / 2.0 - round(out_ps / 2.0)) > 1e-9):
+        problems.append("simulation.output_ps must be a positive multiple of 2 ps")
 
 
 def from_dict(user: dict, source_path: Optional[Path] = None) -> Spec:
@@ -327,4 +339,5 @@ solvent:
 simulation:
   temperature: 310       # K
   production_ns: 1000
+  output_ps: 500         # trajectory/energy output interval in production
 """

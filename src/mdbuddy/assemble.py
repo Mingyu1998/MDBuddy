@@ -3,7 +3,7 @@
 gromacs/
   step5_input.gro / .pdb     assembled system
   topol.top, toppar/         topology with pinned force-field files
-  index.ndx                  PROT, MEMB, SOLV, SOLU_MEMB, BB, System
+  index.ndx                  Protein, MEMBRANE, SOLVENT, SOLU_MEMB, BB, System
   step6.*_*.mdp, step7_production.mdp
   run.sh                     grompp + mdrun for every stage
 """
@@ -26,15 +26,15 @@ class AssembleError(RuntimeError):
 
 def classify(spec, protein_moltypes: list[str], name: str) -> str:
     if name in protein_moltypes:
-        return "PROT"
+        return "Protein"
     if name in spec.lipid_names():
-        return "MEMB"
-    return "SOLV"
+        return "MEMBRANE"
+    return "SOLVENT"
 
 
 def write_index(path: Path, spec, molecules, info: topology.TopologyInfo,
                 protein_moltypes: list[str]) -> dict[str, int]:
-    groups: dict[str, list[int]] = {"System": [], "PROT": [], "MEMB": [], "SOLV": [], "BB": []}
+    groups: dict[str, list[int]] = {"System": [], "Protein": [], "MEMBRANE": [], "SOLVENT": [], "BB": []}
     atom = 0
     for name, count in molecules:
         mt = info.moleculetypes[name]
@@ -44,10 +44,10 @@ def write_index(path: Path, spec, molecules, info: topology.TopologyInfo,
                 atom += 1
                 groups["System"].append(atom)
                 groups[cls].append(atom)
-                if cls == "PROT" and aname == "BB":
+                if cls == "Protein" and aname == "BB":
                     groups["BB"].append(atom)
-    groups["SOLU_MEMB"] = sorted(groups["PROT"] + groups["MEMB"])
-    order = ["System", "PROT", "MEMB", "SOLU_MEMB", "SOLV", "BB"]
+    groups["SOLU_MEMB"] = sorted(groups["Protein"] + groups["MEMBRANE"])
+    order = ["System", "Protein", "MEMBRANE", "SOLU_MEMB", "SOLVENT", "BB"]
     lines = []
     for g in order:
         lines.append(f"[ {g} ]")
@@ -156,7 +156,7 @@ MDRUN_FLAGS="-nt 8" ./run.sh  # pass flags to mdrun
 |---|---|
 | step5_input.gro | assembled system (start coordinates and restraint reference) |
 | topol.top, toppar/ | topology; every parameter file is listed with its SHA-256 in ../mdbuddy.lock.json |
-| index.ndx | groups PROT, MEMB, SOLV, SOLU_MEMB, BB, System |
+| index.ndx | groups Protein, MEMBRANE, SOLVENT, SOLU_MEMB, BB, System |
 {stage_rows}
 
 Rebuild from scratch: `mdbuddy build ../spec.resolved.yaml`
@@ -188,9 +188,10 @@ def assemble(spec, coby_dir: Path, gmx_dir: Path, ff_includes: list[str], protei
         raise AssembleError("system failed validation:\n  - " + "\n  - ".join(report["errors"]))
 
     index_counts = write_index(gmx_dir / "index.ndx", spec, molecules, info, protein_moltypes)
-    for g in spec.sim["coupling_groups"]:
-        if g != "System" and index_counts.get(g, 0) == 0:
-            raise AssembleError(f"coupling group {g} is empty; change simulation.coupling_groups")
+    for key in ("coupling_groups", "comm_groups"):
+        for g in spec.sim[key]:
+            if g != "System" and index_counts.get(g, 0) == 0:
+                raise AssembleError(f"index group {g} is empty; change simulation.{key}")
 
     posres = spec.cg["position_restraints"] != "none"
     stage_list = mdp.stages(spec)

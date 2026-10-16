@@ -86,6 +86,7 @@ simulation:
 
 All options: [`skills/mdbuddy/references/spec_reference.md`](skills/mdbuddy/references/spec_reference.md).
 Background on the choices: [`skills/mdbuddy/references/decisions.md`](skills/mdbuddy/references/decisions.md).
+Every mdp parameter, line by line: [`skills/mdbuddy/references/mdp_parameters.md`](skills/mdbuddy/references/mdp_parameters.md).
 More examples: [`examples/`](examples).
 
 ## What you get
@@ -96,7 +97,8 @@ kcsa_popc_m3/
   00_input/  01_clean/  02_cg/  03_membrane/
   gromacs/
     step5_input.gro  topol.top  toppar/  index.ndx
-    step6.0_minimization.mdp  step6.1 … step6.6_equilibration.mdp  step7_production.mdp
+    step6.0_minimization.mdp (soft-core)  step6.1_minimization.mdp
+    step6.2 … step6.7_equilibration.mdp  step7_production.mdp
     run.sh  README.md
 ```
 

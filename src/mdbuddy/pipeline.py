@@ -163,17 +163,22 @@ def build(spec, from_stage: str = "fetch", until_stage: str = "check", grompp_ch
     return {"output_dir": out, "lock": lock_path, "state": state}
 
 
+# One mdp of each kind: soft-core EM, first NPT stage (gen-vel, C-rescale), production
+GROMPP_CHECK_STAGES = ("step6.0_minimization", "step6.2_equilibration", "step7_production")
+
+
 def grompp_dry_run(gmx_dir: Path, lock: Lock, entry: dict) -> Optional[str]:
-    """Run grompp on the minimisation input to catch topology errors. Needs GROMACS."""
+    """Run grompp (-maxwarn 0) on representative stages to catch topology/mdp errors."""
     gmx = find_gmx()
     if not gmx:
         return "not run: GROMACS not found (the inputs are still complete)"
     check_dir = gmx_dir / ".check"
     check_dir.mkdir(exist_ok=True)
-    cmd = [gmx, "grompp", "-f", "../step6.0_minimization.mdp", "-c", "../step5_input.gro",
-           "-r", "../step5_input.gro", "-p", "../topol.top", "-n", "../index.ndx",
-           "-o", "check.tpr", "-po", "check.mdout.mdp", "-maxwarn", "0"]
-    lock.run(entry, cmd, cwd=check_dir, log_name="grompp_check.log")
-    for f in ("check.tpr", "check.mdout.mdp"):
-        (check_dir / f).unlink(missing_ok=True)
-    return "passed with 0 warnings"
+    for stage in GROMPP_CHECK_STAGES:
+        cmd = [gmx, "grompp", "-f", f"../{stage}.mdp", "-c", "../step5_input.gro",
+               "-r", "../step5_input.gro", "-p", "../topol.top", "-n", "../index.ndx",
+               "-o", "check.tpr", "-po", "check.mdout.mdp", "-maxwarn", "0"]
+        lock.run(entry, cmd, cwd=check_dir, log_name=f"grompp_{stage}.log")
+        for f in ("check.tpr", "check.mdout.mdp"):
+            (check_dir / f).unlink(missing_ok=True)
+    return f"passed with 0 warnings for {', '.join(GROMPP_CHECK_STAGES)}"
