@@ -96,8 +96,10 @@ def read_itp(path: Path) -> dict:
         if sec == "moleculetype":
             cur = fields[0]
             desc = ""
-            for c in reversed(comments[-40:]):
-                if "corresponding to" in c or c.lower().startswith(("a general model", "a martini")):
+            for c in reversed(comments):
+                low = c.lower()
+                if ("corresponding to" in c or low.startswith(("a general model", "a martini"))
+                        or "lipid topology for" in low):
                     desc = c
                     break
             out[cur] = {"atoms": [], "charge": 0.0, "description": desc}
@@ -192,6 +194,8 @@ def main() -> None:
             row = m3_rows.get(name, {})
             cls = row.get("cls") or re.sub(r"^martini_v3\.0\.0_|_v\d+\.itp$", "", itp.name)
             entry = {
+                # True when the Martini 2 correspondence is known (naming table or curated below)
+                "m2_mapping_known": bool(row) or "m2" in CURATED_LIPIDOME.get(name, {}),
                 "class": cls,
                 "chemistry": clean(row.get("chemistry")),
                 "common": clean(row.get("common")),

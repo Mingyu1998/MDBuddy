@@ -95,7 +95,9 @@ mdbuddy lipids show DLPC CDL2 POP2
 mdbuddy lipids convert CDL2 POP2 PIPC --from m2 --to m3
 ```
 
-Details and the full list of pitfalls: [`skills/mdbuddy/references/lipids.md`](skills/mdbuddy/references/lipids.md).
+Every changed or clashing name (generated from the official table):
+[`docs/lipid_name_changes.md`](docs/lipid_name_changes.md). How MDBuddy handles them:
+[`skills/mdbuddy/references/lipids.md`](skills/mdbuddy/references/lipids.md).
 Background on the choices: [`skills/mdbuddy/references/decisions.md`](skills/mdbuddy/references/decisions.md).
 Every mdp parameter, line by line: [`skills/mdbuddy/references/mdp_parameters.md`](skills/mdbuddy/references/mdp_parameters.md).
 More examples: [`examples/`](examples).

@@ -71,3 +71,19 @@ def test_fix_coby_names(tmp_path):
     renames = {"TOCL": {1: ("C2A1", "D2A1"), 2: ("C3C2", "C3B2")}}
     assert assemble.fix_coby_names(gro, tmp_path / "none.pdb", [("TOCL", 2)], info, renames) == {"TOCL": 4}
     assert assemble.validate(gro, [("TOCL", 2)], info)["errors"] == []
+
+
+def test_name_change_document_is_up_to_date():
+    from pathlib import Path
+    doc = Path(__file__).resolve().parents[1] / "docs" / "lipid_name_changes.md"
+    assert doc.read_text() == lipids.report_markdown(), (
+        "docs/lipid_name_changes.md is stale: run `mdbuddy lipids report docs/lipid_name_changes.md`")
+
+
+def test_report_sections():
+    text = lipids.report_markdown()
+    section1 = text.split("## 1.")[1].split("## 2.")[0]
+    for name in ("DLPC", "PIPC", "POP2", "DYPC"):
+        assert f"| **{name}** |" in section1
+    assert "| **DODG** |" not in section1  # not in the official table -> "check chemistry", not a clash
+    assert "**TOCL: +0 → -2**" in text     # CDL0 -> TOCL charge change is flagged

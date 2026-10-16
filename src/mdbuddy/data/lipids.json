@@ -3715,7 +3715,7 @@
     },
     "coby_params": "default",
     "common": null,
-    "description": null,
+    "description": "Martini lipid topology for C16:1(3t)/18:3 PG (JFPG)",
     "itp": "martini_v3.0.0_phospholipids_v1.itp"
    },
    "JPPG": {
@@ -3734,7 +3734,7 @@
     },
     "coby_params": "default",
     "common": "C16:1(3t)/16:0 PG (JPPG)",
-    "description": null,
+    "description": "Martini lipid topology for C16:1(3t)/16:0 PG (JPPG)",
     "itp": "martini_v3.0.0_phospholipids_v1.itp"
    },
    "LPPA": {
@@ -3812,7 +3812,7 @@
     },
     "coby_params": "default",
     "common": "C18:1/16:0 PG (OPPG)",
-    "description": null,
+    "description": "Martini lipid topology for C18:1/16:0 PG (OPPG)",
     "itp": "martini_v3.0.0_phospholipids_v1.itp"
    },
    "PAPA": {
@@ -4325,6 +4325,7 @@
     "description": "A general model ceramide (CER) lipid corresponding to atomistic e.g. C(d18:1/22:0) N-behenoyl-D-erythro tails.",
     "itp": "martini_v3.0.0_ceramides_v2.itp",
     "m2": [],
+    "m2_mapping_known": true,
     "sn1": "tCCC",
     "sn2": "CCCCC"
    },
@@ -4344,6 +4345,7 @@
     "m2": [
      "PBSM"
     ],
+    "m2_mapping_known": true,
     "sn1": "tCCC",
     "sn2": "CCCCC"
    },
@@ -4361,6 +4363,7 @@
     "description": null,
     "itp": "martini_v3.0.0_hydrocarbons_v2.itp",
     "m2": [],
+    "m2_mapping_known": false,
     "sn1": null,
     "sn2": null
    },
@@ -4378,6 +4381,7 @@
     "description": null,
     "itp": "martini_v3.0.0_hydrocarbons_v2.itp",
     "m2": [],
+    "m2_mapping_known": false,
     "sn1": null,
     "sn2": null
    },
@@ -4395,6 +4399,7 @@
     "description": null,
     "itp": "martini_v3.0.0_hydrocarbons_v2.itp",
     "m2": [],
+    "m2_mapping_known": false,
     "sn1": null,
     "sn2": null
    },
@@ -4413,6 +4418,7 @@
     "description": "A general model ceramide (CER) lipid corresponding to atomistic e.g. C(d18:1/26:0) N-hexacosanoyl-D-erythro tails.",
     "itp": "martini_v3.0.0_ceramides_v2.itp",
     "m2": [],
+    "m2_mapping_known": true,
     "sn1": "tCCC",
     "sn2": "CCCCCC"
    },
@@ -4432,6 +4438,7 @@
     "m2": [
      "CHOL"
     ],
+    "m2_mapping_known": true,
     "note": "Martini 3 cholesterol v1.0 (Borges-Araujo 2023), a different bead topology from Martini 2 CHOL.",
     "sn1": null,
     "sn2": null
@@ -4451,6 +4458,7 @@
     "description": "A general model sphingomyelin (SM) lipid corresponding to atomistic e.g. C(d18:1/26:0) N-hexacosanoyl-D-erythro tails.",
     "itp": "martini_v3.0.0_phospholipids_SM_v2.itp",
     "m2": [],
+    "m2_mapping_known": true,
     "sn1": "tCCC",
     "sn2": "CCCCCC"
    },
@@ -4468,6 +4476,7 @@
     "description": "A general model ether lipid phosphatidic acid (EA) lipid corresponding to atomistic C20:4(5c;8c;11c;14c) di-arachidonic acid (AA) tails.",
     "itp": "martini_v3.0.0_etherphospholipids_PA_v2.itp",
     "m2": [],
+    "m2_mapping_known": true,
     "sn1": "cFFDC",
     "sn2": "cFFDC"
    },
@@ -4485,6 +4494,7 @@
     "description": "A general model ether lipid phosphatidylcholine (EC) lipid corresponding to atomistic C20:4(5c;8c;11c;14c) di-arachidonic acid (AA) tails.",
     "itp": "martini_v3.0.0_etherphospholipids_PC_v2.itp",
     "m2": [],
+    "m2_mapping_known": true,
     "sn1": "cFFDC",
     "sn2": "cFFDC"
    },
@@ -4502,6 +4512,7 @@
     "description": "A general model ether lipid phosphatidylethanolamine (EE) lipid corresponding to atomistic C20:4(5c;8c;11c;14c) di-arachidonic acid (AA) tails.",
     "itp": "martini_v3.0.0_etherphospholipids_PE_v2.itp",
     "m2": [],
+    "m2_mapping_known": true,
     "sn1": "cFFDC",
     "sn2": "cFFDC"
    },
@@ -4519,6 +4530,7 @@
     "description": "A general model ether lipid phosphatidylglycerol (EG) lipid corresponding to atomistic C20:4(5c;8c;11c;14c) di-arachidonic acid (AA) tails.",
     "itp": "martini_v3.0.0_etherphospholipids_PG_v2.itp",
     "m2": [],
+    "m2_mapping_known": true,
     "sn1": "cFFDC",
     "sn2": "cFFDC"
    },
@@ -4536,6 +4548,7 @@
     "description": "A general model ether lipid phosphatidylserine (ES) lipid corresponding to atomistic C20:4(5c;8c;11c;14c) di-arachidonic acid (AA) tails.",
     "itp": "martini_v3.0.0_etherphospholipids_PS_v2.itp",
     "m2": [],
+    "m2_mapping_known": true,
     "sn1": "cFFDC",
     "sn2": "cFFDC"
    },
@@ -4553,6 +4566,7 @@
     "description": "A general model plasmalogen phosphatidic acid (LA) lipid corresponding to atomistic C20:4(5c;8c;11c;14c) di-arachidonic acid (AA) tails.",
     "itp": "martini_v3.0.0_plasmalogens_PA_v2.itp",
     "m2": [],
+    "m2_mapping_known": true,
     "sn1": "cFFDC",
     "sn2": "cFFDC"
    },
@@ -4570,6 +4584,7 @@
     "description": "A general model plasmalogen phosphatidylcholine (LC) lipid corresponding to atomistic C20:4(5c;8c;11c;14c) di-arachidonic acid (AA) tails.",
     "itp": "martini_v3.0.0_plasmalogens_PC_v2.itp",
     "m2": [],
+    "m2_mapping_known": true,
     "sn1": "cFFDC",
     "sn2": "cFFDC"
    },
@@ -4587,6 +4602,7 @@
     "description": "A general model plasmalogen phosphatidylethanolamine (LE) lipid corresponding to atomistic C20:4(5c;8c;11c;14c) di-arachidonic acid (AA) tails.",
     "itp": "martini_v3.0.0_plasmalogens_PE_v2.itp",
     "m2": [],
+    "m2_mapping_known": true,
     "sn1": "cFFDC",
     "sn2": "cFFDC"
    },
@@ -4604,6 +4620,7 @@
     "description": "A general model plasmalogen phosphatidylglycerol (LG) lipid corresponding to atomistic C20:4(5c;8c;11c;14c) di-arachidonic acid (AA) tails.",
     "itp": "martini_v3.0.0_plasmalogens_PG_v2.itp",
     "m2": [],
+    "m2_mapping_known": true,
     "sn1": "cFFDC",
     "sn2": "cFFDC"
    },
@@ -4621,6 +4638,7 @@
     "description": "A general model plasmalogen phosphatidylserine (LS) lipid corresponding to atomistic C20:4(5c;8c;11c;14c) di-arachidonic acid (AA) tails.",
     "itp": "martini_v3.0.0_plasmalogens_PS_v2.itp",
     "m2": [],
+    "m2_mapping_known": true,
     "sn1": "cFFDC",
     "sn2": "cFFDC"
    },
@@ -4640,6 +4658,7 @@
     "m2": [
      "DAPA"
     ],
+    "m2_mapping_known": true,
     "sn1": "cFFDC",
     "sn2": "cFFDC"
    },
@@ -4659,6 +4678,7 @@
     "m2": [
      "DAPC"
     ],
+    "m2_mapping_known": true,
     "sn1": "cFFDC",
     "sn2": "cFFDC"
    },
@@ -4678,6 +4698,7 @@
     "m2": [
      "DAPE"
     ],
+    "m2_mapping_known": true,
     "sn1": "cFFDC",
     "sn2": "cFFDC"
    },
@@ -4697,6 +4718,7 @@
     "m2": [
      "DAPG"
     ],
+    "m2_mapping_known": true,
     "sn1": "cFFDC",
     "sn2": "cFFDC"
    },
@@ -4716,6 +4738,7 @@
     "m2": [
      "DAPS"
     ],
+    "m2_mapping_known": true,
     "sn1": "cFFDC",
     "sn2": "cFFDC"
    },
@@ -4733,6 +4756,7 @@
     "description": "A general model ether lipid phosphatidic acid (EA) lipid corresponding to atomistic C22:0 dibehenoyl tails.",
     "itp": "martini_v3.0.0_etherphospholipids_PA_v2.itp",
     "m2": [],
+    "m2_mapping_known": true,
     "sn1": "CCCCC",
     "sn2": "CCCCC"
    },
@@ -4750,6 +4774,7 @@
     "description": "A general model ether lipid phosphatidylcholine (EC) lipid corresponding to atomistic C22:0 dibehenoyl tails.",
     "itp": "martini_v3.0.0_etherphospholipids_PC_v2.itp",
     "m2": [],
+    "m2_mapping_known": true,
     "sn1": "CCCCC",
     "sn2": "CCCCC"
    },
@@ -4767,6 +4792,7 @@
     "description": "A general model ether lipid phosphatidylethanolamine (EE) lipid corresponding to atomistic C22:0 dibehenoyl tails.",
     "itp": "martini_v3.0.0_etherphospholipids_PE_v2.itp",
     "m2": [],
+    "m2_mapping_known": true,
     "sn1": "CCCCC",
     "sn2": "CCCCC"
    },
@@ -4784,6 +4810,7 @@
     "description": "A general model ether lipid phosphatidylglycerol (EG) lipid corresponding to atomistic C22:0 dibehenoyl tails.",
     "itp": "martini_v3.0.0_etherphospholipids_PG_v2.itp",
     "m2": [],
+    "m2_mapping_known": true,
     "sn1": "CCCCC",
     "sn2": "CCCCC"
    },
@@ -4801,6 +4828,7 @@
     "description": "A general model ether lipid phosphatidylserine (ES) lipid corresponding to atomistic C22:0 dibehenoyl tails.",
     "itp": "martini_v3.0.0_etherphospholipids_PS_v2.itp",
     "m2": [],
+    "m2_mapping_known": true,
     "sn1": "CCCCC",
     "sn2": "CCCCC"
    },
@@ -4818,6 +4846,7 @@
     "description": "A general model plasmalogen phosphatidic acid (LA) lipid corresponding to atomistic C22:0 dibehenoyl tails.",
     "itp": "martini_v3.0.0_plasmalogens_PA_v2.itp",
     "m2": [],
+    "m2_mapping_known": true,
     "sn1": "CCCCC",
     "sn2": "CCCCC"
    },
@@ -4835,6 +4864,7 @@
     "description": "A general model plasmalogen phosphatidylcholine (LC) lipid corresponding to atomistic C22:0 dibehenoyl tails.",
     "itp": "martini_v3.0.0_plasmalogens_PC_v2.itp",
     "m2": [],
+    "m2_mapping_known": true,
     "sn1": "CCCCC",
     "sn2": "CCCCC"
    },
@@ -4852,6 +4882,7 @@
     "description": "A general model plasmalogen phosphatidylethanolamine (LE) lipid corresponding to atomistic C22:0 dibehenoyl tails.",
     "itp": "martini_v3.0.0_plasmalogens_PE_v2.itp",
     "m2": [],
+    "m2_mapping_known": true,
     "sn1": "CCCCC",
     "sn2": "CCCCC"
    },
@@ -4869,6 +4900,7 @@
     "description": "A general model plasmalogen phosphatidylglycerol (LG) lipid corresponding to atomistic C22:0 dibehenoyl tails.",
     "itp": "martini_v3.0.0_plasmalogens_PG_v2.itp",
     "m2": [],
+    "m2_mapping_known": true,
     "sn1": "CCCCC",
     "sn2": "CCCCC"
    },
@@ -4886,6 +4918,7 @@
     "description": "A general model plasmalogen phosphatidylserine (LS) lipid corresponding to atomistic C22:0 dibehenoyl tails.",
     "itp": "martini_v3.0.0_plasmalogens_PS_v2.itp",
     "m2": [],
+    "m2_mapping_known": true,
     "sn1": "CCCCC",
     "sn2": "CCCCC"
    },
@@ -4905,6 +4938,7 @@
     "m2": [
      "DBPA"
     ],
+    "m2_mapping_known": true,
     "sn1": "CCCCC",
     "sn2": "CCCCC"
    },
@@ -4924,6 +4958,7 @@
     "m2": [
      "DBPC"
     ],
+    "m2_mapping_known": true,
     "sn1": "CCCCC",
     "sn2": "CCCCC"
    },
@@ -4943,6 +4978,7 @@
     "m2": [
      "DBPE"
     ],
+    "m2_mapping_known": true,
     "sn1": "CCCCC",
     "sn2": "CCCCC"
    },
@@ -4962,6 +4998,7 @@
     "m2": [
      "DBPG"
     ],
+    "m2_mapping_known": true,
     "sn1": "CCCCC",
     "sn2": "CCCCC"
    },
@@ -4981,6 +5018,7 @@
     "m2": [
      "DBPS"
     ],
+    "m2_mapping_known": true,
     "sn1": "CCCCC",
     "sn2": "CCCCC"
    },
@@ -4998,6 +5036,7 @@
     "description": "A general model ether lipid phosphatidic acid (EA) lipid corresponding to atomistic C26:0 dihexacosanoyl tails.",
     "itp": "martini_v3.0.0_etherphospholipids_PA_v2.itp",
     "m2": [],
+    "m2_mapping_known": true,
     "sn1": "CCCCCC",
     "sn2": "CCCCCC"
    },
@@ -5015,6 +5054,7 @@
     "description": "A general model ether lipid phosphatidylcholine (EC) lipid corresponding to atomistic C26:0 dihexacosanoyl tails.",
     "itp": "martini_v3.0.0_etherphospholipids_PC_v2.itp",
     "m2": [],
+    "m2_mapping_known": true,
     "sn1": "CCCCCC",
     "sn2": "CCCCCC"
    },
@@ -5032,6 +5072,7 @@
     "description": "A general model ether lipid phosphatidylethanolamine (EE) lipid corresponding to atomistic C26:0 dihexacosanoyl tails.",
     "itp": "martini_v3.0.0_etherphospholipids_PE_v2.itp",
     "m2": [],
+    "m2_mapping_known": true,
     "sn1": "CCCCCC",
     "sn2": "CCCCCC"
    },
@@ -5049,6 +5090,7 @@
     "description": "A general model ether lipid phosphatidylglycerol (EG) lipid corresponding to atomistic C26:0 dihexacosanoyl tails.",
     "itp": "martini_v3.0.0_etherphospholipids_PG_v2.itp",
     "m2": [],
+    "m2_mapping_known": true,
     "sn1": "CCCCCC",
     "sn2": "CCCCCC"
    },
@@ -5066,6 +5108,7 @@
     "description": "A general model ether lipid phosphatidylserine (ES) lipid corresponding to atomistic C26:0 dihexacosanoyl tails.",
     "itp": "martini_v3.0.0_etherphospholipids_PS_v2.itp",
     "m2": [],
+    "m2_mapping_known": true,
     "sn1": "CCCCCC",
     "sn2": "CCCCCC"
    },
@@ -5083,6 +5126,7 @@
     "description": "A general model plasmalogen phosphatidic acid (LA) lipid corresponding to atomistic C26:0 dihexacosanoyl tails.",
     "itp": "martini_v3.0.0_plasmalogens_PA_v2.itp",
     "m2": [],
+    "m2_mapping_known": true,
     "sn1": "CCCCCC",
     "sn2": "CCCCCC"
    },
@@ -5100,6 +5144,7 @@
     "description": "A general model plasmalogen phosphatidylcholine (LC) lipid corresponding to atomistic C26:0 dihexacosanoyl tails.",
     "itp": "martini_v3.0.0_plasmalogens_PC_v2.itp",
     "m2": [],
+    "m2_mapping_known": true,
     "sn1": "CCCCCC",
     "sn2": "CCCCCC"
    },
@@ -5117,6 +5162,7 @@
     "description": "A general model plasmalogen phosphatidylethanolamine (LE) lipid corresponding to atomistic C26:0 dihexacosanoyl tails.",
     "itp": "martini_v3.0.0_plasmalogens_PE_v2.itp",
     "m2": [],
+    "m2_mapping_known": true,
     "sn1": "CCCCCC",
     "sn2": "CCCCCC"
    },
@@ -5134,6 +5180,7 @@
     "description": "A general model plasmalogen phosphatidylglycerol (LG) lipid corresponding to atomistic C26:0 dihexacosanoyl tails.",
     "itp": "martini_v3.0.0_plasmalogens_PG_v2.itp",
     "m2": [],
+    "m2_mapping_known": true,
     "sn1": "CCCCCC",
     "sn2": "CCCCCC"
    },
@@ -5151,6 +5198,7 @@
     "description": "A general model plasmalogen phosphatidylserine (LS) lipid corresponding to atomistic C26:0 dihexacosanoyl tails.",
     "itp": "martini_v3.0.0_plasmalogens_PS_v2.itp",
     "m2": [],
+    "m2_mapping_known": true,
     "sn1": "CCCCCC",
     "sn2": "CCCCCC"
    },
@@ -5170,6 +5218,7 @@
     "m2": [
      "DXPA"
     ],
+    "m2_mapping_known": true,
     "sn1": "CCCCCC",
     "sn2": "CCCCCC"
    },
@@ -5189,6 +5238,7 @@
     "m2": [
      "DXPC"
     ],
+    "m2_mapping_known": true,
     "sn1": "CCCCCC",
     "sn2": "CCCCCC"
    },
@@ -5208,6 +5258,7 @@
     "m2": [
      "DXPE"
     ],
+    "m2_mapping_known": true,
     "sn1": "CCCCCC",
     "sn2": "CCCCCC"
    },
@@ -5227,6 +5278,7 @@
     "m2": [
      "DXPG"
     ],
+    "m2_mapping_known": true,
     "sn1": "CCCCCC",
     "sn2": "CCCCCC"
    },
@@ -5246,6 +5298,7 @@
     "m2": [
      "DXPS"
     ],
+    "m2_mapping_known": true,
     "sn1": "CCCCCC",
     "sn2": "CCCCCC"
    },
@@ -5263,6 +5316,7 @@
     "description": "A general model ether lipid phosphatidic acid (EA) lipid corresponding to atomistic C22:6(4c;7c;10c;13c;16c;19c) di-docosahexaenoic acid tails.",
     "itp": "martini_v3.0.0_etherphospholipids_PA_v2.itp",
     "m2": [],
+    "m2_mapping_known": true,
     "sn1": "DFFDD",
     "sn2": "DFFDD"
    },
@@ -5280,6 +5334,7 @@
     "description": "A general model ether lipid phosphatidylcholine (EC) lipid corresponding to atomistic C22:6(4c;7c;10c;13c;16c;19c) di-docosahexaenoic acid tails.",
     "itp": "martini_v3.0.0_etherphospholipids_PC_v2.itp",
     "m2": [],
+    "m2_mapping_known": true,
     "sn1": "DFFDD",
     "sn2": "DFFDD"
    },
@@ -5297,6 +5352,7 @@
     "description": "A general model ether lipid phosphatidylethanolamine (EE) lipid corresponding to atomistic C22:6(4c;7c;10c;13c;16c;19c) di-docosahexaenoic acid tails.",
     "itp": "martini_v3.0.0_etherphospholipids_PE_v2.itp",
     "m2": [],
+    "m2_mapping_known": true,
     "sn1": "DFFDD",
     "sn2": "DFFDD"
    },
@@ -5314,6 +5370,7 @@
     "description": "A general model ether lipid phosphatidylglycerol (EG) lipid corresponding to atomistic C22:6(4c;7c;10c;13c;16c;19c) di-docosahexaenoic acid tails.",
     "itp": "martini_v3.0.0_etherphospholipids_PG_v2.itp",
     "m2": [],
+    "m2_mapping_known": true,
     "sn1": "DFFDD",
     "sn2": "DFFDD"
    },
@@ -5331,6 +5388,7 @@
     "description": "A general model ether lipid phosphatidylserine (ES) lipid corresponding to atomistic C22:6(4c;7c;10c;13c;16c;19c) di-docosahexaenoic acid tails.",
     "itp": "martini_v3.0.0_etherphospholipids_PS_v2.itp",
     "m2": [],
+    "m2_mapping_known": true,
     "sn1": "DFFDD",
     "sn2": "DFFDD"
    },
@@ -5348,6 +5406,7 @@
     "description": "A general model plasmalogen phosphatidic acid (LA) lipid corresponding to atomistic C22:6(4c;7c;10c;13c;16c;19c) di-docosahexaenoic acid tails.",
     "itp": "martini_v3.0.0_plasmalogens_PA_v2.itp",
     "m2": [],
+    "m2_mapping_known": true,
     "sn1": "DFFDD",
     "sn2": "DFFDD"
    },
@@ -5365,6 +5424,7 @@
     "description": "A general model plasmalogen phosphatidylcholine (LC) lipid corresponding to atomistic C22:6(4c;7c;10c;13c;16c;19c) di-docosahexaenoic acid tails.",
     "itp": "martini_v3.0.0_plasmalogens_PC_v2.itp",
     "m2": [],
+    "m2_mapping_known": true,
     "sn1": "DFFDD",
     "sn2": "DFFDD"
    },
@@ -5382,6 +5442,7 @@
     "description": "A general model plasmalogen phosphatidylethanolamine (LE) lipid corresponding to atomistic C22:6(4c;7c;10c;13c;16c;19c) di-docosahexaenoic acid tails.",
     "itp": "martini_v3.0.0_plasmalogens_PE_v2.itp",
     "m2": [],
+    "m2_mapping_known": true,
     "sn1": "DFFDD",
     "sn2": "DFFDD"
    },
@@ -5399,6 +5460,7 @@
     "description": "A general model plasmalogen phosphatidylglycerol (LG) lipid corresponding to atomistic C22:6(4c;7c;10c;13c;16c;19c) di-docosahexaenoic acid tails.",
     "itp": "martini_v3.0.0_plasmalogens_PG_v2.itp",
     "m2": [],
+    "m2_mapping_known": true,
     "sn1": "DFFDD",
     "sn2": "DFFDD"
    },
@@ -5416,6 +5478,7 @@
     "description": "A general model plasmalogen phosphatidylserine (LS) lipid corresponding to atomistic C22:6(4c;7c;10c;13c;16c;19c) di-docosahexaenoic acid tails.",
     "itp": "martini_v3.0.0_plasmalogens_PS_v2.itp",
     "m2": [],
+    "m2_mapping_known": true,
     "sn1": "DFFDD",
     "sn2": "DFFDD"
    },
@@ -5433,6 +5496,7 @@
     "description": "A general model phosphatidic acid (PA) lipid corresponding to atomistic C22:6(4c;7c;10c;13c;16c;19c) di-docosahexaenoic acid tails.",
     "itp": "martini_v3.0.0_phospholipids_PA_v2.itp",
     "m2": [],
+    "m2_mapping_known": true,
     "sn1": "DFFDD",
     "sn2": "DFFDD"
    },
@@ -5450,6 +5514,7 @@
     "description": "A general model phosphatidylcholine (PC) lipid corresponding to atomistic C22:6(4c;7c;10c;13c;16c;19c) di-docosahexaenoic acid tails.",
     "itp": "martini_v3.0.0_phospholipids_PC_v2.itp",
     "m2": [],
+    "m2_mapping_known": true,
     "sn1": "DFFDD",
     "sn2": "DFFDD"
    },
@@ -5469,6 +5534,7 @@
     "m2": [
      "DUPE"
     ],
+    "m2_mapping_known": true,
     "sn1": "DFFDD",
     "sn2": "DFFDD"
    },
@@ -5486,6 +5552,7 @@
     "description": "A general model phosphatidylglycerol (PG) lipid corresponding to atomistic C22:6(4c;7c;10c;13c;16c;19c) di-docosahexaenoic acid tails.",
     "itp": "martini_v3.0.0_phospholipids_PG_v2.itp",
     "m2": [],
+    "m2_mapping_known": true,
     "sn1": "DFFDD",
     "sn2": "DFFDD"
    },
@@ -5505,6 +5572,7 @@
     "m2": [
      "DUPS"
     ],
+    "m2_mapping_known": true,
     "sn1": "DFFDD",
     "sn2": "DFFDD"
    },
@@ -5522,6 +5590,7 @@
     "description": "A general model ether lipid phosphatidic acid (EA) lipid corresponding to atomistic C22:1(11c) or C22:1(13c) dierucoyl tails.",
     "itp": "martini_v3.0.0_etherphospholipids_PA_v2.itp",
     "m2": [],
+    "m2_mapping_known": true,
     "sn1": "CCDCC",
     "sn2": "CCDCC"
    },
@@ -5539,6 +5608,7 @@
     "description": "A general model ether lipid phosphatidylcholine (EC) lipid corresponding to atomistic C22:1(11c) or C22:1(13c) dierucoyl tails.",
     "itp": "martini_v3.0.0_etherphospholipids_PC_v2.itp",
     "m2": [],
+    "m2_mapping_known": true,
     "sn1": "CCDCC",
     "sn2": "CCDCC"
    },
@@ -5556,6 +5626,7 @@
     "description": "A general model ether lipid phosphatidylethanolamine (EE) lipid corresponding to atomistic C22:1(11c) or C22:1(13c) dierucoyl tails.",
     "itp": "martini_v3.0.0_etherphospholipids_PE_v2.itp",
     "m2": [],
+    "m2_mapping_known": true,
     "sn1": "CCDCC",
     "sn2": "CCDCC"
    },
@@ -5573,6 +5644,7 @@
     "description": "A general model ether lipid phosphatidylglycerol (EG) lipid corresponding to atomistic C22:1(11c) or C22:1(13c) dierucoyl tails.",
     "itp": "martini_v3.0.0_etherphospholipids_PG_v2.itp",
     "m2": [],
+    "m2_mapping_known": true,
     "sn1": "CCDCC",
     "sn2": "CCDCC"
    },
@@ -5590,6 +5662,7 @@
     "description": "A general model ether lipid phosphatidylserine (ES) lipid corresponding to atomistic C22:1(11c) or C22:1(13c) dierucoyl tails.",
     "itp": "martini_v3.0.0_etherphospholipids_PS_v2.itp",
     "m2": [],
+    "m2_mapping_known": true,
     "sn1": "CCDCC",
     "sn2": "CCDCC"
    },
@@ -5607,6 +5680,7 @@
     "description": "A general model plasmalogen phosphatidic acid (LA) lipid corresponding to atomistic C22:1(11c) or C22:1(13c) dierucoyl tails.",
     "itp": "martini_v3.0.0_plasmalogens_PA_v2.itp",
     "m2": [],
+    "m2_mapping_known": true,
     "sn1": "CCDCC",
     "sn2": "CCDCC"
    },
@@ -5624,6 +5698,7 @@
     "description": "A general model plasmalogen phosphatidylcholine (LC) lipid corresponding to atomistic C22:1(11c) or C22:1(13c) dierucoyl tails.",
     "itp": "martini_v3.0.0_plasmalogens_PC_v2.itp",
     "m2": [],
+    "m2_mapping_known": true,
     "sn1": "CCDCC",
     "sn2": "CCDCC"
    },
@@ -5641,6 +5716,7 @@
     "description": "A general model plasmalogen phosphatidylethanolamine (LE) lipid corresponding to atomistic C22:1(11c) or C22:1(13c) dierucoyl tails.",
     "itp": "martini_v3.0.0_plasmalogens_PE_v2.itp",
     "m2": [],
+    "m2_mapping_known": true,
     "sn1": "CCDCC",
     "sn2": "CCDCC"
    },
@@ -5658,6 +5734,7 @@
     "description": "A general model plasmalogen phosphatidylglycerol (LG) lipid corresponding to atomistic C22:1(11c) or C22:1(13c) dierucoyl tails.",
     "itp": "martini_v3.0.0_plasmalogens_PG_v2.itp",
     "m2": [],
+    "m2_mapping_known": true,
     "sn1": "CCDCC",
     "sn2": "CCDCC"
    },
@@ -5675,6 +5752,7 @@
     "description": "A general model plasmalogen phosphatidylserine (LS) lipid corresponding to atomistic C22:1(11c) or C22:1(13c) dierucoyl tails.",
     "itp": "martini_v3.0.0_plasmalogens_PS_v2.itp",
     "m2": [],
+    "m2_mapping_known": true,
     "sn1": "CCDCC",
     "sn2": "CCDCC"
    },
@@ -5694,6 +5772,7 @@
     "m2": [
      "DGPA"
     ],
+    "m2_mapping_known": true,
     "sn1": "CCDCC",
     "sn2": "CCDCC"
    },
@@ -5713,6 +5792,7 @@
     "m2": [
      "DGPC"
     ],
+    "m2_mapping_known": true,
     "sn1": "CCDCC",
     "sn2": "CCDCC"
    },
@@ -5732,6 +5812,7 @@
     "m2": [
      "DGPE"
     ],
+    "m2_mapping_known": true,
     "sn1": "CCDCC",
     "sn2": "CCDCC"
    },
@@ -5751,6 +5832,7 @@
     "m2": [
      "DGPG"
     ],
+    "m2_mapping_known": true,
     "sn1": "CCDCC",
     "sn2": "CCDCC"
    },
@@ -5770,6 +5852,7 @@
     "m2": [
      "DGPS"
     ],
+    "m2_mapping_known": true,
     "sn1": "CCDCC",
     "sn2": "CCDCC"
    },
@@ -5787,6 +5870,7 @@
     "description": "A general model ether lipid phosphatidic acid (EA) lipid corresponding to atomistic C18:3(9c;12c;15c) di-alpha-linolenic acid tails.",
     "itp": "martini_v3.0.0_etherphospholipids_PA_v2.itp",
     "m2": [],
+    "m2_mapping_known": true,
     "sn1": "CDDD",
     "sn2": "CDDD"
    },
@@ -5804,6 +5888,7 @@
     "description": "A general model ether lipid phosphatidylcholine (EC) lipid corresponding to atomistic C18:3(9c;12c;15c) di-alpha-linolenic acid tails.",
     "itp": "martini_v3.0.0_etherphospholipids_PC_v2.itp",
     "m2": [],
+    "m2_mapping_known": true,
     "sn1": "CDDD",
     "sn2": "CDDD"
    },
@@ -5821,6 +5906,7 @@
     "description": "A general model ether lipid phosphatidylethanolamine (EE) lipid corresponding to atomistic C18:3(9c;12c;15c) di-alpha-linolenic acid tails.",
     "itp": "martini_v3.0.0_etherphospholipids_PE_v2.itp",
     "m2": [],
+    "m2_mapping_known": true,
     "sn1": "CDDD",
     "sn2": "CDDD"
    },
@@ -5838,6 +5924,7 @@
     "description": "A general model ether lipid phosphatidylglycerol (EG) lipid corresponding to atomistic C18:3(9c;12c;15c) di-alpha-linolenic acid tails.",
     "itp": "martini_v3.0.0_etherphospholipids_PG_v2.itp",
     "m2": [],
+    "m2_mapping_known": true,
     "sn1": "CDDD",
     "sn2": "CDDD"
    },
@@ -5855,6 +5942,7 @@
     "description": "A general model ether lipid phosphatidylserine (ES) lipid corresponding to atomistic C18:3(9c;12c;15c) di-alpha-linolenic acid tails.",
     "itp": "martini_v3.0.0_etherphospholipids_PS_v2.itp",
     "m2": [],
+    "m2_mapping_known": true,
     "sn1": "CDDD",
     "sn2": "CDDD"
    },
@@ -5872,6 +5960,7 @@
     "description": "A general model plasmalogen phosphatidic acid (LA) lipid corresponding to atomistic C18:3(9c;12c;15c) di-alpha-linolenic acid tails.",
     "itp": "martini_v3.0.0_plasmalogens_PA_v2.itp",
     "m2": [],
+    "m2_mapping_known": true,
     "sn1": "CDDD",
     "sn2": "CDDD"
    },
@@ -5889,6 +5978,7 @@
     "description": "A general model plasmalogen phosphatidylcholine (LC) lipid corresponding to atomistic C18:3(9c;12c;15c) di-alpha-linolenic acid tails.",
     "itp": "martini_v3.0.0_plasmalogens_PC_v2.itp",
     "m2": [],
+    "m2_mapping_known": true,
     "sn1": "CDDD",
     "sn2": "CDDD"
    },
@@ -5906,6 +5996,7 @@
     "description": "A general model plasmalogen phosphatidylethanolamine (LE) lipid corresponding to atomistic C18:3(9c;12c;15c) di-alpha-linolenic acid tails.",
     "itp": "martini_v3.0.0_plasmalogens_PE_v2.itp",
     "m2": [],
+    "m2_mapping_known": true,
     "sn1": "CDDD",
     "sn2": "CDDD"
    },
@@ -5923,6 +6014,7 @@
     "description": "A general model plasmalogen phosphatidylglycerol (LG) lipid corresponding to atomistic C18:3(9c;12c;15c) di-alpha-linolenic acid tails.",
     "itp": "martini_v3.0.0_plasmalogens_PG_v2.itp",
     "m2": [],
+    "m2_mapping_known": true,
     "sn1": "CDDD",
     "sn2": "CDDD"
    },
@@ -5940,6 +6032,7 @@
     "description": "A general model plasmalogen phosphatidylserine (LS) lipid corresponding to atomistic C18:3(9c;12c;15c) di-alpha-linolenic acid tails.",
     "itp": "martini_v3.0.0_plasmalogens_PS_v2.itp",
     "m2": [],
+    "m2_mapping_known": true,
     "sn1": "CDDD",
     "sn2": "CDDD"
    },
@@ -5959,6 +6052,7 @@
     "m2": [
      "DFPA"
     ],
+    "m2_mapping_known": true,
     "sn1": "CDDD",
     "sn2": "CDDD"
    },
@@ -5978,6 +6072,7 @@
     "m2": [
      "DFPC"
     ],
+    "m2_mapping_known": true,
     "sn1": "CDDD",
     "sn2": "CDDD"
    },
@@ -5997,6 +6092,7 @@
     "m2": [
      "DFPE"
     ],
+    "m2_mapping_known": true,
     "sn1": "CDDD",
     "sn2": "CDDD"
    },
@@ -6016,6 +6112,7 @@
     "m2": [
      "DFPG"
     ],
+    "m2_mapping_known": true,
     "sn1": "CDDD",
     "sn2": "CDDD"
    },
@@ -6035,6 +6132,7 @@
     "m2": [
      "DFPS"
     ],
+    "m2_mapping_known": true,
     "sn1": "CDDD",
     "sn2": "CDDD"
    },
@@ -6052,6 +6150,7 @@
     "description": "A general model ether lipid phosphatidic acid (EA) lipid corresponding to atomistic C20:1(11c) di-gondoic acid tails.",
     "itp": "martini_v3.0.0_etherphospholipids_PA_v2.itp",
     "m2": [],
+    "m2_mapping_known": true,
     "sn1": "cCDCC",
     "sn2": "cCDCC"
    },
@@ -6069,6 +6168,7 @@
     "description": "A general model ether lipid phosphatidylcholine (EC) lipid corresponding to atomistic C20:1(11c) di-gondoic acid tails.",
     "itp": "martini_v3.0.0_etherphospholipids_PC_v2.itp",
     "m2": [],
+    "m2_mapping_known": true,
     "sn1": "cCDCC",
     "sn2": "cCDCC"
    },
@@ -6086,6 +6186,7 @@
     "description": "A general model ether lipid phosphatidylethanolamine (EE) lipid corresponding to atomistic C20:1(11c) di-gondoic acid tails.",
     "itp": "martini_v3.0.0_etherphospholipids_PE_v2.itp",
     "m2": [],
+    "m2_mapping_known": true,
     "sn1": "cCDCC",
     "sn2": "cCDCC"
    },
@@ -6103,6 +6204,7 @@
     "description": "A general model ether lipid phosphatidylglycerol (EG) lipid corresponding to atomistic C20:1(11c) di-gondoic acid tails.",
     "itp": "martini_v3.0.0_etherphospholipids_PG_v2.itp",
     "m2": [],
+    "m2_mapping_known": true,
     "sn1": "cCDCC",
     "sn2": "cCDCC"
    },
@@ -6120,6 +6222,7 @@
     "description": "A general model ether lipid phosphatidylserine (ES) lipid corresponding to atomistic C20:1(11c) di-gondoic acid tails.",
     "itp": "martini_v3.0.0_etherphospholipids_PS_v2.itp",
     "m2": [],
+    "m2_mapping_known": true,
     "sn1": "cCDCC",
     "sn2": "cCDCC"
    },
@@ -6137,6 +6240,7 @@
     "description": "A general model plasmalogen phosphatidic acid (LA) lipid corresponding to atomistic C20:1(11c) di-gondoic acid tails.",
     "itp": "martini_v3.0.0_plasmalogens_PA_v2.itp",
     "m2": [],
+    "m2_mapping_known": true,
     "sn1": "cCDCC",
     "sn2": "cCDCC"
    },
@@ -6154,6 +6258,7 @@
     "description": "A general model plasmalogen phosphatidylcholine (LC) lipid corresponding to atomistic C20:1(11c) di-gondoic acid tails.",
     "itp": "martini_v3.0.0_plasmalogens_PC_v2.itp",
     "m2": [],
+    "m2_mapping_known": true,
     "sn1": "cCDCC",
     "sn2": "cCDCC"
    },
@@ -6171,6 +6276,7 @@
     "description": "A general model plasmalogen phosphatidylethanolamine (LE) lipid corresponding to atomistic C20:1(11c) di-gondoic acid tails.",
     "itp": "martini_v3.0.0_plasmalogens_PE_v2.itp",
     "m2": [],
+    "m2_mapping_known": true,
     "sn1": "cCDCC",
     "sn2": "cCDCC"
    },
@@ -6188,6 +6294,7 @@
     "description": "A general model plasmalogen phosphatidylglycerol (LG) lipid corresponding to atomistic C20:1(11c) di-gondoic acid tails.",
     "itp": "martini_v3.0.0_plasmalogens_PG_v2.itp",
     "m2": [],
+    "m2_mapping_known": true,
     "sn1": "cCDCC",
     "sn2": "cCDCC"
    },
@@ -6205,6 +6312,7 @@
     "description": "A general model plasmalogen phosphatidylserine (LS) lipid corresponding to atomistic C20:1(11c) di-gondoic acid tails.",
     "itp": "martini_v3.0.0_plasmalogens_PS_v2.itp",
     "m2": [],
+    "m2_mapping_known": true,
     "sn1": "cCDCC",
     "sn2": "cCDCC"
    },
@@ -6224,6 +6332,7 @@
     "m2": [
      "DGPA"
     ],
+    "m2_mapping_known": true,
     "sn1": "cCDCC",
     "sn2": "cCDCC"
    },
@@ -6243,6 +6352,7 @@
     "m2": [
      "DGPC"
     ],
+    "m2_mapping_known": true,
     "sn1": "cCDCC",
     "sn2": "cCDCC"
    },
@@ -6262,6 +6372,7 @@
     "m2": [
      "DGPE"
     ],
+    "m2_mapping_known": true,
     "sn1": "cCDCC",
     "sn2": "cCDCC"
    },
@@ -6281,6 +6392,7 @@
     "m2": [
      "DGPG"
     ],
+    "m2_mapping_known": true,
     "sn1": "cCDCC",
     "sn2": "cCDCC"
    },
@@ -6300,6 +6412,7 @@
     "m2": [
      "DGPS"
     ],
+    "m2_mapping_known": true,
     "sn1": "cCDCC",
     "sn2": "cCDCC"
    },
@@ -6317,6 +6430,7 @@
     "description": "A general model ether lipid phosphatidic acid (EA) lipid corresponding to atomistic C10:0 didecanoyl tails.",
     "itp": "martini_v3.0.0_etherphospholipids_PA_v2.itp",
     "m2": [],
+    "m2_mapping_known": true,
     "sn1": "CC",
     "sn2": "CC"
    },
@@ -6334,6 +6448,7 @@
     "description": "A general model ether lipid phosphatidylcholine (EC) lipid corresponding to atomistic C10:0 didecanoyl tails.",
     "itp": "martini_v3.0.0_etherphospholipids_PC_v2.itp",
     "m2": [],
+    "m2_mapping_known": true,
     "sn1": "CC",
     "sn2": "CC"
    },
@@ -6351,6 +6466,7 @@
     "description": "A general model ether lipid phosphatidylethanolamine (EE) lipid corresponding to atomistic C10:0 didecanoyl tails.",
     "itp": "martini_v3.0.0_etherphospholipids_PE_v2.itp",
     "m2": [],
+    "m2_mapping_known": true,
     "sn1": "CC",
     "sn2": "CC"
    },
@@ -6368,6 +6484,7 @@
     "description": "A general model ether lipid phosphatidylglycerol (EG) lipid corresponding to atomistic C10:0 didecanoyl tails.",
     "itp": "martini_v3.0.0_etherphospholipids_PG_v2.itp",
     "m2": [],
+    "m2_mapping_known": true,
     "sn1": "CC",
     "sn2": "CC"
    },
@@ -6385,6 +6502,7 @@
     "description": "A general model ether lipid phosphatidylserine (ES) lipid corresponding to atomistic C10:0 didecanoyl tails.",
     "itp": "martini_v3.0.0_etherphospholipids_PS_v2.itp",
     "m2": [],
+    "m2_mapping_known": true,
     "sn1": "CC",
     "sn2": "CC"
    },
@@ -6402,6 +6520,7 @@
     "description": "A general model plasmalogen phosphatidic acid (LA) lipid corresponding to atomistic C10:0 didecanoyl tails.",
     "itp": "martini_v3.0.0_plasmalogens_PA_v2.itp",
     "m2": [],
+    "m2_mapping_known": true,
     "sn1": "CC",
     "sn2": "CC"
    },
@@ -6419,6 +6538,7 @@
     "description": "A general model plasmalogen phosphatidylcholine (LC) lipid corresponding to atomistic C10:0 didecanoyl tails.",
     "itp": "martini_v3.0.0_plasmalogens_PC_v2.itp",
     "m2": [],
+    "m2_mapping_known": true,
     "sn1": "CC",
     "sn2": "CC"
    },
@@ -6436,6 +6556,7 @@
     "description": "A general model plasmalogen phosphatidylethanolamine (LE) lipid corresponding to atomistic C10:0 didecanoyl tails.",
     "itp": "martini_v3.0.0_plasmalogens_PE_v2.itp",
     "m2": [],
+    "m2_mapping_known": true,
     "sn1": "CC",
     "sn2": "CC"
    },
@@ -6453,6 +6574,7 @@
     "description": "A general model plasmalogen phosphatidylglycerol (LG) lipid corresponding to atomistic C10:0 didecanoyl tails.",
     "itp": "martini_v3.0.0_plasmalogens_PG_v2.itp",
     "m2": [],
+    "m2_mapping_known": true,
     "sn1": "CC",
     "sn2": "CC"
    },
@@ -6470,6 +6592,7 @@
     "description": "A general model plasmalogen phosphatidylserine (LS) lipid corresponding to atomistic C10:0 didecanoyl tails.",
     "itp": "martini_v3.0.0_plasmalogens_PS_v2.itp",
     "m2": [],
+    "m2_mapping_known": true,
     "sn1": "CC",
     "sn2": "CC"
    },
@@ -6489,6 +6612,7 @@
     "m2": [
      "DTPA"
     ],
+    "m2_mapping_known": true,
     "sn1": "CC",
     "sn2": "CC"
    },
@@ -6508,6 +6632,7 @@
     "m2": [
      "DTPC"
     ],
+    "m2_mapping_known": true,
     "sn1": "CC",
     "sn2": "CC"
    },
@@ -6527,6 +6652,7 @@
     "m2": [
      "DTPE"
     ],
+    "m2_mapping_known": true,
     "sn1": "CC",
     "sn2": "CC"
    },
@@ -6546,6 +6672,7 @@
     "m2": [
      "DTPG"
     ],
+    "m2_mapping_known": true,
     "sn1": "CC",
     "sn2": "CC"
    },
@@ -6565,6 +6692,7 @@
     "m2": [
      "DTPS"
     ],
+    "m2_mapping_known": true,
     "sn1": "CC",
     "sn2": "CC"
    },
@@ -6582,6 +6710,7 @@
     "description": "A general model ether lipid phosphatidic acid (EA) lipid corresponding to atomistic C20:0 diarachidoyl tails.",
     "itp": "martini_v3.0.0_etherphospholipids_PA_v2.itp",
     "m2": [],
+    "m2_mapping_known": true,
     "sn1": "cCCCC",
     "sn2": "cCCCC"
    },
@@ -6599,6 +6728,7 @@
     "description": "A general model ether lipid phosphatidylcholine (EC) lipid corresponding to atomistic C20:0 diarachidoyl tails.",
     "itp": "martini_v3.0.0_etherphospholipids_PC_v2.itp",
     "m2": [],
+    "m2_mapping_known": true,
     "sn1": "cCCCC",
     "sn2": "cCCCC"
    },
@@ -6616,6 +6746,7 @@
     "description": "A general model ether lipid phosphatidylethanolamine (EE) lipid corresponding to atomistic C20:0 diarachidoyl tails.",
     "itp": "martini_v3.0.0_etherphospholipids_PE_v2.itp",
     "m2": [],
+    "m2_mapping_known": true,
     "sn1": "cCCCC",
     "sn2": "cCCCC"
    },
@@ -6633,6 +6764,7 @@
     "description": "A general model ether lipid phosphatidylglycerol (EG) lipid corresponding to atomistic C20:0 diarachidoyl tails.",
     "itp": "martini_v3.0.0_etherphospholipids_PG_v2.itp",
     "m2": [],
+    "m2_mapping_known": true,
     "sn1": "cCCCC",
     "sn2": "cCCCC"
    },
@@ -6650,6 +6782,7 @@
     "description": "A general model ether lipid phosphatidylserine (ES) lipid corresponding to atomistic C20:0 diarachidoyl tails.",
     "itp": "martini_v3.0.0_etherphospholipids_PS_v2.itp",
     "m2": [],
+    "m2_mapping_known": true,
     "sn1": "cCCCC",
     "sn2": "cCCCC"
    },
@@ -6667,6 +6800,7 @@
     "description": "A general model plasmalogen phosphatidic acid (LA) lipid corresponding to atomistic C20:0 diarachidoyl tails.",
     "itp": "martini_v3.0.0_plasmalogens_PA_v2.itp",
     "m2": [],
+    "m2_mapping_known": true,
     "sn1": "cCCCC",
     "sn2": "cCCCC"
    },
@@ -6684,6 +6818,7 @@
     "description": "A general model plasmalogen phosphatidylcholine (LC) lipid corresponding to atomistic C20:0 diarachidoyl tails.",
     "itp": "martini_v3.0.0_plasmalogens_PC_v2.itp",
     "m2": [],
+    "m2_mapping_known": true,
     "sn1": "cCCCC",
     "sn2": "cCCCC"
    },
@@ -6701,6 +6836,7 @@
     "description": "A general model plasmalogen phosphatidylethanolamine (LE) lipid corresponding to atomistic C20:0 diarachidoyl tails.",
     "itp": "martini_v3.0.0_plasmalogens_PE_v2.itp",
     "m2": [],
+    "m2_mapping_known": true,
     "sn1": "cCCCC",
     "sn2": "cCCCC"
    },
@@ -6718,6 +6854,7 @@
     "description": "A general model plasmalogen phosphatidylglycerol (LG) lipid corresponding to atomistic C20:0 diarachidoyl tails.",
     "itp": "martini_v3.0.0_plasmalogens_PG_v2.itp",
     "m2": [],
+    "m2_mapping_known": true,
     "sn1": "cCCCC",
     "sn2": "cCCCC"
    },
@@ -6735,6 +6872,7 @@
     "description": "A general model plasmalogen phosphatidylserine (LS) lipid corresponding to atomistic C20:0 diarachidoyl tails.",
     "itp": "martini_v3.0.0_plasmalogens_PS_v2.itp",
     "m2": [],
+    "m2_mapping_known": true,
     "sn1": "cCCCC",
     "sn2": "cCCCC"
    },
@@ -6754,6 +6892,7 @@
     "m2": [
      "DBPA"
     ],
+    "m2_mapping_known": true,
     "sn1": "cCCCC",
     "sn2": "cCCCC"
    },
@@ -6773,6 +6912,7 @@
     "m2": [
      "DBPC"
     ],
+    "m2_mapping_known": true,
     "sn1": "cCCCC",
     "sn2": "cCCCC"
    },
@@ -6792,6 +6932,7 @@
     "m2": [
      "DBPE"
     ],
+    "m2_mapping_known": true,
     "sn1": "cCCCC",
     "sn2": "cCCCC"
    },
@@ -6811,6 +6952,7 @@
     "m2": [
      "DBPG"
     ],
+    "m2_mapping_known": true,
     "sn1": "cCCCC",
     "sn2": "cCCCC"
    },
@@ -6830,6 +6972,7 @@
     "m2": [
      "DBPS"
     ],
+    "m2_mapping_known": true,
     "sn1": "cCCCC",
     "sn2": "cCCCC"
    },
@@ -6847,6 +6990,7 @@
     "description": "A general model ether lipid phosphatidic acid (EA) lipid corresponding to atomistic C18:2(9c;12c) dilinoleoyl (DLEA or DLiEA) tails.",
     "itp": "martini_v3.0.0_etherphospholipids_PA_v2.itp",
     "m2": [],
+    "m2_mapping_known": true,
     "sn1": "CDDC",
     "sn2": "CDDC"
    },
@@ -6864,6 +7008,7 @@
     "description": "A general model ether lipid phosphatidylcholine (EC) lipid corresponding to atomistic C18:2(9c;12c) dilinoleoyl (DLEC or DLiEC) tails.",
     "itp": "martini_v3.0.0_etherphospholipids_PC_v2.itp",
     "m2": [],
+    "m2_mapping_known": true,
     "sn1": "CDDC",
     "sn2": "CDDC"
    },
@@ -6881,6 +7026,7 @@
     "description": "A general model ether lipid phosphatidylethanolamine (EE) lipid corresponding to atomistic C18:2(9c;12c) dilinoleoyl (DLEE or DLiEE) tails.",
     "itp": "martini_v3.0.0_etherphospholipids_PE_v2.itp",
     "m2": [],
+    "m2_mapping_known": true,
     "sn1": "CDDC",
     "sn2": "CDDC"
    },
@@ -6898,6 +7044,7 @@
     "description": "A general model ether lipid phosphatidylglycerol (EG) lipid corresponding to atomistic C18:2(9c;12c) dilinoleoyl (DLEG or DLiEG) tails.",
     "itp": "martini_v3.0.0_etherphospholipids_PG_v2.itp",
     "m2": [],
+    "m2_mapping_known": true,
     "sn1": "CDDC",
     "sn2": "CDDC"
    },
@@ -6915,6 +7062,7 @@
     "description": "A general model ether lipid phosphatidylserine (ES) lipid corresponding to atomistic C18:2(9c;12c) dilinoleoyl (DLES or DLiES) tails.",
     "itp": "martini_v3.0.0_etherphospholipids_PS_v2.itp",
     "m2": [],
+    "m2_mapping_known": true,
     "sn1": "CDDC",
     "sn2": "CDDC"
    },
@@ -6932,6 +7080,7 @@
     "description": "A general model plasmalogen phosphatidic acid (LA) lipid corresponding to atomistic C18:2(9c;12c) dilinoleoyl (DLLA or DLiLA) tails.",
     "itp": "martini_v3.0.0_plasmalogens_PA_v2.itp",
     "m2": [],
+    "m2_mapping_known": true,
     "sn1": "CDDC",
     "sn2": "CDDC"
    },
@@ -6949,6 +7098,7 @@
     "description": "A general model plasmalogen phosphatidylcholine (LC) lipid corresponding to atomistic C18:2(9c;12c) dilinoleoyl (DLLC or DLiLC) tails.",
     "itp": "martini_v3.0.0_plasmalogens_PC_v2.itp",
     "m2": [],
+    "m2_mapping_known": true,
     "sn1": "CDDC",
     "sn2": "CDDC"
    },
@@ -6966,6 +7116,7 @@
     "description": "A general model plasmalogen phosphatidylethanolamine (LE) lipid corresponding to atomistic C18:2(9c;12c) dilinoleoyl (DLLE or DLiLE) tails.",
     "itp": "martini_v3.0.0_plasmalogens_PE_v2.itp",
     "m2": [],
+    "m2_mapping_known": true,
     "sn1": "CDDC",
     "sn2": "CDDC"
    },
@@ -6983,6 +7134,7 @@
     "description": "A general model plasmalogen phosphatidylglycerol (LG) lipid corresponding to atomistic C18:2(9c;12c) dilinoleoyl (DLLG or DLiLG) tails.",
     "itp": "martini_v3.0.0_plasmalogens_PG_v2.itp",
     "m2": [],
+    "m2_mapping_known": true,
     "sn1": "CDDC",
     "sn2": "CDDC"
    },
@@ -7000,6 +7152,7 @@
     "description": "A general model plasmalogen phosphatidylserine (LS) lipid corresponding to atomistic C18:2(9c;12c) dilinoleoyl (DLLS or DLiLS) tails.",
     "itp": "martini_v3.0.0_plasmalogens_PS_v2.itp",
     "m2": [],
+    "m2_mapping_known": true,
     "sn1": "CDDC",
     "sn2": "CDDC"
    },
@@ -7019,6 +7172,7 @@
     "m2": [
      "DIPA"
     ],
+    "m2_mapping_known": true,
     "sn1": "CDDC",
     "sn2": "CDDC"
    },
@@ -7038,6 +7192,7 @@
     "m2": [
      "DIPC"
     ],
+    "m2_mapping_known": true,
     "sn1": "CDDC",
     "sn2": "CDDC"
    },
@@ -7057,6 +7212,7 @@
     "m2": [
      "DIPE"
     ],
+    "m2_mapping_known": true,
     "sn1": "CDDC",
     "sn2": "CDDC"
    },
@@ -7076,6 +7232,7 @@
     "m2": [
      "DIPG"
     ],
+    "m2_mapping_known": true,
     "sn1": "CDDC",
     "sn2": "CDDC"
    },
@@ -7095,6 +7252,7 @@
     "m2": [
      "DIPS"
     ],
+    "m2_mapping_known": true,
     "sn1": "CDDC",
     "sn2": "CDDC"
    },
@@ -7112,6 +7270,7 @@
     "description": "A general model ether lipid phosphatidic acid (EA) lipid corresponding to atomistic C14:0 dimyristoyl (DMEA) tails.",
     "itp": "martini_v3.0.0_etherphospholipids_PA_v2.itp",
     "m2": [],
+    "m2_mapping_known": true,
     "sn1": "CCC",
     "sn2": "CCC"
    },
@@ -7129,6 +7288,7 @@
     "description": "A general model ether lipid phosphatidylcholine (EC) lipid corresponding to atomistic C14:0 dimyristoyl (DMEC) tails.",
     "itp": "martini_v3.0.0_etherphospholipids_PC_v2.itp",
     "m2": [],
+    "m2_mapping_known": true,
     "sn1": "CCC",
     "sn2": "CCC"
    },
@@ -7146,6 +7306,7 @@
     "description": "A general model ether lipid phosphatidylethanolamine (EE) lipid corresponding to atomistic C14:0 dimyristoyl (DMEE) tails.",
     "itp": "martini_v3.0.0_etherphospholipids_PE_v2.itp",
     "m2": [],
+    "m2_mapping_known": true,
     "sn1": "CCC",
     "sn2": "CCC"
    },
@@ -7163,6 +7324,7 @@
     "description": "A general model ether lipid phosphatidylglycerol (EG) lipid corresponding to atomistic C14:0 dimyristoyl (DMEG) tails.",
     "itp": "martini_v3.0.0_etherphospholipids_PG_v2.itp",
     "m2": [],
+    "m2_mapping_known": true,
     "sn1": "CCC",
     "sn2": "CCC"
    },
@@ -7180,6 +7342,7 @@
     "description": "A general model ether lipid phosphatidylserine (ES) lipid corresponding to atomistic C14:0 dimyristoyl (DMES) tails.",
     "itp": "martini_v3.0.0_etherphospholipids_PS_v2.itp",
     "m2": [],
+    "m2_mapping_known": true,
     "sn1": "CCC",
     "sn2": "CCC"
    },
@@ -7197,6 +7360,7 @@
     "description": "A general model plasmalogen phosphatidic acid (LA) lipid corresponding to atomistic C14:0 dimyristoyl (DMLA) tails.",
     "itp": "martini_v3.0.0_plasmalogens_PA_v2.itp",
     "m2": [],
+    "m2_mapping_known": true,
     "sn1": "CCC",
     "sn2": "CCC"
    },
@@ -7214,6 +7378,7 @@
     "description": "A general model plasmalogen phosphatidylcholine (LC) lipid corresponding to atomistic C14:0 dimyristoyl (DMLC) tails.",
     "itp": "martini_v3.0.0_plasmalogens_PC_v2.itp",
     "m2": [],
+    "m2_mapping_known": true,
     "sn1": "CCC",
     "sn2": "CCC"
    },
@@ -7231,6 +7396,7 @@
     "description": "A general model plasmalogen phosphatidylethanolamine (LE) lipid corresponding to atomistic C14:0 dimyristoyl (DMLE) tails.",
     "itp": "martini_v3.0.0_plasmalogens_PE_v2.itp",
     "m2": [],
+    "m2_mapping_known": true,
     "sn1": "CCC",
     "sn2": "CCC"
    },
@@ -7248,6 +7414,7 @@
     "description": "A general model plasmalogen phosphatidylglycerol (LG) lipid corresponding to atomistic C14:0 dimyristoyl (DMLG) tails.",
     "itp": "martini_v3.0.0_plasmalogens_PG_v2.itp",
     "m2": [],
+    "m2_mapping_known": true,
     "sn1": "CCC",
     "sn2": "CCC"
    },
@@ -7265,6 +7432,7 @@
     "description": "A general model plasmalogen phosphatidylserine (LS) lipid corresponding to atomistic C14:0 dimyristoyl (DMLS) tails.",
     "itp": "martini_v3.0.0_plasmalogens_PS_v2.itp",
     "m2": [],
+    "m2_mapping_known": true,
     "sn1": "CCC",
     "sn2": "CCC"
    },
@@ -7284,6 +7452,7 @@
     "m2": [
      "DLPA"
     ],
+    "m2_mapping_known": true,
     "sn1": "CCC",
     "sn2": "CCC"
    },
@@ -7303,6 +7472,7 @@
     "m2": [
      "DLPC"
     ],
+    "m2_mapping_known": true,
     "sn1": "CCC",
     "sn2": "CCC"
    },
@@ -7322,6 +7492,7 @@
     "m2": [
      "DLPE"
     ],
+    "m2_mapping_known": true,
     "sn1": "CCC",
     "sn2": "CCC"
    },
@@ -7341,6 +7512,7 @@
     "m2": [
      "DLPG"
     ],
+    "m2_mapping_known": true,
     "sn1": "CCC",
     "sn2": "CCC"
    },
@@ -7360,6 +7532,7 @@
     "m2": [
      "DLPS"
     ],
+    "m2_mapping_known": true,
     "sn1": "CCC",
     "sn2": "CCC"
    },
@@ -7377,6 +7550,7 @@
     "description": "A general model ether lipid phosphatidic acid (EA) lipid corresponding to atomistic C24:1(15c) di-nervonic acid tails.",
     "itp": "martini_v3.0.0_etherphospholipids_PA_v2.itp",
     "m2": [],
+    "m2_mapping_known": true,
     "sn1": "cCCDCC",
     "sn2": "cCCDCC"
    },
@@ -7394,6 +7568,7 @@
     "description": "A general model ether lipid phosphatidylcholine (EC) lipid corresponding to atomistic C24:1(15c) di-nervonic acid tails.",
     "itp": "martini_v3.0.0_etherphospholipids_PC_v2.itp",
     "m2": [],
+    "m2_mapping_known": true,
     "sn1": "cCCDCC",
     "sn2": "cCCDCC"
    },
@@ -7411,6 +7586,7 @@
     "description": "A general model ether lipid phosphatidylethanolamine (EE) lipid corresponding to atomistic C24:1(15c) di-nervonic acid tails.",
     "itp": "martini_v3.0.0_etherphospholipids_PE_v2.itp",
     "m2": [],
+    "m2_mapping_known": true,
     "sn1": "cCCDCC",
     "sn2": "cCCDCC"
    },
@@ -7428,6 +7604,7 @@
     "description": "A general model ether lipid phosphatidylglycerol (EG) lipid corresponding to atomistic C24:1(15c) di-nervonic acid tails.",
     "itp": "martini_v3.0.0_etherphospholipids_PG_v2.itp",
     "m2": [],
+    "m2_mapping_known": true,
     "sn1": "cCCDCC",
     "sn2": "cCCDCC"
    },
@@ -7445,6 +7622,7 @@
     "description": "A general model ether lipid phosphatidylserine (ES) lipid corresponding to atomistic C24:1(15c) di-nervonic acid tails.",
     "itp": "martini_v3.0.0_etherphospholipids_PS_v2.itp",
     "m2": [],
+    "m2_mapping_known": true,
     "sn1": "cCCDCC",
     "sn2": "cCCDCC"
    },
@@ -7462,6 +7640,7 @@
     "description": "A general model plasmalogen phosphatidic acid (LA) lipid corresponding to atomistic C24:1(15c) di-nervonic acid tails.",
     "itp": "martini_v3.0.0_plasmalogens_PA_v2.itp",
     "m2": [],
+    "m2_mapping_known": true,
     "sn1": "cCCDCC",
     "sn2": "cCCDCC"
    },
@@ -7479,6 +7658,7 @@
     "description": "A general model plasmalogen phosphatidylcholine (LC) lipid corresponding to atomistic C24:1(15c) di-nervonic acid tails.",
     "itp": "martini_v3.0.0_plasmalogens_PC_v2.itp",
     "m2": [],
+    "m2_mapping_known": true,
     "sn1": "cCCDCC",
     "sn2": "cCCDCC"
    },
@@ -7496,6 +7676,7 @@
     "description": "A general model plasmalogen phosphatidylethanolamine (LE) lipid corresponding to atomistic C24:1(15c) di-nervonic acid tails.",
     "itp": "martini_v3.0.0_plasmalogens_PE_v2.itp",
     "m2": [],
+    "m2_mapping_known": true,
     "sn1": "cCCDCC",
     "sn2": "cCCDCC"
    },
@@ -7513,6 +7694,7 @@
     "description": "A general model plasmalogen phosphatidylglycerol (LG) lipid corresponding to atomistic C24:1(15c) di-nervonic acid tails.",
     "itp": "martini_v3.0.0_plasmalogens_PG_v2.itp",
     "m2": [],
+    "m2_mapping_known": true,
     "sn1": "cCCDCC",
     "sn2": "cCCDCC"
    },
@@ -7530,6 +7712,7 @@
     "description": "A general model plasmalogen phosphatidylserine (LS) lipid corresponding to atomistic C24:1(15c) di-nervonic acid tails.",
     "itp": "martini_v3.0.0_plasmalogens_PS_v2.itp",
     "m2": [],
+    "m2_mapping_known": true,
     "sn1": "cCCDCC",
     "sn2": "cCCDCC"
    },
@@ -7549,6 +7732,7 @@
     "m2": [
      "DNPA"
     ],
+    "m2_mapping_known": true,
     "sn1": "cCCDCC",
     "sn2": "cCCDCC"
    },
@@ -7568,6 +7752,7 @@
     "m2": [
      "DNPC"
     ],
+    "m2_mapping_known": true,
     "sn1": "cCCDCC",
     "sn2": "cCCDCC"
    },
@@ -7587,6 +7772,7 @@
     "m2": [
      "DNPE"
     ],
+    "m2_mapping_known": true,
     "sn1": "cCCDCC",
     "sn2": "cCCDCC"
    },
@@ -7606,6 +7792,7 @@
     "m2": [
      "DNPG"
     ],
+    "m2_mapping_known": true,
     "sn1": "cCCDCC",
     "sn2": "cCCDCC"
    },
@@ -7625,6 +7812,7 @@
     "m2": [
      "DNPS"
     ],
+    "m2_mapping_known": true,
     "sn1": "cCCDCC",
     "sn2": "cCCDCC"
    },
@@ -7640,9 +7828,10 @@
     },
     "coby_params": "LTF",
     "common": null,
-    "description": null,
+    "description": "Martini lipid topology for 2,2' isomer C18:1/C18:1 BMP (DOB2)",
     "itp": "martini_v3.0.0_phospholipids_2,2-BMP_v2.itp",
     "m2": [],
+    "m2_mapping_known": false,
     "sn1": null,
     "sn2": null
    },
@@ -7658,9 +7847,10 @@
     },
     "coby_params": "LTF",
     "common": null,
-    "description": null,
+    "description": "Martini lipid topology for 3,3' isomer C18:1/C18:1 BMP (DOB3)",
     "itp": "martini_v3.0.0_phospholipids_3,3-BMP_v2.itp",
     "m2": [],
+    "m2_mapping_known": false,
     "sn1": null,
     "sn2": null
    },
@@ -7681,9 +7871,10 @@
     },
     "coby_params": "LTF",
     "common": null,
-    "description": null,
+    "description": "Martini lipid topology for di-C18:1 DG (DODG), generated using:",
     "itp": "martini_v3.0.0_diglycerides_v2.itp",
     "m2": [],
+    "m2_mapping_known": false,
     "sn1": null,
     "sn2": null
    },
@@ -7701,6 +7892,7 @@
     "description": "A general model ether lipid phosphatidic acid (EA) lipid corresponding to atomistic C18:1(9c) dioleoyl (DOEA) tails.",
     "itp": "martini_v3.0.0_etherphospholipids_PA_v2.itp",
     "m2": [],
+    "m2_mapping_known": true,
     "sn1": "CDCC",
     "sn2": "CDCC"
    },
@@ -7718,6 +7910,7 @@
     "description": "A general model ether lipid phosphatidylcholine (EC) lipid corresponding to atomistic C18:1(9c) dioleoyl (DOEC) tails.",
     "itp": "martini_v3.0.0_etherphospholipids_PC_v2.itp",
     "m2": [],
+    "m2_mapping_known": true,
     "sn1": "CDCC",
     "sn2": "CDCC"
    },
@@ -7735,6 +7928,7 @@
     "description": "A general model ether lipid phosphatidylethanolamine (EE) lipid corresponding to atomistic C18:1(9c) dioleoyl (DOEE) tails.",
     "itp": "martini_v3.0.0_etherphospholipids_PE_v2.itp",
     "m2": [],
+    "m2_mapping_known": true,
     "sn1": "CDCC",
     "sn2": "CDCC"
    },
@@ -7752,6 +7946,7 @@
     "description": "A general model ether lipid phosphatidylglycerol (EG) lipid corresponding to atomistic C18:1(9c) dioleoyl (DOEG) tails.",
     "itp": "martini_v3.0.0_etherphospholipids_PG_v2.itp",
     "m2": [],
+    "m2_mapping_known": true,
     "sn1": "CDCC",
     "sn2": "CDCC"
    },
@@ -7769,6 +7964,7 @@
     "description": "A general model ether lipid phosphatidylserine (ES) lipid corresponding to atomistic C18:1(9c) dioleoyl (DOES) tails.",
     "itp": "martini_v3.0.0_etherphospholipids_PS_v2.itp",
     "m2": [],
+    "m2_mapping_known": true,
     "sn1": "CDCC",
     "sn2": "CDCC"
    },
@@ -7786,6 +7982,7 @@
     "description": "A general model plasmalogen phosphatidic acid (LA) lipid corresponding to atomistic C18:1(9c) dioleoyl (DOLA) tails.",
     "itp": "martini_v3.0.0_plasmalogens_PA_v2.itp",
     "m2": [],
+    "m2_mapping_known": true,
     "sn1": "CDCC",
     "sn2": "CDCC"
    },
@@ -7803,6 +8000,7 @@
     "description": "A general model plasmalogen phosphatidylcholine (LC) lipid corresponding to atomistic C18:1(9c) dioleoyl (DOLC) tails.",
     "itp": "martini_v3.0.0_plasmalogens_PC_v2.itp",
     "m2": [],
+    "m2_mapping_known": true,
     "sn1": "CDCC",
     "sn2": "CDCC"
    },
@@ -7820,6 +8018,7 @@
     "description": "A general model plasmalogen phosphatidylethanolamine (LE) lipid corresponding to atomistic C18:1(9c) dioleoyl (DOLE) tails.",
     "itp": "martini_v3.0.0_plasmalogens_PE_v2.itp",
     "m2": [],
+    "m2_mapping_known": true,
     "sn1": "CDCC",
     "sn2": "CDCC"
    },
@@ -7837,6 +8036,7 @@
     "description": "A general model plasmalogen phosphatidylglycerol (LG) lipid corresponding to atomistic C18:1(9c) dioleoyl (DOLG) tails.",
     "itp": "martini_v3.0.0_plasmalogens_PG_v2.itp",
     "m2": [],
+    "m2_mapping_known": true,
     "sn1": "CDCC",
     "sn2": "CDCC"
    },
@@ -7854,6 +8054,7 @@
     "description": "A general model plasmalogen phosphatidylserine (LS) lipid corresponding to atomistic C18:1(9c) dioleoyl (DOLS) tails.",
     "itp": "martini_v3.0.0_plasmalogens_PS_v2.itp",
     "m2": [],
+    "m2_mapping_known": true,
     "sn1": "CDCC",
     "sn2": "CDCC"
    },
@@ -7873,6 +8074,7 @@
     "m2": [
      "DOPA"
     ],
+    "m2_mapping_known": true,
     "sn1": "CDCC",
     "sn2": "CDCC"
    },
@@ -7892,6 +8094,7 @@
     "m2": [
      "DOPC"
     ],
+    "m2_mapping_known": true,
     "sn1": "CDCC",
     "sn2": "CDCC"
    },
@@ -7911,6 +8114,7 @@
     "m2": [
      "DOPE"
     ],
+    "m2_mapping_known": true,
     "sn1": "CDCC",
     "sn2": "CDCC"
    },
@@ -7930,6 +8134,7 @@
     "m2": [
      "DOPG"
     ],
+    "m2_mapping_known": true,
     "sn1": "CDCC",
     "sn2": "CDCC"
    },
@@ -7949,6 +8154,7 @@
     "m2": [
      "DOPS"
     ],
+    "m2_mapping_known": true,
     "sn1": "CDCC",
     "sn2": "CDCC"
    },
@@ -7963,9 +8169,10 @@
     },
     "coby_params": "LTF",
     "common": null,
-    "description": null,
+    "description": "Martini lipid topology for di-C18:1 trimethylammonium propane (DOTAP), generated using:",
     "itp": "martini_v3.0.0_DOTAP_v2.itp",
     "m2": [],
+    "m2_mapping_known": false,
     "sn1": null,
     "sn2": null
    },
@@ -7983,6 +8190,7 @@
     "description": "A general model ether lipid phosphatidic acid (EA) lipid corresponding to atomistic C16:0 dipalmitoyl (DPEA) tails.",
     "itp": "martini_v3.0.0_etherphospholipids_PA_v2.itp",
     "m2": [],
+    "m2_mapping_known": true,
     "sn1": "cCCC",
     "sn2": "cCCC"
    },
@@ -8000,6 +8208,7 @@
     "description": "A general model ether lipid phosphatidylcholine (EC) lipid corresponding to atomistic C16:0 dipalmitoyl (DPEC) tails.",
     "itp": "martini_v3.0.0_etherphospholipids_PC_v2.itp",
     "m2": [],
+    "m2_mapping_known": true,
     "sn1": "cCCC",
     "sn2": "cCCC"
    },
@@ -8017,6 +8226,7 @@
     "description": "A general model ether lipid phosphatidylethanolamine (EE) lipid corresponding to atomistic C16:0 dipalmitoyl (DPEE) tails.",
     "itp": "martini_v3.0.0_etherphospholipids_PE_v2.itp",
     "m2": [],
+    "m2_mapping_known": true,
     "sn1": "cCCC",
     "sn2": "cCCC"
    },
@@ -8034,6 +8244,7 @@
     "description": "A general model ether lipid phosphatidylglycerol (EG) lipid corresponding to atomistic C16:0 dipalmitoyl (DPEG) tails.",
     "itp": "martini_v3.0.0_etherphospholipids_PG_v2.itp",
     "m2": [],
+    "m2_mapping_known": true,
     "sn1": "cCCC",
     "sn2": "cCCC"
    },
@@ -8051,6 +8262,7 @@
     "description": "A general model ether lipid phosphatidylserine (ES) lipid corresponding to atomistic C16:0 dipalmitoyl (DPES) tails.",
     "itp": "martini_v3.0.0_etherphospholipids_PS_v2.itp",
     "m2": [],
+    "m2_mapping_known": true,
     "sn1": "cCCC",
     "sn2": "cCCC"
    },
@@ -8068,6 +8280,7 @@
     "description": "A general model plasmalogen phosphatidic acid (LA) lipid corresponding to atomistic C16:0 dipalmitoyl (DPLA) tails.",
     "itp": "martini_v3.0.0_plasmalogens_PA_v2.itp",
     "m2": [],
+    "m2_mapping_known": true,
     "sn1": "cCCC",
     "sn2": "cCCC"
    },
@@ -8086,6 +8299,7 @@
     "description": "A general model plasmalogen phosphatidylcholine (LC) lipid corresponding to atomistic C16:0 dipalmitoyl (DPLC) tails.",
     "itp": "martini_v3.0.0_plasmalogens_PC_v2.itp",
     "m2": [],
+    "m2_mapping_known": true,
     "sn1": "cCCC",
     "sn2": "cCCC"
    },
@@ -8104,6 +8318,7 @@
     "description": "A general model plasmalogen phosphatidylethanolamine (LE) lipid corresponding to atomistic C16:0 dipalmitoyl (DPLE) tails.",
     "itp": "martini_v3.0.0_plasmalogens_PE_v2.itp",
     "m2": [],
+    "m2_mapping_known": true,
     "sn1": "cCCC",
     "sn2": "cCCC"
    },
@@ -8121,6 +8336,7 @@
     "description": "A general model plasmalogen phosphatidylglycerol (LG) lipid corresponding to atomistic C16:0 dipalmitoyl (DPLG) tails.",
     "itp": "martini_v3.0.0_plasmalogens_PG_v2.itp",
     "m2": [],
+    "m2_mapping_known": true,
     "sn1": "cCCC",
     "sn2": "cCCC"
    },
@@ -8138,6 +8354,7 @@
     "description": "A general model plasmalogen phosphatidylserine (LS) lipid corresponding to atomistic C16:0 dipalmitoyl (DPLS) tails.",
     "itp": "martini_v3.0.0_plasmalogens_PS_v2.itp",
     "m2": [],
+    "m2_mapping_known": true,
     "sn1": "cCCC",
     "sn2": "cCCC"
    },
@@ -8157,6 +8374,7 @@
     "m2": [
      "DPPA"
     ],
+    "m2_mapping_known": true,
     "sn1": "cCCC",
     "sn2": "cCCC"
    },
@@ -8176,6 +8394,7 @@
     "m2": [
      "DPPC"
     ],
+    "m2_mapping_known": true,
     "sn1": "cCCC",
     "sn2": "cCCC"
    },
@@ -8195,6 +8414,7 @@
     "m2": [
      "DPPE"
     ],
+    "m2_mapping_known": true,
     "sn1": "cCCC",
     "sn2": "cCCC"
    },
@@ -8214,6 +8434,7 @@
     "m2": [
      "DPPG"
     ],
+    "m2_mapping_known": true,
     "sn1": "cCCC",
     "sn2": "cCCC"
    },
@@ -8233,6 +8454,7 @@
     "m2": [
      "DPPS"
     ],
+    "m2_mapping_known": true,
     "sn1": "cCCC",
     "sn2": "cCCC"
    },
@@ -8250,6 +8472,7 @@
     "description": "A general model ether lipid phosphatidic acid (EA) lipid corresponding to atomistic C14:1(9c) dimyristoleoyl tails.",
     "itp": "martini_v3.0.0_etherphospholipids_PA_v2.itp",
     "m2": [],
+    "m2_mapping_known": true,
     "sn1": "CDC",
     "sn2": "CDC"
    },
@@ -8267,6 +8490,7 @@
     "description": "A general model ether lipid phosphatidylcholine (EC) lipid corresponding to atomistic C14:1(9c) dimyristoleoyl tails.",
     "itp": "martini_v3.0.0_etherphospholipids_PC_v2.itp",
     "m2": [],
+    "m2_mapping_known": true,
     "sn1": "CDC",
     "sn2": "CDC"
    },
@@ -8284,6 +8508,7 @@
     "description": "A general model ether lipid phosphatidylethanolamine (EE) lipid corresponding to atomistic C14:1(9c) dimyristoleoyl tails.",
     "itp": "martini_v3.0.0_etherphospholipids_PE_v2.itp",
     "m2": [],
+    "m2_mapping_known": true,
     "sn1": "CDC",
     "sn2": "CDC"
    },
@@ -8301,6 +8526,7 @@
     "description": "A general model ether lipid phosphatidylglycerol (EG) lipid corresponding to atomistic C14:1(9c) dimyristoleoyl tails.",
     "itp": "martini_v3.0.0_etherphospholipids_PG_v2.itp",
     "m2": [],
+    "m2_mapping_known": true,
     "sn1": "CDC",
     "sn2": "CDC"
    },
@@ -8318,6 +8544,7 @@
     "description": "A general model ether lipid phosphatidylserine (ES) lipid corresponding to atomistic C14:1(9c) dimyristoleoyl tails.",
     "itp": "martini_v3.0.0_etherphospholipids_PS_v2.itp",
     "m2": [],
+    "m2_mapping_known": true,
     "sn1": "CDC",
     "sn2": "CDC"
    },
@@ -8335,6 +8562,7 @@
     "description": "A general model plasmalogen phosphatidic acid (LA) lipid corresponding to atomistic C14:1(9c) dimyristoleoyl tails.",
     "itp": "martini_v3.0.0_plasmalogens_PA_v2.itp",
     "m2": [],
+    "m2_mapping_known": true,
     "sn1": "CDC",
     "sn2": "CDC"
    },
@@ -8352,6 +8580,7 @@
     "description": "A general model plasmalogen phosphatidylcholine (LC) lipid corresponding to atomistic C14:1(9c) dimyristoleoyl tails.",
     "itp": "martini_v3.0.0_plasmalogens_PC_v2.itp",
     "m2": [],
+    "m2_mapping_known": true,
     "sn1": "CDC",
     "sn2": "CDC"
    },
@@ -8369,6 +8598,7 @@
     "description": "A general model plasmalogen phosphatidylethanolamine (LE) lipid corresponding to atomistic C14:1(9c) dimyristoleoyl tails.",
     "itp": "martini_v3.0.0_plasmalogens_PE_v2.itp",
     "m2": [],
+    "m2_mapping_known": true,
     "sn1": "CDC",
     "sn2": "CDC"
    },
@@ -8386,6 +8616,7 @@
     "description": "A general model plasmalogen phosphatidylglycerol (LG) lipid corresponding to atomistic C14:1(9c) dimyristoleoyl tails.",
     "itp": "martini_v3.0.0_plasmalogens_PG_v2.itp",
     "m2": [],
+    "m2_mapping_known": true,
     "sn1": "CDC",
     "sn2": "CDC"
    },
@@ -8403,6 +8634,7 @@
     "description": "A general model plasmalogen phosphatidylserine (LS) lipid corresponding to atomistic C14:1(9c) dimyristoleoyl tails.",
     "itp": "martini_v3.0.0_plasmalogens_PS_v2.itp",
     "m2": [],
+    "m2_mapping_known": true,
     "sn1": "CDC",
     "sn2": "CDC"
    },
@@ -8422,6 +8654,7 @@
     "m2": [
      "DYPA"
     ],
+    "m2_mapping_known": true,
     "sn1": "CDC",
     "sn2": "CDC"
    },
@@ -8441,6 +8674,7 @@
     "m2": [
      "DYPC"
     ],
+    "m2_mapping_known": true,
     "sn1": "CDC",
     "sn2": "CDC"
    },
@@ -8460,6 +8694,7 @@
     "m2": [
      "DYPE"
     ],
+    "m2_mapping_known": true,
     "sn1": "CDC",
     "sn2": "CDC"
    },
@@ -8479,6 +8714,7 @@
     "m2": [
      "DYPG"
     ],
+    "m2_mapping_known": true,
     "sn1": "CDC",
     "sn2": "CDC"
    },
@@ -8498,6 +8734,7 @@
     "m2": [
      "DYPS"
     ],
+    "m2_mapping_known": true,
     "sn1": "CDC",
     "sn2": "CDC"
    },
@@ -8515,6 +8752,7 @@
     "description": "A general model ether lipid phosphatidic acid (EA) lipid corresponding to atomistic C18:0 distearoyl (DSEA) tails.",
     "itp": "martini_v3.0.0_etherphospholipids_PA_v2.itp",
     "m2": [],
+    "m2_mapping_known": true,
     "sn1": "CCCC",
     "sn2": "CCCC"
    },
@@ -8532,6 +8770,7 @@
     "description": "A general model ether lipid phosphatidylcholine (EC) lipid corresponding to atomistic C18:0 distearoyl (DSEC) tails.",
     "itp": "martini_v3.0.0_etherphospholipids_PC_v2.itp",
     "m2": [],
+    "m2_mapping_known": true,
     "sn1": "CCCC",
     "sn2": "CCCC"
    },
@@ -8549,6 +8788,7 @@
     "description": "A general model ether lipid phosphatidylethanolamine (EE) lipid corresponding to atomistic C18:0 distearoyl (DSEE) tails.",
     "itp": "martini_v3.0.0_etherphospholipids_PE_v2.itp",
     "m2": [],
+    "m2_mapping_known": true,
     "sn1": "CCCC",
     "sn2": "CCCC"
    },
@@ -8566,6 +8806,7 @@
     "description": "A general model ether lipid phosphatidylglycerol (EG) lipid corresponding to atomistic C18:0 distearoyl (DSEG) tails.",
     "itp": "martini_v3.0.0_etherphospholipids_PG_v2.itp",
     "m2": [],
+    "m2_mapping_known": true,
     "sn1": "CCCC",
     "sn2": "CCCC"
    },
@@ -8583,6 +8824,7 @@
     "description": "A general model ether lipid phosphatidylserine (ES) lipid corresponding to atomistic C18:0 distearoyl (DSES) tails.",
     "itp": "martini_v3.0.0_etherphospholipids_PS_v2.itp",
     "m2": [],
+    "m2_mapping_known": true,
     "sn1": "CCCC",
     "sn2": "CCCC"
    },
@@ -8600,6 +8842,7 @@
     "description": "A general model plasmalogen phosphatidic acid (LA) lipid corresponding to atomistic C18:0 distearoyl (DSLA) tails.",
     "itp": "martini_v3.0.0_plasmalogens_PA_v2.itp",
     "m2": [],
+    "m2_mapping_known": true,
     "sn1": "CCCC",
     "sn2": "CCCC"
    },
@@ -8617,6 +8860,7 @@
     "description": "A general model plasmalogen phosphatidylcholine (LC) lipid corresponding to atomistic C18:0 distearoyl (DSLC) tails.",
     "itp": "martini_v3.0.0_plasmalogens_PC_v2.itp",
     "m2": [],
+    "m2_mapping_known": true,
     "sn1": "CCCC",
     "sn2": "CCCC"
    },
@@ -8634,6 +8878,7 @@
     "description": "A general model plasmalogen phosphatidylethanolamine (LE) lipid corresponding to atomistic C18:0 distearoyl (DSLE) tails.",
     "itp": "martini_v3.0.0_plasmalogens_PE_v2.itp",
     "m2": [],
+    "m2_mapping_known": true,
     "sn1": "CCCC",
     "sn2": "CCCC"
    },
@@ -8651,6 +8896,7 @@
     "description": "A general model plasmalogen phosphatidylglycerol (LG) lipid corresponding to atomistic C18:0 distearoyl (DSLG) tails.",
     "itp": "martini_v3.0.0_plasmalogens_PG_v2.itp",
     "m2": [],
+    "m2_mapping_known": true,
     "sn1": "CCCC",
     "sn2": "CCCC"
    },
@@ -8668,6 +8914,7 @@
     "description": "A general model plasmalogen phosphatidylserine (LS) lipid corresponding to atomistic C18:0 distearoyl (DSLS) tails.",
     "itp": "martini_v3.0.0_plasmalogens_PS_v2.itp",
     "m2": [],
+    "m2_mapping_known": true,
     "sn1": "CCCC",
     "sn2": "CCCC"
    },
@@ -8687,6 +8934,7 @@
     "m2": [
      "DPPA"
     ],
+    "m2_mapping_known": true,
     "sn1": "CCCC",
     "sn2": "CCCC"
    },
@@ -8706,6 +8954,7 @@
     "m2": [
      "DPPC"
     ],
+    "m2_mapping_known": true,
     "sn1": "CCCC",
     "sn2": "CCCC"
    },
@@ -8725,6 +8974,7 @@
     "m2": [
      "DPPE"
     ],
+    "m2_mapping_known": true,
     "sn1": "CCCC",
     "sn2": "CCCC"
    },
@@ -8744,6 +8994,7 @@
     "m2": [
      "DPPG"
     ],
+    "m2_mapping_known": true,
     "sn1": "CCCC",
     "sn2": "CCCC"
    },
@@ -8763,6 +9014,7 @@
     "m2": [
      "DPPS"
     ],
+    "m2_mapping_known": true,
     "sn1": "CCCC",
     "sn2": "CCCC"
    },
@@ -8780,6 +9032,7 @@
     "description": "A general model ether lipid phosphatidic acid (EA) lipid corresponding to atomistic C8:0 dioctanoyl tails.",
     "itp": "martini_v3.0.0_etherphospholipids_PA_v2.itp",
     "m2": [],
+    "m2_mapping_known": true,
     "sn1": "cC",
     "sn2": "cC"
    },
@@ -8797,6 +9050,7 @@
     "description": "A general model ether lipid phosphatidylcholine (EC) lipid corresponding to atomistic C8:0 dioctanoyl tails.",
     "itp": "martini_v3.0.0_etherphospholipids_PC_v2.itp",
     "m2": [],
+    "m2_mapping_known": true,
     "sn1": "cC",
     "sn2": "cC"
    },
@@ -8814,6 +9068,7 @@
     "description": "A general model ether lipid phosphatidylethanolamine (EE) lipid corresponding to atomistic C8:0 dioctanoyl tails.",
     "itp": "martini_v3.0.0_etherphospholipids_PE_v2.itp",
     "m2": [],
+    "m2_mapping_known": true,
     "sn1": "cC",
     "sn2": "cC"
    },
@@ -8831,6 +9086,7 @@
     "description": "A general model ether lipid phosphatidylglycerol (EG) lipid corresponding to atomistic C8:0 dioctanoyl tails.",
     "itp": "martini_v3.0.0_etherphospholipids_PG_v2.itp",
     "m2": [],
+    "m2_mapping_known": true,
     "sn1": "cC",
     "sn2": "cC"
    },
@@ -8848,6 +9104,7 @@
     "description": "A general model ether lipid phosphatidylserine (ES) lipid corresponding to atomistic C8:0 dioctanoyl tails.",
     "itp": "martini_v3.0.0_etherphospholipids_PS_v2.itp",
     "m2": [],
+    "m2_mapping_known": true,
     "sn1": "cC",
     "sn2": "cC"
    },
@@ -8865,6 +9122,7 @@
     "description": "A general model plasmalogen phosphatidic acid (LA) lipid corresponding to atomistic C8:0 dioctanoyl tails.",
     "itp": "martini_v3.0.0_plasmalogens_PA_v2.itp",
     "m2": [],
+    "m2_mapping_known": true,
     "sn1": "cC",
     "sn2": "cC"
    },
@@ -8882,6 +9140,7 @@
     "description": "A general model plasmalogen phosphatidylcholine (LC) lipid corresponding to atomistic C8:0 dioctanoyl tails.",
     "itp": "martini_v3.0.0_plasmalogens_PC_v2.itp",
     "m2": [],
+    "m2_mapping_known": true,
     "sn1": "cC",
     "sn2": "cC"
    },
@@ -8899,6 +9158,7 @@
     "description": "A general model plasmalogen phosphatidylethanolamine (LE) lipid corresponding to atomistic C8:0 dioctanoyl tails.",
     "itp": "martini_v3.0.0_plasmalogens_PE_v2.itp",
     "m2": [],
+    "m2_mapping_known": true,
     "sn1": "cC",
     "sn2": "cC"
    },
@@ -8916,6 +9176,7 @@
     "description": "A general model plasmalogen phosphatidylglycerol (LG) lipid corresponding to atomistic C8:0 dioctanoyl tails.",
     "itp": "martini_v3.0.0_plasmalogens_PG_v2.itp",
     "m2": [],
+    "m2_mapping_known": true,
     "sn1": "cC",
     "sn2": "cC"
    },
@@ -8933,6 +9194,7 @@
     "description": "A general model plasmalogen phosphatidylserine (LS) lipid corresponding to atomistic C8:0 dioctanoyl tails.",
     "itp": "martini_v3.0.0_plasmalogens_PS_v2.itp",
     "m2": [],
+    "m2_mapping_known": true,
     "sn1": "cC",
     "sn2": "cC"
    },
@@ -8952,6 +9214,7 @@
     "m2": [
      "DTPA"
     ],
+    "m2_mapping_known": true,
     "sn1": "cC",
     "sn2": "cC"
    },
@@ -8971,6 +9234,7 @@
     "m2": [
      "DTPC"
     ],
+    "m2_mapping_known": true,
     "sn1": "cC",
     "sn2": "cC"
    },
@@ -8990,6 +9254,7 @@
     "m2": [
      "DTPE"
     ],
+    "m2_mapping_known": true,
     "sn1": "cC",
     "sn2": "cC"
    },
@@ -9009,6 +9274,7 @@
     "m2": [
      "DTPG"
     ],
+    "m2_mapping_known": true,
     "sn1": "cC",
     "sn2": "cC"
    },
@@ -9028,6 +9294,7 @@
     "m2": [
      "DTPS"
     ],
+    "m2_mapping_known": true,
     "sn1": "cC",
     "sn2": "cC"
    },
@@ -9045,6 +9312,7 @@
     "description": "A general model ether lipid phosphatidic acid (EA) lipid corresponding to atomistic C12:0 dilauroyl tails.",
     "itp": "martini_v3.0.0_etherphospholipids_PA_v2.itp",
     "m2": [],
+    "m2_mapping_known": true,
     "sn1": "cCC",
     "sn2": "cCC"
    },
@@ -9062,6 +9330,7 @@
     "description": "A general model ether lipid phosphatidylcholine (EC) lipid corresponding to atomistic C12:0 dilauroyl tails.",
     "itp": "martini_v3.0.0_etherphospholipids_PC_v2.itp",
     "m2": [],
+    "m2_mapping_known": true,
     "sn1": "cCC",
     "sn2": "cCC"
    },
@@ -9079,6 +9348,7 @@
     "description": "A general model ether lipid phosphatidylethanolamine (EE) lipid corresponding to atomistic C12:0 dilauroyl tails.",
     "itp": "martini_v3.0.0_etherphospholipids_PE_v2.itp",
     "m2": [],
+    "m2_mapping_known": true,
     "sn1": "cCC",
     "sn2": "cCC"
    },
@@ -9096,6 +9366,7 @@
     "description": "A general model ether lipid phosphatidylglycerol (EG) lipid corresponding to atomistic C12:0 dilauroyl tails.",
     "itp": "martini_v3.0.0_etherphospholipids_PG_v2.itp",
     "m2": [],
+    "m2_mapping_known": true,
     "sn1": "cCC",
     "sn2": "cCC"
    },
@@ -9113,6 +9384,7 @@
     "description": "A general model ether lipid phosphatidylserine (ES) lipid corresponding to atomistic C12:0 dilauroyl tails.",
     "itp": "martini_v3.0.0_etherphospholipids_PS_v2.itp",
     "m2": [],
+    "m2_mapping_known": true,
     "sn1": "cCC",
     "sn2": "cCC"
    },
@@ -9130,6 +9402,7 @@
     "description": "A general model plasmalogen phosphatidic acid (LA) lipid corresponding to atomistic C12:0 dilauroyl tails.",
     "itp": "martini_v3.0.0_plasmalogens_PA_v2.itp",
     "m2": [],
+    "m2_mapping_known": true,
     "sn1": "cCC",
     "sn2": "cCC"
    },
@@ -9147,6 +9420,7 @@
     "description": "A general model plasmalogen phosphatidylcholine (LC) lipid corresponding to atomistic C12:0 dilauroyl tails.",
     "itp": "martini_v3.0.0_plasmalogens_PC_v2.itp",
     "m2": [],
+    "m2_mapping_known": true,
     "sn1": "cCC",
     "sn2": "cCC"
    },
@@ -9164,6 +9438,7 @@
     "description": "A general model plasmalogen phosphatidylethanolamine (LE) lipid corresponding to atomistic C12:0 dilauroyl tails.",
     "itp": "martini_v3.0.0_plasmalogens_PE_v2.itp",
     "m2": [],
+    "m2_mapping_known": true,
     "sn1": "cCC",
     "sn2": "cCC"
    },
@@ -9181,6 +9456,7 @@
     "description": "A general model plasmalogen phosphatidylglycerol (LG) lipid corresponding to atomistic C12:0 dilauroyl tails.",
     "itp": "martini_v3.0.0_plasmalogens_PG_v2.itp",
     "m2": [],
+    "m2_mapping_known": true,
     "sn1": "cCC",
     "sn2": "cCC"
    },
@@ -9198,6 +9474,7 @@
     "description": "A general model plasmalogen phosphatidylserine (LS) lipid corresponding to atomistic C12:0 dilauroyl tails.",
     "itp": "martini_v3.0.0_plasmalogens_PS_v2.itp",
     "m2": [],
+    "m2_mapping_known": true,
     "sn1": "cCC",
     "sn2": "cCC"
    },
@@ -9217,6 +9494,7 @@
     "m2": [
      "DLPA"
     ],
+    "m2_mapping_known": true,
     "sn1": "cCC",
     "sn2": "cCC"
    },
@@ -9236,6 +9514,7 @@
     "m2": [
      "DLPC"
     ],
+    "m2_mapping_known": true,
     "sn1": "cCC",
     "sn2": "cCC"
    },
@@ -9255,6 +9534,7 @@
     "m2": [
      "DLPE"
     ],
+    "m2_mapping_known": true,
     "sn1": "cCC",
     "sn2": "cCC"
    },
@@ -9274,6 +9554,7 @@
     "m2": [
      "DLPG"
     ],
+    "m2_mapping_known": true,
     "sn1": "cCC",
     "sn2": "cCC"
    },
@@ -9293,6 +9574,7 @@
     "m2": [
      "DLPS"
     ],
+    "m2_mapping_known": true,
     "sn1": "cCC",
     "sn2": "cCC"
    },
@@ -9310,6 +9592,7 @@
     "description": "A general model ether lipid phosphatidic acid (EA) lipid corresponding to atomistic C18:1(11c) cis-vaccenic acid tails.",
     "itp": "martini_v3.0.0_etherphospholipids_PA_v2.itp",
     "m2": [],
+    "m2_mapping_known": true,
     "sn1": "CCDC",
     "sn2": "CCDC"
    },
@@ -9327,6 +9610,7 @@
     "description": "A general model ether lipid phosphatidylcholine (EC) lipid corresponding to atomistic C18:1(11c) cis-vaccenic acid tails.",
     "itp": "martini_v3.0.0_etherphospholipids_PC_v2.itp",
     "m2": [],
+    "m2_mapping_known": true,
     "sn1": "CCDC",
     "sn2": "CCDC"
    },
@@ -9344,6 +9628,7 @@
     "description": "A general model ether lipid phosphatidylethanolamine (EE) lipid corresponding to atomistic C18:1(11c) cis-vaccenic acid tails.",
     "itp": "martini_v3.0.0_etherphospholipids_PE_v2.itp",
     "m2": [],
+    "m2_mapping_known": true,
     "sn1": "CCDC",
     "sn2": "CCDC"
    },
@@ -9361,6 +9646,7 @@
     "description": "A general model ether lipid phosphatidylglycerol (EG) lipid corresponding to atomistic C18:1(11c) cis-vaccenic acid tails.",
     "itp": "martini_v3.0.0_etherphospholipids_PG_v2.itp",
     "m2": [],
+    "m2_mapping_known": true,
     "sn1": "CCDC",
     "sn2": "CCDC"
    },
@@ -9378,6 +9664,7 @@
     "description": "A general model ether lipid phosphatidylserine (ES) lipid corresponding to atomistic C18:1(11c) cis-vaccenic acid tails.",
     "itp": "martini_v3.0.0_etherphospholipids_PS_v2.itp",
     "m2": [],
+    "m2_mapping_known": true,
     "sn1": "CCDC",
     "sn2": "CCDC"
    },
@@ -9395,6 +9682,7 @@
     "description": "A general model plasmalogen phosphatidic acid (LA) lipid corresponding to atomistic C18:1(11c) cis-vaccenic acid tails.",
     "itp": "martini_v3.0.0_plasmalogens_PA_v2.itp",
     "m2": [],
+    "m2_mapping_known": true,
     "sn1": "CCDC",
     "sn2": "CCDC"
    },
@@ -9412,6 +9700,7 @@
     "description": "A general model plasmalogen phosphatidylcholine (LC) lipid corresponding to atomistic C18:1(11c) cis-vaccenic acid tails.",
     "itp": "martini_v3.0.0_plasmalogens_PC_v2.itp",
     "m2": [],
+    "m2_mapping_known": true,
     "sn1": "CCDC",
     "sn2": "CCDC"
    },
@@ -9429,6 +9718,7 @@
     "description": "A general model plasmalogen phosphatidylethanolamine (LE) lipid corresponding to atomistic C18:1(11c) cis-vaccenic acid tails.",
     "itp": "martini_v3.0.0_plasmalogens_PE_v2.itp",
     "m2": [],
+    "m2_mapping_known": true,
     "sn1": "CCDC",
     "sn2": "CCDC"
    },
@@ -9446,6 +9736,7 @@
     "description": "A general model plasmalogen phosphatidylglycerol (LG) lipid corresponding to atomistic C18:1(11c) cis-vaccenic acid tails.",
     "itp": "martini_v3.0.0_plasmalogens_PG_v2.itp",
     "m2": [],
+    "m2_mapping_known": true,
     "sn1": "CCDC",
     "sn2": "CCDC"
    },
@@ -9463,6 +9754,7 @@
     "description": "A general model plasmalogen phosphatidylserine (LS) lipid corresponding to atomistic C18:1(11c) cis-vaccenic acid tails.",
     "itp": "martini_v3.0.0_plasmalogens_PS_v2.itp",
     "m2": [],
+    "m2_mapping_known": true,
     "sn1": "CCDC",
     "sn2": "CCDC"
    },
@@ -9482,6 +9774,7 @@
     "m2": [
      "DVPA"
     ],
+    "m2_mapping_known": true,
     "sn1": "CCDC",
     "sn2": "CCDC"
    },
@@ -9501,6 +9794,7 @@
     "m2": [
      "DVPC"
     ],
+    "m2_mapping_known": true,
     "sn1": "CCDC",
     "sn2": "CCDC"
    },
@@ -9520,6 +9814,7 @@
     "m2": [
      "DVPE"
     ],
+    "m2_mapping_known": true,
     "sn1": "CCDC",
     "sn2": "CCDC"
    },
@@ -9539,6 +9834,7 @@
     "m2": [
      "DVPG"
     ],
+    "m2_mapping_known": true,
     "sn1": "CCDC",
     "sn2": "CCDC"
    },
@@ -9558,6 +9854,7 @@
     "m2": [
      "DVPS"
     ],
+    "m2_mapping_known": true,
     "sn1": "CCDC",
     "sn2": "CCDC"
    },
@@ -9575,6 +9872,7 @@
     "description": "A general model ether lipid phosphatidic acid (EA) lipid corresponding to atomistic C24:0 dilignoceroyl tails.",
     "itp": "martini_v3.0.0_etherphospholipids_PA_v2.itp",
     "m2": [],
+    "m2_mapping_known": true,
     "sn1": "cCCCCC",
     "sn2": "cCCCCC"
    },
@@ -9592,6 +9890,7 @@
     "description": "A general model ether lipid phosphatidylcholine (EC) lipid corresponding to atomistic C24:0 dilignoceroyl tails.",
     "itp": "martini_v3.0.0_etherphospholipids_PC_v2.itp",
     "m2": [],
+    "m2_mapping_known": true,
     "sn1": "cCCCCC",
     "sn2": "cCCCCC"
    },
@@ -9609,6 +9908,7 @@
     "description": "A general model ether lipid phosphatidylethanolamine (EE) lipid corresponding to atomistic C24:0 dilignoceroyl tails.",
     "itp": "martini_v3.0.0_etherphospholipids_PE_v2.itp",
     "m2": [],
+    "m2_mapping_known": true,
     "sn1": "cCCCCC",
     "sn2": "cCCCCC"
    },
@@ -9626,6 +9926,7 @@
     "description": "A general model ether lipid phosphatidylglycerol (EG) lipid corresponding to atomistic C24:0 dilignoceroyl tails.",
     "itp": "martini_v3.0.0_etherphospholipids_PG_v2.itp",
     "m2": [],
+    "m2_mapping_known": true,
     "sn1": "cCCCCC",
     "sn2": "cCCCCC"
    },
@@ -9643,6 +9944,7 @@
     "description": "A general model ether lipid phosphatidylserine (ES) lipid corresponding to atomistic C24:0 dilignoceroyl tails.",
     "itp": "martini_v3.0.0_etherphospholipids_PS_v2.itp",
     "m2": [],
+    "m2_mapping_known": true,
     "sn1": "cCCCCC",
     "sn2": "cCCCCC"
    },
@@ -9660,6 +9962,7 @@
     "description": "A general model plasmalogen phosphatidic acid (LA) lipid corresponding to atomistic C24:0 dilignoceroyl tails.",
     "itp": "martini_v3.0.0_plasmalogens_PA_v2.itp",
     "m2": [],
+    "m2_mapping_known": true,
     "sn1": "cCCCCC",
     "sn2": "cCCCCC"
    },
@@ -9677,6 +9980,7 @@
     "description": "A general model plasmalogen phosphatidylcholine (LC) lipid corresponding to atomistic C24:0 dilignoceroyl tails.",
     "itp": "martini_v3.0.0_plasmalogens_PC_v2.itp",
     "m2": [],
+    "m2_mapping_known": true,
     "sn1": "cCCCCC",
     "sn2": "cCCCCC"
    },
@@ -9694,6 +9998,7 @@
     "description": "A general model plasmalogen phosphatidylethanolamine (LE) lipid corresponding to atomistic C24:0 dilignoceroyl tails.",
     "itp": "martini_v3.0.0_plasmalogens_PE_v2.itp",
     "m2": [],
+    "m2_mapping_known": true,
     "sn1": "cCCCCC",
     "sn2": "cCCCCC"
    },
@@ -9711,6 +10016,7 @@
     "description": "A general model plasmalogen phosphatidylglycerol (LG) lipid corresponding to atomistic C24:0 dilignoceroyl tails.",
     "itp": "martini_v3.0.0_plasmalogens_PG_v2.itp",
     "m2": [],
+    "m2_mapping_known": true,
     "sn1": "cCCCCC",
     "sn2": "cCCCCC"
    },
@@ -9728,6 +10034,7 @@
     "description": "A general model plasmalogen phosphatidylserine (LS) lipid corresponding to atomistic C24:0 dilignoceroyl tails.",
     "itp": "martini_v3.0.0_plasmalogens_PS_v2.itp",
     "m2": [],
+    "m2_mapping_known": true,
     "sn1": "cCCCCC",
     "sn2": "cCCCCC"
    },
@@ -9748,6 +10055,7 @@
     "m2": [
      "DXPA"
     ],
+    "m2_mapping_known": true,
     "sn1": "cCCCCC",
     "sn2": "cCCCCC"
    },
@@ -9768,6 +10076,7 @@
     "m2": [
      "DXPC"
     ],
+    "m2_mapping_known": true,
     "sn1": "cCCCCC",
     "sn2": "cCCCCC"
    },
@@ -9788,6 +10097,7 @@
     "m2": [
      "DXPE"
     ],
+    "m2_mapping_known": true,
     "sn1": "cCCCCC",
     "sn2": "cCCCCC"
    },
@@ -9808,6 +10118,7 @@
     "m2": [
      "DXPG"
     ],
+    "m2_mapping_known": true,
     "sn1": "cCCCCC",
     "sn2": "cCCCCC"
    },
@@ -9828,6 +10139,7 @@
     "m2": [
      "DXPS"
     ],
+    "m2_mapping_known": true,
     "sn1": "cCCCCC",
     "sn2": "cCCCCC"
    },
@@ -9845,6 +10157,7 @@
     "description": "A general model ether lipid phosphatidic acid (EA) lipid corresponding to atomistic C16:1(9c) dipalmitoleoyl tails.",
     "itp": "martini_v3.0.0_etherphospholipids_PA_v2.itp",
     "m2": [],
+    "m2_mapping_known": true,
     "sn1": "cCDC",
     "sn2": "cCDC"
    },
@@ -9862,6 +10175,7 @@
     "description": "A general model ether lipid phosphatidylcholine (EC) lipid corresponding to atomistic C16:1(9c) dipalmitoleoyl tails.",
     "itp": "martini_v3.0.0_etherphospholipids_PC_v2.itp",
     "m2": [],
+    "m2_mapping_known": true,
     "sn1": "cCDC",
     "sn2": "cCDC"
    },
@@ -9879,6 +10193,7 @@
     "description": "A general model ether lipid phosphatidylethanolamine (EE) lipid corresponding to atomistic C16:1(9c) dipalmitoleoyl tails.",
     "itp": "martini_v3.0.0_etherphospholipids_PE_v2.itp",
     "m2": [],
+    "m2_mapping_known": true,
     "sn1": "cCDC",
     "sn2": "cCDC"
    },
@@ -9896,6 +10211,7 @@
     "description": "A general model ether lipid phosphatidylglycerol (EG) lipid corresponding to atomistic C16:1(9c) dipalmitoleoyl tails.",
     "itp": "martini_v3.0.0_etherphospholipids_PG_v2.itp",
     "m2": [],
+    "m2_mapping_known": true,
     "sn1": "cCDC",
     "sn2": "cCDC"
    },
@@ -9913,6 +10229,7 @@
     "description": "A general model ether lipid phosphatidylserine (ES) lipid corresponding to atomistic C16:1(9c) dipalmitoleoyl tails.",
     "itp": "martini_v3.0.0_etherphospholipids_PS_v2.itp",
     "m2": [],
+    "m2_mapping_known": true,
     "sn1": "cCDC",
     "sn2": "cCDC"
    },
@@ -9930,6 +10247,7 @@
     "description": "A general model plasmalogen phosphatidic acid (LA) lipid corresponding to atomistic C16:1(9c) dipalmitoleoyl tails.",
     "itp": "martini_v3.0.0_plasmalogens_PA_v2.itp",
     "m2": [],
+    "m2_mapping_known": true,
     "sn1": "cCDC",
     "sn2": "cCDC"
    },
@@ -9947,6 +10265,7 @@
     "description": "A general model plasmalogen phosphatidylcholine (LC) lipid corresponding to atomistic C16:1(9c) dipalmitoleoyl tails.",
     "itp": "martini_v3.0.0_plasmalogens_PC_v2.itp",
     "m2": [],
+    "m2_mapping_known": true,
     "sn1": "cCDC",
     "sn2": "cCDC"
    },
@@ -9964,6 +10283,7 @@
     "description": "A general model plasmalogen phosphatidylethanolamine (LE) lipid corresponding to atomistic C16:1(9c) dipalmitoleoyl tails.",
     "itp": "martini_v3.0.0_plasmalogens_PE_v2.itp",
     "m2": [],
+    "m2_mapping_known": true,
     "sn1": "cCDC",
     "sn2": "cCDC"
    },
@@ -9981,6 +10301,7 @@
     "description": "A general model plasmalogen phosphatidylglycerol (LG) lipid corresponding to atomistic C16:1(9c) dipalmitoleoyl tails.",
     "itp": "martini_v3.0.0_plasmalogens_PG_v2.itp",
     "m2": [],
+    "m2_mapping_known": true,
     "sn1": "cCDC",
     "sn2": "cCDC"
    },
@@ -9998,6 +10319,7 @@
     "description": "A general model plasmalogen phosphatidylserine (LS) lipid corresponding to atomistic C16:1(9c) dipalmitoleoyl tails.",
     "itp": "martini_v3.0.0_plasmalogens_PS_v2.itp",
     "m2": [],
+    "m2_mapping_known": true,
     "sn1": "cCDC",
     "sn2": "cCDC"
    },
@@ -10017,6 +10339,7 @@
     "m2": [
      "DVPA"
     ],
+    "m2_mapping_known": true,
     "sn1": "cCDC",
     "sn2": "cCDC"
    },
@@ -10036,6 +10359,7 @@
     "m2": [
      "DVPC"
     ],
+    "m2_mapping_known": true,
     "sn1": "cCDC",
     "sn2": "cCDC"
    },
@@ -10055,6 +10379,7 @@
     "m2": [
      "DVPE"
     ],
+    "m2_mapping_known": true,
     "sn1": "cCDC",
     "sn2": "cCDC"
    },
@@ -10074,6 +10399,7 @@
     "m2": [
      "DVPG"
     ],
+    "m2_mapping_known": true,
     "sn1": "cCDC",
     "sn2": "cCDC"
    },
@@ -10093,6 +10419,7 @@
     "m2": [
      "DVPS"
     ],
+    "m2_mapping_known": true,
     "sn1": "cCDC",
     "sn2": "cCDC"
    },
@@ -10110,6 +10437,7 @@
     "description": null,
     "itp": "martini_v3.0.0_hydrocarbons_v2.itp",
     "m2": [],
+    "m2_mapping_known": false,
     "sn1": null,
     "sn2": null
    },
@@ -10127,6 +10455,7 @@
     "description": null,
     "itp": "martini_v3.0.0_hydrocarbons_v2.itp",
     "m2": [],
+    "m2_mapping_known": false,
     "sn1": null,
     "sn2": null
    },
@@ -10144,6 +10473,7 @@
     "description": null,
     "itp": "martini_v3.0.0_hydrocarbons_v2.itp",
     "m2": [],
+    "m2_mapping_known": false,
     "sn1": null,
     "sn2": null
    },
@@ -10161,6 +10491,7 @@
     "description": null,
     "itp": "martini_v3.0.0_hydrocarbons_v2.itp",
     "m2": [],
+    "m2_mapping_known": false,
     "sn1": null,
     "sn2": null
    },
@@ -10178,6 +10509,7 @@
     "description": null,
     "itp": "martini_v3.0.0_hydrocarbons_v2.itp",
     "m2": [],
+    "m2_mapping_known": false,
     "sn1": null,
     "sn2": null
    },
@@ -10195,6 +10527,7 @@
     "description": null,
     "itp": "martini_v3.0.0_hydrocarbons_v2.itp",
     "m2": [],
+    "m2_mapping_known": false,
     "sn1": null,
     "sn2": null
    },
@@ -10212,6 +10545,7 @@
     "description": null,
     "itp": "martini_v3.0.0_hydrocarbons_v2.itp",
     "m2": [],
+    "m2_mapping_known": false,
     "sn1": null,
     "sn2": null
    },
@@ -10229,6 +10563,7 @@
     "description": null,
     "itp": "martini_v3.0.0_hydrocarbons_v2.itp",
     "m2": [],
+    "m2_mapping_known": false,
     "sn1": null,
     "sn2": null
    },
@@ -10246,6 +10581,7 @@
     "description": null,
     "itp": "martini_v3.0.0_hydrocarbons_v2.itp",
     "m2": [],
+    "m2_mapping_known": false,
     "sn1": null,
     "sn2": null
    },
@@ -10263,6 +10599,7 @@
     "description": "A general model ceramide (CER) lipid corresponding to atomistic e.g. C(d18:1/20:0) N-arachidoyl-D-erythro tails.",
     "itp": "martini_v3.0.0_ceramides_v2.itp",
     "m2": [],
+    "m2_mapping_known": true,
     "sn1": "tCCC",
     "sn2": "cCCCC"
    },
@@ -10282,6 +10619,7 @@
     "m2": [
      "PBSM"
     ],
+    "m2_mapping_known": true,
     "sn1": "tCCC",
     "sn2": "cCCCC"
    },
@@ -10299,6 +10637,7 @@
     "description": null,
     "itp": "martini_v3.0.0_fattyacids_v2.itp",
     "m2": [],
+    "m2_mapping_known": false,
     "sn1": null,
     "sn2": null
    },
@@ -10316,6 +10655,7 @@
     "description": "A general model ether lipid phosphatidic acid (EA) lipid corresponding to atomistic C18:2(9c;12c)/18:3(9c;12c;15c) 1-dilinoleoyl-2-alpha-linolenic acid  tails.",
     "itp": "martini_v3.0.0_etherphospholipids_PA_v2.itp",
     "m2": [],
+    "m2_mapping_known": true,
     "sn1": "CDDC",
     "sn2": "CDDD"
    },
@@ -10333,6 +10673,7 @@
     "description": "A general model ether lipid phosphatidylcholine (EC) lipid corresponding to atomistic C18:2(9c;12c)/18:3(9c;12c;15c) 1-dilinoleoyl-2-alpha-linolenic acid  tails.",
     "itp": "martini_v3.0.0_etherphospholipids_PC_v2.itp",
     "m2": [],
+    "m2_mapping_known": true,
     "sn1": "CDDC",
     "sn2": "CDDD"
    },
@@ -10350,6 +10691,7 @@
     "description": "A general model ether lipid phosphatidylethanolamine (EE) lipid corresponding to atomistic C18:2(9c;12c)/18:3(9c;12c;15c) 1-dilinoleoyl-2-alpha-linolenic acid  tails.",
     "itp": "martini_v3.0.0_etherphospholipids_PE_v2.itp",
     "m2": [],
+    "m2_mapping_known": true,
     "sn1": "CDDC",
     "sn2": "CDDD"
    },
@@ -10367,6 +10709,7 @@
     "description": "A general model ether lipid phosphatidylglycerol (EG) lipid corresponding to atomistic C18:2(9c;12c)/18:3(9c;12c;15c) 1-dilinoleoyl-2-alpha-linolenic acid  tails.",
     "itp": "martini_v3.0.0_etherphospholipids_PG_v2.itp",
     "m2": [],
+    "m2_mapping_known": true,
     "sn1": "CDDC",
     "sn2": "CDDD"
    },
@@ -10384,6 +10727,7 @@
     "description": "A general model ether lipid phosphatidylserine (ES) lipid corresponding to atomistic C18:2(9c;12c)/18:3(9c;12c;15c) 1-dilinoleoyl-2-alpha-linolenic acid  tails.",
     "itp": "martini_v3.0.0_etherphospholipids_PS_v2.itp",
     "m2": [],
+    "m2_mapping_known": true,
     "sn1": "CDDC",
     "sn2": "CDDD"
    },
@@ -10401,6 +10745,7 @@
     "description": "A general model plasmalogen phosphatidic acid (LA) lipid corresponding to atomistic C18:2(9c;12c)/18:3(9c;12c;15c) 1-dilinoleoyl-2-alpha-linolenic acid  tails.",
     "itp": "martini_v3.0.0_plasmalogens_PA_v2.itp",
     "m2": [],
+    "m2_mapping_known": true,
     "sn1": "CDDC",
     "sn2": "CDDD"
    },
@@ -10418,6 +10763,7 @@
     "description": "A general model plasmalogen phosphatidylcholine (LC) lipid corresponding to atomistic C18:2(9c;12c)/18:3(9c;12c;15c) 1-dilinoleoyl-2-alpha-linolenic acid  tails.",
     "itp": "martini_v3.0.0_plasmalogens_PC_v2.itp",
     "m2": [],
+    "m2_mapping_known": true,
     "sn1": "CDDC",
     "sn2": "CDDD"
    },
@@ -10435,6 +10781,7 @@
     "description": "A general model plasmalogen phosphatidylethanolamine (LE) lipid corresponding to atomistic C18:2(9c;12c)/18:3(9c;12c;15c) 1-dilinoleoyl-2-alpha-linolenic acid  tails.",
     "itp": "martini_v3.0.0_plasmalogens_PE_v2.itp",
     "m2": [],
+    "m2_mapping_known": true,
     "sn1": "CDDC",
     "sn2": "CDDD"
    },
@@ -10452,6 +10799,7 @@
     "description": "A general model plasmalogen phosphatidylglycerol (LG) lipid corresponding to atomistic C18:2(9c;12c)/18:3(9c;12c;15c) 1-dilinoleoyl-2-alpha-linolenic acid  tails.",
     "itp": "martini_v3.0.0_plasmalogens_PG_v2.itp",
     "m2": [],
+    "m2_mapping_known": true,
     "sn1": "CDDC",
     "sn2": "CDDD"
    },
@@ -10469,6 +10817,7 @@
     "description": "A general model plasmalogen phosphatidylserine (LS) lipid corresponding to atomistic C18:2(9c;12c)/18:3(9c;12c;15c) 1-dilinoleoyl-2-alpha-linolenic acid  tails.",
     "itp": "martini_v3.0.0_plasmalogens_PS_v2.itp",
     "m2": [],
+    "m2_mapping_known": true,
     "sn1": "CDDC",
     "sn2": "CDDD"
    },
@@ -10486,6 +10835,7 @@
     "description": "A general model phosphatidic acid (PA) lipid corresponding to atomistic C18:2(9c;12c)/18:3(9c;12c;15c) 1-dilinoleoyl-2-alpha-linolenic acid  tails.",
     "itp": "martini_v3.0.0_phospholipids_PA_v2.itp",
     "m2": [],
+    "m2_mapping_known": true,
     "sn1": "CDDC",
     "sn2": "CDDD"
    },
@@ -10503,6 +10853,7 @@
     "description": "A general model phosphatidylcholine (PC) lipid corresponding to atomistic C18:2(9c;12c)/18:3(9c;12c;15c) 1-dilinoleoyl-2-alpha-linolenic acid  tails.",
     "itp": "martini_v3.0.0_phospholipids_PC_v2.itp",
     "m2": [],
+    "m2_mapping_known": true,
     "sn1": "CDDC",
     "sn2": "CDDD"
    },
@@ -10520,6 +10871,7 @@
     "description": "A general model phosphatidylethanolamine (PE) lipid corresponding to atomistic C18:2(9c;12c)/18:3(9c;12c;15c) 1-dilinoleoyl-2-alpha-linolenic acid  tails.",
     "itp": "martini_v3.0.0_phospholipids_PE_v2.itp",
     "m2": [],
+    "m2_mapping_known": true,
     "sn1": "CDDC",
     "sn2": "CDDD"
    },
@@ -10537,6 +10889,7 @@
     "description": "A general model phosphatidylglycerol (PG) lipid corresponding to atomistic C18:2(9c;12c)/18:3(9c;12c;15c) 1-dilinoleoyl-2-alpha-linolenic acid  tails.",
     "itp": "martini_v3.0.0_phospholipids_PG_v2.itp",
     "m2": [],
+    "m2_mapping_known": true,
     "sn1": "CDDC",
     "sn2": "CDDD"
    },
@@ -10554,6 +10907,7 @@
     "description": "A general model phosphatidylserine (PS) lipid corresponding to atomistic C18:2(9c;12c)/18:3(9c;12c;15c) 1-dilinoleoyl-2-alpha-linolenic acid  tails.",
     "itp": "martini_v3.0.0_phospholipids_PS_v2.itp",
     "m2": [],
+    "m2_mapping_known": true,
     "sn1": "CDDC",
     "sn2": "CDDD"
    },
@@ -10571,6 +10925,7 @@
     "description": null,
     "itp": "martini_v3.0.0_fattyacids_v2.itp",
     "m2": [],
+    "m2_mapping_known": false,
     "sn1": null,
     "sn2": null
    },
@@ -10588,6 +10943,7 @@
     "description": null,
     "itp": "martini_v3.0.0_fattyacids_v2.itp",
     "m2": [],
+    "m2_mapping_known": false,
     "sn1": null,
     "sn2": null
    },
@@ -10605,6 +10961,7 @@
     "description": "A general model ceramide (CER) lipid corresponding to atomistic e.g. C(d18:1/14:0) N-myristoyl-D-erythro tails.",
     "itp": "martini_v3.0.0_ceramides_v2.itp",
     "m2": [],
+    "m2_mapping_known": true,
     "sn1": "tCCC",
     "sn2": "CCC"
    },
@@ -10622,6 +10979,7 @@
     "description": null,
     "itp": "martini_v3.0.0_monoglycerides_v2.itp",
     "m2": [],
+    "m2_mapping_known": false,
     "sn1": null,
     "sn2": null
    },
@@ -10639,6 +10997,7 @@
     "description": null,
     "itp": "martini_v3.0.0_monoglycerides_v2.itp",
     "m2": [],
+    "m2_mapping_known": false,
     "sn1": null,
     "sn2": null
    },
@@ -10656,6 +11015,7 @@
     "description": null,
     "itp": "martini_v3.0.0_monoglycerides_v2.itp",
     "m2": [],
+    "m2_mapping_known": false,
     "sn1": null,
     "sn2": null
    },
@@ -10673,6 +11033,7 @@
     "description": null,
     "itp": "martini_v3.0.0_monoglycerides_v2.itp",
     "m2": [],
+    "m2_mapping_known": false,
     "sn1": null,
     "sn2": null
    },
@@ -10690,6 +11051,7 @@
     "description": null,
     "itp": "martini_v3.0.0_monoglycerides_v2.itp",
     "m2": [],
+    "m2_mapping_known": false,
     "sn1": null,
     "sn2": null
    },
@@ -10707,6 +11069,7 @@
     "description": null,
     "itp": "martini_v3.0.0_monoglycerides_v2.itp",
     "m2": [],
+    "m2_mapping_known": false,
     "sn1": null,
     "sn2": null
    },
@@ -10724,6 +11087,7 @@
     "description": "A general model phosphatidylcholine (PC) lipid corresponding to atomistic C14:0/16:0 1-myristoyl-2-palmitoyl tails.",
     "itp": "martini_v3.0.0_phospholipids_PC_v2.itp",
     "m2": [],
+    "m2_mapping_known": false,
     "sn1": null,
     "sn2": null
    },
@@ -10741,6 +11105,7 @@
     "description": null,
     "itp": "martini_v3.0.0_monoglycerides_v2.itp",
     "m2": [],
+    "m2_mapping_known": false,
     "sn1": null,
     "sn2": null
    },
@@ -10758,6 +11123,7 @@
     "description": "A general model sphingomyelin (SM) lipid corresponding to atomistic e.g. C(d18:1/14:0) N-myristoyl-D-erythro tails.",
     "itp": "martini_v3.0.0_phospholipids_SM_v2.itp",
     "m2": [],
+    "m2_mapping_known": true,
     "sn1": "tCCC",
     "sn2": "CCC"
    },
@@ -10775,6 +11141,7 @@
     "description": "A general model phosphatidylcholine (PC) lipid corresponding to atomistic C14:0/18:0 1-myristoyl-2-stearoyl tails.",
     "itp": "martini_v3.0.0_phospholipids_PC_v2.itp",
     "m2": [],
+    "m2_mapping_known": false,
     "sn1": null,
     "sn2": null
    },
@@ -10794,6 +11161,7 @@
     "m2": [
      "PNCE"
     ],
+    "m2_mapping_known": true,
     "sn1": "tCCC",
     "sn2": "cCCDCC"
    },
@@ -10813,6 +11181,7 @@
     "m2": [
      "PNSM"
     ],
+    "m2_mapping_known": true,
     "sn1": "tCCC",
     "sn2": "cCCDCC"
    },
@@ -10830,6 +11199,7 @@
     "description": null,
     "itp": "martini_v3.0.0_fattyacids_v2.itp",
     "m2": [],
+    "m2_mapping_known": false,
     "sn1": null,
     "sn2": null
    },
@@ -10847,6 +11217,7 @@
     "description": "A general model phosphatidylethanolamine (PE) lipid corresponding to atomistic C18:1(9c)/20:4(5c;8c;11c;14c) 1-oleoyl-2-arachidonoyl tails.",
     "itp": "martini_v3.0.0_phospholipids_PE_v2.itp",
     "m2": [],
+    "m2_mapping_known": false,
     "sn1": null,
     "sn2": null
    },
@@ -10866,6 +11237,7 @@
     "m2": [
      "POCE"
     ],
+    "m2_mapping_known": true,
     "sn1": "tCCC",
     "sn2": "CDCC"
    },
@@ -10883,6 +11255,7 @@
     "description": "A general model ether lipid phosphatidic acid (EA) lipid corresponding to atomistic C18:1(9c)/22:6(4c;7c;10c;13c;16c;19c) 1-oleoyl-2-docosahexaenoic acid tails.",
     "itp": "martini_v3.0.0_etherphospholipids_PA_v2.itp",
     "m2": [],
+    "m2_mapping_known": true,
     "sn1": "CDCC",
     "sn2": "DFFDD"
    },
@@ -10900,6 +11273,7 @@
     "description": "A general model ether lipid phosphatidylcholine (EC) lipid corresponding to atomistic C18:1(9c)/22:6(4c;7c;10c;13c;16c;19c) 1-oleoyl-2-docosahexaenoic acid tails.",
     "itp": "martini_v3.0.0_etherphospholipids_PC_v2.itp",
     "m2": [],
+    "m2_mapping_known": true,
     "sn1": "CDCC",
     "sn2": "DFFDD"
    },
@@ -10917,6 +11291,7 @@
     "description": "A general model ether lipid phosphatidylethanolamine (EE) lipid corresponding to atomistic C18:1(9c)/22:6(4c;7c;10c;13c;16c;19c) 1-oleoyl-2-docosahexaenoic acid tails.",
     "itp": "martini_v3.0.0_etherphospholipids_PE_v2.itp",
     "m2": [],
+    "m2_mapping_known": true,
     "sn1": "CDCC",
     "sn2": "DFFDD"
    },
@@ -10934,6 +11309,7 @@
     "description": "A general model ether lipid phosphatidylglycerol (EG) lipid corresponding to atomistic C18:1(9c)/22:6(4c;7c;10c;13c;16c;19c) 1-oleoyl-2-docosahexaenoic acid tails.",
     "itp": "martini_v3.0.0_etherphospholipids_PG_v2.itp",
     "m2": [],
+    "m2_mapping_known": true,
     "sn1": "CDCC",
     "sn2": "DFFDD"
    },
@@ -10951,6 +11327,7 @@
     "description": "A general model ether lipid phosphatidylserine (ES) lipid corresponding to atomistic C18:1(9c)/22:6(4c;7c;10c;13c;16c;19c) 1-oleoyl-2-docosahexaenoic acid tails.",
     "itp": "martini_v3.0.0_etherphospholipids_PS_v2.itp",
     "m2": [],
+    "m2_mapping_known": true,
     "sn1": "CDCC",
     "sn2": "DFFDD"
    },
@@ -10968,6 +11345,7 @@
     "description": "A general model plasmalogen phosphatidic acid (LA) lipid corresponding to atomistic C18:1(9c)/22:6(4c;7c;10c;13c;16c;19c) 1-oleoyl-2-docosahexaenoic acid tails.",
     "itp": "martini_v3.0.0_plasmalogens_PA_v2.itp",
     "m2": [],
+    "m2_mapping_known": true,
     "sn1": "CDCC",
     "sn2": "DFFDD"
    },
@@ -10985,6 +11363,7 @@
     "description": "A general model plasmalogen phosphatidylcholine (LC) lipid corresponding to atomistic C18:1(9c)/22:6(4c;7c;10c;13c;16c;19c) 1-oleoyl-2-docosahexaenoic acid tails.",
     "itp": "martini_v3.0.0_plasmalogens_PC_v2.itp",
     "m2": [],
+    "m2_mapping_known": true,
     "sn1": "CDCC",
     "sn2": "DFFDD"
    },
@@ -11002,6 +11381,7 @@
     "description": "A general model plasmalogen phosphatidylethanolamine (LE) lipid corresponding to atomistic C18:1(9c)/22:6(4c;7c;10c;13c;16c;19c) 1-oleoyl-2-docosahexaenoic acid tails.",
     "itp": "martini_v3.0.0_plasmalogens_PE_v2.itp",
     "m2": [],
+    "m2_mapping_known": true,
     "sn1": "CDCC",
     "sn2": "DFFDD"
    },
@@ -11019,6 +11399,7 @@
     "description": "A general model plasmalogen phosphatidylglycerol (LG) lipid corresponding to atomistic C18:1(9c)/22:6(4c;7c;10c;13c;16c;19c) 1-oleoyl-2-docosahexaenoic acid tails.",
     "itp": "martini_v3.0.0_plasmalogens_PG_v2.itp",
     "m2": [],
+    "m2_mapping_known": true,
     "sn1": "CDCC",
     "sn2": "DFFDD"
    },
@@ -11036,6 +11417,7 @@
     "description": "A general model plasmalogen phosphatidylserine (LS) lipid corresponding to atomistic C18:1(9c)/22:6(4c;7c;10c;13c;16c;19c) 1-oleoyl-2-docosahexaenoic acid tails.",
     "itp": "martini_v3.0.0_plasmalogens_PS_v2.itp",
     "m2": [],
+    "m2_mapping_known": true,
     "sn1": "CDCC",
     "sn2": "DFFDD"
    },
@@ -11053,6 +11435,7 @@
     "description": "A general model phosphatidic acid (PA) lipid corresponding to atomistic C18:1(9c)/22:6(4c;7c;10c;13c;16c;19c) 1-oleoyl-2-docosahexaenoic acid tails.",
     "itp": "martini_v3.0.0_phospholipids_PA_v2.itp",
     "m2": [],
+    "m2_mapping_known": true,
     "sn1": "CDCC",
     "sn2": "DFFDD"
    },
@@ -11072,6 +11455,7 @@
     "m2": [
      "OUPC"
     ],
+    "m2_mapping_known": true,
     "sn1": "CDCC",
     "sn2": "DFFDD"
    },
@@ -11091,6 +11475,7 @@
     "m2": [
      "OUPE"
     ],
+    "m2_mapping_known": true,
     "sn1": "CDCC",
     "sn2": "DFFDD"
    },
@@ -11108,6 +11493,7 @@
     "description": "A general model phosphatidylglycerol (PG) lipid corresponding to atomistic C18:1(9c)/22:6(4c;7c;10c;13c;16c;19c) 1-oleoyl-2-docosahexaenoic acid tails.",
     "itp": "martini_v3.0.0_phospholipids_PG_v2.itp",
     "m2": [],
+    "m2_mapping_known": true,
     "sn1": "CDCC",
     "sn2": "DFFDD"
    },
@@ -11127,6 +11513,7 @@
     "m2": [
      "OUPS"
     ],
+    "m2_mapping_known": true,
     "sn1": "CDCC",
     "sn2": "DFFDD"
    },
@@ -11144,6 +11531,7 @@
     "description": "A general model ether lipid phosphatidic acid (EA) lipid corresponding to atomistic C18:1(9c)/22:1(13c) 1-oleoyl-2-dierucoyl tails.",
     "itp": "martini_v3.0.0_etherphospholipids_PA_v2.itp",
     "m2": [],
+    "m2_mapping_known": true,
     "sn1": "CDCC",
     "sn2": "CCDCC"
    },
@@ -11161,6 +11549,7 @@
     "description": "A general model ether lipid phosphatidylcholine (EC) lipid corresponding to atomistic C18:1(9c)/22:1(13c) 1-oleoyl-2-dierucoyl tails.",
     "itp": "martini_v3.0.0_etherphospholipids_PC_v2.itp",
     "m2": [],
+    "m2_mapping_known": true,
     "sn1": "CDCC",
     "sn2": "CCDCC"
    },
@@ -11178,6 +11567,7 @@
     "description": "A general model ether lipid phosphatidylethanolamine (EE) lipid corresponding to atomistic C18:1(9c)/22:1(13c) 1-oleoyl-2-dierucoyl tails.",
     "itp": "martini_v3.0.0_etherphospholipids_PE_v2.itp",
     "m2": [],
+    "m2_mapping_known": true,
     "sn1": "CDCC",
     "sn2": "CCDCC"
    },
@@ -11195,6 +11585,7 @@
     "description": "A general model ether lipid phosphatidylglycerol (EG) lipid corresponding to atomistic C18:1(9c)/22:1(13c) 1-oleoyl-2-dierucoyl tails.",
     "itp": "martini_v3.0.0_etherphospholipids_PG_v2.itp",
     "m2": [],
+    "m2_mapping_known": true,
     "sn1": "CDCC",
     "sn2": "CCDCC"
    },
@@ -11212,6 +11603,7 @@
     "description": "A general model ether lipid phosphatidylserine (ES) lipid corresponding to atomistic C18:1(9c)/22:1(13c) 1-oleoyl-2-dierucoyl tails.",
     "itp": "martini_v3.0.0_etherphospholipids_PS_v2.itp",
     "m2": [],
+    "m2_mapping_known": true,
     "sn1": "CDCC",
     "sn2": "CCDCC"
    },
@@ -11229,6 +11621,7 @@
     "description": "A general model plasmalogen phosphatidic acid (LA) lipid corresponding to atomistic C18:1(9c)/22:1(13c) 1-oleoyl-2-dierucoyl tails.",
     "itp": "martini_v3.0.0_plasmalogens_PA_v2.itp",
     "m2": [],
+    "m2_mapping_known": true,
     "sn1": "CDCC",
     "sn2": "CCDCC"
    },
@@ -11246,6 +11639,7 @@
     "description": "A general model plasmalogen phosphatidylcholine (LC) lipid corresponding to atomistic C18:1(9c)/22:1(13c) 1-oleoyl-2-dierucoyl tails.",
     "itp": "martini_v3.0.0_plasmalogens_PC_v2.itp",
     "m2": [],
+    "m2_mapping_known": true,
     "sn1": "CDCC",
     "sn2": "CCDCC"
    },
@@ -11263,6 +11657,7 @@
     "description": "A general model plasmalogen phosphatidylethanolamine (LE) lipid corresponding to atomistic C18:1(9c)/22:1(13c) 1-oleoyl-2-dierucoyl tails.",
     "itp": "martini_v3.0.0_plasmalogens_PE_v2.itp",
     "m2": [],
+    "m2_mapping_known": true,
     "sn1": "CDCC",
     "sn2": "CCDCC"
    },
@@ -11280,6 +11675,7 @@
     "description": "A general model plasmalogen phosphatidylglycerol (LG) lipid corresponding to atomistic C18:1(9c)/22:1(13c) 1-oleoyl-2-dierucoyl tails.",
     "itp": "martini_v3.0.0_plasmalogens_PG_v2.itp",
     "m2": [],
+    "m2_mapping_known": true,
     "sn1": "CDCC",
     "sn2": "CCDCC"
    },
@@ -11297,6 +11693,7 @@
     "description": "A general model plasmalogen phosphatidylserine (LS) lipid corresponding to atomistic C18:1(9c)/22:1(13c) 1-oleoyl-2-dierucoyl tails.",
     "itp": "martini_v3.0.0_plasmalogens_PS_v2.itp",
     "m2": [],
+    "m2_mapping_known": true,
     "sn1": "CDCC",
     "sn2": "CCDCC"
    },
@@ -11314,6 +11711,7 @@
     "description": "A general model phosphatidic acid (PA) lipid corresponding to atomistic C18:1(9c)/22:1(13c) 1-oleoyl-2-dierucoyl tails.",
     "itp": "martini_v3.0.0_phospholipids_PA_v2.itp",
     "m2": [],
+    "m2_mapping_known": true,
     "sn1": "CDCC",
     "sn2": "CCDCC"
    },
@@ -11331,6 +11729,7 @@
     "description": "A general model phosphatidylcholine (PC) lipid corresponding to atomistic C18:1(9c)/22:1(13c) 1-oleoyl-2-dierucoyl tails.",
     "itp": "martini_v3.0.0_phospholipids_PC_v2.itp",
     "m2": [],
+    "m2_mapping_known": true,
     "sn1": "CDCC",
     "sn2": "CCDCC"
    },
@@ -11348,6 +11747,7 @@
     "description": "A general model phosphatidylethanolamine (PE) lipid corresponding to atomistic C18:1(9c)/22:1(13c) 1-oleoyl-2-dierucoyl tails.",
     "itp": "martini_v3.0.0_phospholipids_PE_v2.itp",
     "m2": [],
+    "m2_mapping_known": true,
     "sn1": "CDCC",
     "sn2": "CCDCC"
    },
@@ -11365,6 +11765,7 @@
     "description": "A general model phosphatidylglycerol (PG) lipid corresponding to atomistic C18:1(9c)/22:1(13c) 1-oleoyl-2-dierucoyl tails.",
     "itp": "martini_v3.0.0_phospholipids_PG_v2.itp",
     "m2": [],
+    "m2_mapping_known": true,
     "sn1": "CDCC",
     "sn2": "CCDCC"
    },
@@ -11382,6 +11783,7 @@
     "description": "A general model phosphatidylserine (PS) lipid corresponding to atomistic C18:1(9c)/22:1(13c) 1-oleoyl-2-dierucoyl tails.",
     "itp": "martini_v3.0.0_phospholipids_PS_v2.itp",
     "m2": [],
+    "m2_mapping_known": true,
     "sn1": "CDCC",
     "sn2": "CCDCC"
    },
@@ -11399,6 +11801,7 @@
     "description": "A general model ether lipid phosphatidic acid (EA) lipid corresponding to atomistic C18:1(9c)/18:2(9c;12c) 1-oleoyl-2-linoleoyl  tails.",
     "itp": "martini_v3.0.0_etherphospholipids_PA_v2.itp",
     "m2": [],
+    "m2_mapping_known": true,
     "sn1": "CDCC",
     "sn2": "CDDC"
    },
@@ -11416,6 +11819,7 @@
     "description": "A general model ether lipid phosphatidylcholine (EC) lipid corresponding to atomistic C18:1(9c)/18:2(9c;12c) 1-oleoyl-2-linoleoyl  tails.",
     "itp": "martini_v3.0.0_etherphospholipids_PC_v2.itp",
     "m2": [],
+    "m2_mapping_known": true,
     "sn1": "CDCC",
     "sn2": "CDDC"
    },
@@ -11433,6 +11837,7 @@
     "description": "A general model ether lipid phosphatidylethanolamine (EE) lipid corresponding to atomistic C18:1(9c)/18:2(9c;12c) 1-oleoyl-2-linoleoyl  tails.",
     "itp": "martini_v3.0.0_etherphospholipids_PE_v2.itp",
     "m2": [],
+    "m2_mapping_known": true,
     "sn1": "CDCC",
     "sn2": "CDDC"
    },
@@ -11450,6 +11855,7 @@
     "description": "A general model ether lipid phosphatidylglycerol (EG) lipid corresponding to atomistic C18:1(9c)/18:2(9c;12c) 1-oleoyl-2-linoleoyl  tails.",
     "itp": "martini_v3.0.0_etherphospholipids_PG_v2.itp",
     "m2": [],
+    "m2_mapping_known": true,
     "sn1": "CDCC",
     "sn2": "CDDC"
    },
@@ -11467,6 +11873,7 @@
     "description": "A general model ether lipid phosphatidylserine (ES) lipid corresponding to atomistic C18:1(9c)/18:2(9c;12c) 1-oleoyl-2-linoleoyl  tails.",
     "itp": "martini_v3.0.0_etherphospholipids_PS_v2.itp",
     "m2": [],
+    "m2_mapping_known": true,
     "sn1": "CDCC",
     "sn2": "CDDC"
    },
@@ -11484,6 +11891,7 @@
     "description": "A general model plasmalogen phosphatidic acid (LA) lipid corresponding to atomistic C18:1(9c)/18:2(9c;12c) 1-oleoyl-2-linoleoyl  tails.",
     "itp": "martini_v3.0.0_plasmalogens_PA_v2.itp",
     "m2": [],
+    "m2_mapping_known": true,
     "sn1": "CDCC",
     "sn2": "CDDC"
    },
@@ -11501,6 +11909,7 @@
     "description": "A general model plasmalogen phosphatidylcholine (LC) lipid corresponding to atomistic C18:1(9c)/18:2(9c;12c) 1-oleoyl-2-linoleoyl  tails.",
     "itp": "martini_v3.0.0_plasmalogens_PC_v2.itp",
     "m2": [],
+    "m2_mapping_known": true,
     "sn1": "CDCC",
     "sn2": "CDDC"
    },
@@ -11518,6 +11927,7 @@
     "description": "A general model plasmalogen phosphatidylethanolamine (LE) lipid corresponding to atomistic C18:1(9c)/18:2(9c;12c) 1-oleoyl-2-linoleoyl  tails.",
     "itp": "martini_v3.0.0_plasmalogens_PE_v2.itp",
     "m2": [],
+    "m2_mapping_known": true,
     "sn1": "CDCC",
     "sn2": "CDDC"
    },
@@ -11535,6 +11945,7 @@
     "description": "A general model plasmalogen phosphatidylglycerol (LG) lipid corresponding to atomistic C18:1(9c)/18:2(9c;12c) 1-oleoyl-2-linoleoyl  tails.",
     "itp": "martini_v3.0.0_plasmalogens_PG_v2.itp",
     "m2": [],
+    "m2_mapping_known": true,
     "sn1": "CDCC",
     "sn2": "CDDC"
    },
@@ -11552,6 +11963,7 @@
     "description": "A general model plasmalogen phosphatidylserine (LS) lipid corresponding to atomistic C18:1(9c)/18:2(9c;12c) 1-oleoyl-2-linoleoyl  tails.",
     "itp": "martini_v3.0.0_plasmalogens_PS_v2.itp",
     "m2": [],
+    "m2_mapping_known": true,
     "sn1": "CDCC",
     "sn2": "CDDC"
    },
@@ -11569,6 +11981,7 @@
     "description": "A general model phosphatidic acid (PA) lipid corresponding to atomistic C18:1(9c)/18:2(9c;12c) 1-oleoyl-2-linoleoyl  tails.",
     "itp": "martini_v3.0.0_phospholipids_PA_v2.itp",
     "m2": [],
+    "m2_mapping_known": true,
     "sn1": "CDCC",
     "sn2": "CDDC"
    },
@@ -11588,6 +12001,7 @@
     "m2": [
      "OIPC"
     ],
+    "m2_mapping_known": true,
     "sn1": "CDCC",
     "sn2": "CDDC"
    },
@@ -11607,6 +12021,7 @@
     "m2": [
      "OIPE"
     ],
+    "m2_mapping_known": true,
     "sn1": "CDCC",
     "sn2": "CDDC"
    },
@@ -11624,6 +12039,7 @@
     "description": "A general model phosphatidylglycerol (PG) lipid corresponding to atomistic C18:1(9c)/18:2(9c;12c) 1-oleoyl-2-linoleoyl  tails.",
     "itp": "martini_v3.0.0_phospholipids_PG_v2.itp",
     "m2": [],
+    "m2_mapping_known": true,
     "sn1": "CDCC",
     "sn2": "CDDC"
    },
@@ -11641,6 +12057,7 @@
     "description": "A general model phosphatidylserine (PS) lipid corresponding to atomistic C18:1(9c)/18:2(9c;12c) 1-oleoyl-2-linoleoyl  tails.",
     "itp": "martini_v3.0.0_phospholipids_PS_v2.itp",
     "m2": [],
+    "m2_mapping_known": true,
     "sn1": "CDCC",
     "sn2": "CDDC"
    },
@@ -11660,6 +12077,7 @@
     "m2": [
      "POSM"
     ],
+    "m2_mapping_known": true,
     "sn1": "tCCC",
     "sn2": "CDCC"
    },
@@ -11677,6 +12095,7 @@
     "description": null,
     "itp": "martini_v3.0.0_fattyacids_v2.itp",
     "m2": [],
+    "m2_mapping_known": false,
     "sn1": null,
     "sn2": null
    },
@@ -11694,6 +12113,7 @@
     "description": "A general model ether lipid phosphatidic acid (EA) lipid corresponding to atomistic C16:0/20:4(5c;8c;11c;14c) 1-palmitoyl-2-arachidonoyl tails.",
     "itp": "martini_v3.0.0_etherphospholipids_PA_v2.itp",
     "m2": [],
+    "m2_mapping_known": true,
     "sn1": "cCCC",
     "sn2": "cFFDC"
    },
@@ -11711,6 +12131,7 @@
     "description": "A general model ether lipid phosphatidylcholine (EC) lipid corresponding to atomistic C16:0/20:4(5c;8c;11c;14c) 1-palmitoyl-2-arachidonoyl tails.",
     "itp": "martini_v3.0.0_etherphospholipids_PC_v2.itp",
     "m2": [],
+    "m2_mapping_known": true,
     "sn1": "cCCC",
     "sn2": "cFFDC"
    },
@@ -11728,6 +12149,7 @@
     "description": "A general model ether lipid phosphatidylethanolamine (EE) lipid corresponding to atomistic C16:0/20:4(5c;8c;11c;14c) 1-palmitoyl-2-arachidonoyl tails.",
     "itp": "martini_v3.0.0_etherphospholipids_PE_v2.itp",
     "m2": [],
+    "m2_mapping_known": true,
     "sn1": "cCCC",
     "sn2": "cFFDC"
    },
@@ -11745,6 +12167,7 @@
     "description": "A general model ether lipid phosphatidylglycerol (EG) lipid corresponding to atomistic C16:0/20:4(5c;8c;11c;14c) 1-palmitoyl-2-arachidonoyl tails.",
     "itp": "martini_v3.0.0_etherphospholipids_PG_v2.itp",
     "m2": [],
+    "m2_mapping_known": true,
     "sn1": "cCCC",
     "sn2": "cFFDC"
    },
@@ -11762,6 +12185,7 @@
     "description": "A general model ether lipid phosphatidylserine (ES) lipid corresponding to atomistic C16:0/20:4(5c;8c;11c;14c) 1-palmitoyl-2-arachidonoyl tails.",
     "itp": "martini_v3.0.0_etherphospholipids_PS_v2.itp",
     "m2": [],
+    "m2_mapping_known": true,
     "sn1": "cCCC",
     "sn2": "cFFDC"
    },
@@ -11779,6 +12203,7 @@
     "description": "A general model plasmalogen phosphatidic acid (LA) lipid corresponding to atomistic C16:0/20:4(5c;8c;11c;14c) 1-palmitoyl-2-arachidonoyl tails.",
     "itp": "martini_v3.0.0_plasmalogens_PA_v2.itp",
     "m2": [],
+    "m2_mapping_known": true,
     "sn1": "cCCC",
     "sn2": "cFFDC"
    },
@@ -11796,6 +12221,7 @@
     "description": "A general model plasmalogen phosphatidylcholine (LC) lipid corresponding to atomistic C16:0/20:4(5c;8c;11c;14c) 1-palmitoyl-2-arachidonoyl tails.",
     "itp": "martini_v3.0.0_plasmalogens_PC_v2.itp",
     "m2": [],
+    "m2_mapping_known": true,
     "sn1": "cCCC",
     "sn2": "cFFDC"
    },
@@ -11813,6 +12239,7 @@
     "description": "A general model plasmalogen phosphatidylethanolamine (LE) lipid corresponding to atomistic C16:0/20:4(5c;8c;11c;14c) 1-palmitoyl-2-arachidonoyl tails.",
     "itp": "martini_v3.0.0_plasmalogens_PE_v2.itp",
     "m2": [],
+    "m2_mapping_known": true,
     "sn1": "cCCC",
     "sn2": "cFFDC"
    },
@@ -11830,6 +12257,7 @@
     "description": "A general model plasmalogen phosphatidylglycerol (LG) lipid corresponding to atomistic C16:0/20:4(5c;8c;11c;14c) 1-palmitoyl-2-arachidonoyl tails.",
     "itp": "martini_v3.0.0_plasmalogens_PG_v2.itp",
     "m2": [],
+    "m2_mapping_known": true,
     "sn1": "cCCC",
     "sn2": "cFFDC"
    },
@@ -11847,6 +12275,7 @@
     "description": "A general model plasmalogen phosphatidylserine (LS) lipid corresponding to atomistic C16:0/20:4(5c;8c;11c;14c) 1-palmitoyl-2-arachidonoyl tails.",
     "itp": "martini_v3.0.0_plasmalogens_PS_v2.itp",
     "m2": [],
+    "m2_mapping_known": true,
     "sn1": "cCCC",
     "sn2": "cFFDC"
    },
@@ -11866,6 +12295,7 @@
     "m2": [
      "PAPA"
     ],
+    "m2_mapping_known": true,
     "sn1": "cCCC",
     "sn2": "cFFDC"
    },
@@ -11885,6 +12315,7 @@
     "m2": [
      "PAPC"
     ],
+    "m2_mapping_known": true,
     "sn1": "cCCC",
     "sn2": "cFFDC"
    },
@@ -11904,6 +12335,7 @@
     "m2": [
      "PAPE"
     ],
+    "m2_mapping_known": true,
     "sn1": "cCCC",
     "sn2": "cFFDC"
    },
@@ -11923,6 +12355,7 @@
     "m2": [
      "PAPG"
     ],
+    "m2_mapping_known": true,
     "sn1": "cCCC",
     "sn2": "cFFDC"
    },
@@ -11942,6 +12375,7 @@
     "m2": [
      "PAPS"
     ],
+    "m2_mapping_known": true,
     "sn1": "cCCC",
     "sn2": "cFFDC"
    },
@@ -11961,6 +12395,7 @@
     "m2": [
      "DPCE"
     ],
+    "m2_mapping_known": true,
     "sn1": "tCCC",
     "sn2": "cCCC"
    },
@@ -11978,6 +12413,7 @@
     "description": "A general model ether lipid phosphatidic acid (EA) lipid corresponding to atomistic C16:0/22:6(4c;7c;10c;13c;16c;19c) 1-palmitoyl-2-docosahexaenoyl tails.",
     "itp": "martini_v3.0.0_etherphospholipids_PA_v2.itp",
     "m2": [],
+    "m2_mapping_known": true,
     "sn1": "cCCC",
     "sn2": "DFFDD"
    },
@@ -11995,6 +12431,7 @@
     "description": "A general model ether lipid phosphatidylcholine (EC) lipid corresponding to atomistic C16:0/22:6(4c;7c;10c;13c;16c;19c) 1-palmitoyl-2-docosahexaenoyl tails.",
     "itp": "martini_v3.0.0_etherphospholipids_PC_v2.itp",
     "m2": [],
+    "m2_mapping_known": true,
     "sn1": "cCCC",
     "sn2": "DFFDD"
    },
@@ -12012,6 +12449,7 @@
     "description": "A general model ether lipid phosphatidylethanolamine (EE) lipid corresponding to atomistic C16:0/22:6(4c;7c;10c;13c;16c;19c) 1-palmitoyl-2-docosahexaenoyl tails.",
     "itp": "martini_v3.0.0_etherphospholipids_PE_v2.itp",
     "m2": [],
+    "m2_mapping_known": true,
     "sn1": "cCCC",
     "sn2": "DFFDD"
    },
@@ -12029,6 +12467,7 @@
     "description": "A general model ether lipid phosphatidylglycerol (EG) lipid corresponding to atomistic C16:0/22:6(4c;7c;10c;13c;16c;19c) 1-palmitoyl-2-docosahexaenoyl tails.",
     "itp": "martini_v3.0.0_etherphospholipids_PG_v2.itp",
     "m2": [],
+    "m2_mapping_known": true,
     "sn1": "cCCC",
     "sn2": "DFFDD"
    },
@@ -12046,6 +12485,7 @@
     "description": "A general model ether lipid phosphatidylserine (ES) lipid corresponding to atomistic C16:0/22:6(4c;7c;10c;13c;16c;19c) 1-palmitoyl-2-docosahexaenoyl tails.",
     "itp": "martini_v3.0.0_etherphospholipids_PS_v2.itp",
     "m2": [],
+    "m2_mapping_known": true,
     "sn1": "cCCC",
     "sn2": "DFFDD"
    },
@@ -12063,6 +12503,7 @@
     "description": "A general model plasmalogen phosphatidic acid (LA) lipid corresponding to atomistic C16:0/22:6(4c;7c;10c;13c;16c;19c) 1-palmitoyl-2-docosahexaenoyl tails.",
     "itp": "martini_v3.0.0_plasmalogens_PA_v2.itp",
     "m2": [],
+    "m2_mapping_known": true,
     "sn1": "cCCC",
     "sn2": "DFFDD"
    },
@@ -12080,6 +12521,7 @@
     "description": "A general model plasmalogen phosphatidylcholine (LC) lipid corresponding to atomistic C16:0/22:6(4c;7c;10c;13c;16c;19c) 1-palmitoyl-2-docosahexaenoyl tails.",
     "itp": "martini_v3.0.0_plasmalogens_PC_v2.itp",
     "m2": [],
+    "m2_mapping_known": true,
     "sn1": "cCCC",
     "sn2": "DFFDD"
    },
@@ -12097,6 +12539,7 @@
     "description": "A general model plasmalogen phosphatidylethanolamine (LE) lipid corresponding to atomistic C16:0/22:6(4c;7c;10c;13c;16c;19c) 1-palmitoyl-2-docosahexaenoyl tails.",
     "itp": "martini_v3.0.0_plasmalogens_PE_v2.itp",
     "m2": [],
+    "m2_mapping_known": true,
     "sn1": "cCCC",
     "sn2": "DFFDD"
    },
@@ -12114,6 +12557,7 @@
     "description": "A general model plasmalogen phosphatidylglycerol (LG) lipid corresponding to atomistic C16:0/22:6(4c;7c;10c;13c;16c;19c) 1-palmitoyl-2-docosahexaenoyl tails.",
     "itp": "martini_v3.0.0_plasmalogens_PG_v2.itp",
     "m2": [],
+    "m2_mapping_known": true,
     "sn1": "cCCC",
     "sn2": "DFFDD"
    },
@@ -12131,6 +12575,7 @@
     "description": "A general model plasmalogen phosphatidylserine (LS) lipid corresponding to atomistic C16:0/22:6(4c;7c;10c;13c;16c;19c) 1-palmitoyl-2-docosahexaenoyl tails.",
     "itp": "martini_v3.0.0_plasmalogens_PS_v2.itp",
     "m2": [],
+    "m2_mapping_known": true,
     "sn1": "cCCC",
     "sn2": "DFFDD"
    },
@@ -12150,6 +12595,7 @@
     "m2": [
      "PUPA"
     ],
+    "m2_mapping_known": true,
     "sn1": "cCCC",
     "sn2": "DFFDD"
    },
@@ -12169,6 +12615,7 @@
     "m2": [
      "PUPC"
     ],
+    "m2_mapping_known": true,
     "sn1": "cCCC",
     "sn2": "DFFDD"
    },
@@ -12188,6 +12635,7 @@
     "m2": [
      "PUPE"
     ],
+    "m2_mapping_known": true,
     "sn1": "cCCC",
     "sn2": "DFFDD"
    },
@@ -12205,6 +12653,7 @@
     "description": "A general model phosphatidylglycerol (PG) lipid corresponding to atomistic C16:0/22:6(4c;7c;10c;13c;16c;19c) 1-palmitoyl-2-docosahexaenoyl tails.",
     "itp": "martini_v3.0.0_phospholipids_PG_v2.itp",
     "m2": [],
+    "m2_mapping_known": true,
     "sn1": "cCCC",
     "sn2": "DFFDD"
    },
@@ -12224,6 +12673,7 @@
     "m2": [
      "PUPS"
     ],
+    "m2_mapping_known": true,
     "sn1": "cCCC",
     "sn2": "DFFDD"
    },
@@ -12241,6 +12691,7 @@
     "description": "A general model ether lipid phosphatidic acid (EA) lipid corresponding to atomistic C16:0/22:1 1-palmitoyl-2-erucoyl tails.",
     "itp": "martini_v3.0.0_etherphospholipids_PA_v2.itp",
     "m2": [],
+    "m2_mapping_known": true,
     "sn1": "cCCC",
     "sn2": "CCDCC"
    },
@@ -12258,6 +12709,7 @@
     "description": "A general model ether lipid phosphatidylcholine (EC) lipid corresponding to atomistic C16:0/22:1 1-palmitoyl-2-erucoyl tails.",
     "itp": "martini_v3.0.0_etherphospholipids_PC_v2.itp",
     "m2": [],
+    "m2_mapping_known": true,
     "sn1": "cCCC",
     "sn2": "CCDCC"
    },
@@ -12275,6 +12727,7 @@
     "description": "A general model ether lipid phosphatidylethanolamine (EE) lipid corresponding to atomistic C16:0/22:1 1-palmitoyl-2-erucoyl tails.",
     "itp": "martini_v3.0.0_etherphospholipids_PE_v2.itp",
     "m2": [],
+    "m2_mapping_known": true,
     "sn1": "cCCC",
     "sn2": "CCDCC"
    },
@@ -12292,6 +12745,7 @@
     "description": "A general model ether lipid phosphatidylglycerol (EG) lipid corresponding to atomistic C16:0/22:1 1-palmitoyl-2-erucoyl tails.",
     "itp": "martini_v3.0.0_etherphospholipids_PG_v2.itp",
     "m2": [],
+    "m2_mapping_known": true,
     "sn1": "cCCC",
     "sn2": "CCDCC"
    },
@@ -12309,6 +12763,7 @@
     "description": "A general model ether lipid phosphatidylserine (ES) lipid corresponding to atomistic C16:0/22:1 1-palmitoyl-2-erucoyl tails.",
     "itp": "martini_v3.0.0_etherphospholipids_PS_v2.itp",
     "m2": [],
+    "m2_mapping_known": true,
     "sn1": "cCCC",
     "sn2": "CCDCC"
    },
@@ -12326,6 +12781,7 @@
     "description": "A general model plasmalogen phosphatidic acid (LA) lipid corresponding to atomistic C16:0/22:1 1-palmitoyl-2-erucoyl tails.",
     "itp": "martini_v3.0.0_plasmalogens_PA_v2.itp",
     "m2": [],
+    "m2_mapping_known": true,
     "sn1": "cCCC",
     "sn2": "CCDCC"
    },
@@ -12343,6 +12799,7 @@
     "description": "A general model plasmalogen phosphatidylcholine (LC) lipid corresponding to atomistic C16:0/22:1 1-palmitoyl-2-erucoyl tails.",
     "itp": "martini_v3.0.0_plasmalogens_PC_v2.itp",
     "m2": [],
+    "m2_mapping_known": true,
     "sn1": "cCCC",
     "sn2": "CCDCC"
    },
@@ -12360,6 +12817,7 @@
     "description": "A general model plasmalogen phosphatidylethanolamine (LE) lipid corresponding to atomistic C16:0/22:1 1-palmitoyl-2-erucoyl tails.",
     "itp": "martini_v3.0.0_plasmalogens_PE_v2.itp",
     "m2": [],
+    "m2_mapping_known": true,
     "sn1": "cCCC",
     "sn2": "CCDCC"
    },
@@ -12377,6 +12835,7 @@
     "description": "A general model plasmalogen phosphatidylglycerol (LG) lipid corresponding to atomistic C16:0/22:1 1-palmitoyl-2-erucoyl tails.",
     "itp": "martini_v3.0.0_plasmalogens_PG_v2.itp",
     "m2": [],
+    "m2_mapping_known": true,
     "sn1": "cCCC",
     "sn2": "CCDCC"
    },
@@ -12394,6 +12853,7 @@
     "description": "A general model plasmalogen phosphatidylserine (LS) lipid corresponding to atomistic C16:0/22:1 1-palmitoyl-2-erucoyl tails.",
     "itp": "martini_v3.0.0_plasmalogens_PS_v2.itp",
     "m2": [],
+    "m2_mapping_known": true,
     "sn1": "cCCC",
     "sn2": "CCDCC"
    },
@@ -12413,6 +12873,7 @@
     "m2": [
      "PGPA"
     ],
+    "m2_mapping_known": true,
     "sn1": "cCCC",
     "sn2": "CCDCC"
    },
@@ -12432,6 +12893,7 @@
     "m2": [
      "PGPC"
     ],
+    "m2_mapping_known": true,
     "sn1": "cCCC",
     "sn2": "CCDCC"
    },
@@ -12451,6 +12913,7 @@
     "m2": [
      "PGPE"
     ],
+    "m2_mapping_known": true,
     "sn1": "cCCC",
     "sn2": "CCDCC"
    },
@@ -12470,6 +12933,7 @@
     "m2": [
      "PGPG"
     ],
+    "m2_mapping_known": true,
     "sn1": "cCCC",
     "sn2": "CCDCC"
    },
@@ -12489,6 +12953,7 @@
     "m2": [
      "PGPS"
     ],
+    "m2_mapping_known": true,
     "sn1": "cCCC",
     "sn2": "CCDCC"
    },
@@ -12506,6 +12971,7 @@
     "description": "A general model ether lipid phosphatidic acid (EA) lipid corresponding to atomistic C16:0/18:3(9c;12c;15c) 1-palmitoyl-2-alpha-linolenic acid tails.",
     "itp": "martini_v3.0.0_etherphospholipids_PA_v2.itp",
     "m2": [],
+    "m2_mapping_known": true,
     "sn1": "cCCC",
     "sn2": "CDDD"
    },
@@ -12523,6 +12989,7 @@
     "description": "A general model ether lipid phosphatidylcholine (EC) lipid corresponding to atomistic C16:0/18:3(9c;12c;15c) 1-palmitoyl-2-alpha-linolenic acid tails.",
     "itp": "martini_v3.0.0_etherphospholipids_PC_v2.itp",
     "m2": [],
+    "m2_mapping_known": true,
     "sn1": "cCCC",
     "sn2": "CDDD"
    },
@@ -12540,6 +13007,7 @@
     "description": "A general model ether lipid phosphatidylethanolamine (EE) lipid corresponding to atomistic C16:0/18:3(9c;12c;15c) 1-palmitoyl-2-alpha-linolenic acid tails.",
     "itp": "martini_v3.0.0_etherphospholipids_PE_v2.itp",
     "m2": [],
+    "m2_mapping_known": true,
     "sn1": "cCCC",
     "sn2": "CDDD"
    },
@@ -12557,6 +13025,7 @@
     "description": "A general model ether lipid phosphatidylglycerol (EG) lipid corresponding to atomistic C16:0/18:3(9c;12c;15c) 1-palmitoyl-2-alpha-linolenic acid tails.",
     "itp": "martini_v3.0.0_etherphospholipids_PG_v2.itp",
     "m2": [],
+    "m2_mapping_known": true,
     "sn1": "cCCC",
     "sn2": "CDDD"
    },
@@ -12574,6 +13043,7 @@
     "description": "A general model ether lipid phosphatidylserine (ES) lipid corresponding to atomistic C16:0/18:3(9c;12c;15c) 1-palmitoyl-2-alpha-linolenic acid tails.",
     "itp": "martini_v3.0.0_etherphospholipids_PS_v2.itp",
     "m2": [],
+    "m2_mapping_known": true,
     "sn1": "cCCC",
     "sn2": "CDDD"
    },
@@ -12591,6 +13061,7 @@
     "description": "A general model plasmalogen phosphatidic acid (LA) lipid corresponding to atomistic C16:0/18:3(9c;12c;15c) 1-palmitoyl-2-alpha-linolenic acid tails.",
     "itp": "martini_v3.0.0_plasmalogens_PA_v2.itp",
     "m2": [],
+    "m2_mapping_known": true,
     "sn1": "cCCC",
     "sn2": "CDDD"
    },
@@ -12608,6 +13079,7 @@
     "description": "A general model plasmalogen phosphatidylcholine (LC) lipid corresponding to atomistic C16:0/18:3(9c;12c;15c) 1-palmitoyl-2-alpha-linolenic acid tails.",
     "itp": "martini_v3.0.0_plasmalogens_PC_v2.itp",
     "m2": [],
+    "m2_mapping_known": true,
     "sn1": "cCCC",
     "sn2": "CDDD"
    },
@@ -12625,6 +13097,7 @@
     "description": "A general model plasmalogen phosphatidylethanolamine (LE) lipid corresponding to atomistic C16:0/18:3(9c;12c;15c) 1-palmitoyl-2-alpha-linolenic acid tails.",
     "itp": "martini_v3.0.0_plasmalogens_PE_v2.itp",
     "m2": [],
+    "m2_mapping_known": true,
     "sn1": "cCCC",
     "sn2": "CDDD"
    },
@@ -12642,6 +13115,7 @@
     "description": "A general model plasmalogen phosphatidylglycerol (LG) lipid corresponding to atomistic C16:0/18:3(9c;12c;15c) 1-palmitoyl-2-alpha-linolenic acid tails.",
     "itp": "martini_v3.0.0_plasmalogens_PG_v2.itp",
     "m2": [],
+    "m2_mapping_known": true,
     "sn1": "cCCC",
     "sn2": "CDDD"
    },
@@ -12659,6 +13133,7 @@
     "description": "A general model plasmalogen phosphatidylserine (LS) lipid corresponding to atomistic C16:0/18:3(9c;12c;15c) 1-palmitoyl-2-alpha-linolenic acid tails.",
     "itp": "martini_v3.0.0_plasmalogens_PS_v2.itp",
     "m2": [],
+    "m2_mapping_known": true,
     "sn1": "cCCC",
     "sn2": "CDDD"
    },
@@ -12676,6 +13151,7 @@
     "description": "A general model phosphatidic acid (PA) lipid corresponding to atomistic C16:0/18:3(9c;12c;15c) 1-palmitoyl-2-alpha-linolenic acid tails.",
     "itp": "martini_v3.0.0_phospholipids_PA_v2.itp",
     "m2": [],
+    "m2_mapping_known": true,
     "sn1": "cCCC",
     "sn2": "CDDD"
    },
@@ -12695,6 +13171,7 @@
     "m2": [
      "PFPC"
     ],
+    "m2_mapping_known": true,
     "sn1": "cCCC",
     "sn2": "CDDD"
    },
@@ -12712,6 +13189,7 @@
     "description": "A general model phosphatidylethanolamine (PE) lipid corresponding to atomistic C16:0/18:3(9c;12c;15c) 1-palmitoyl-2-alpha-linolenic acid tails.",
     "itp": "martini_v3.0.0_phospholipids_PE_v2.itp",
     "m2": [],
+    "m2_mapping_known": true,
     "sn1": "cCCC",
     "sn2": "CDDD"
    },
@@ -12729,6 +13207,7 @@
     "description": "A general model phosphatidylglycerol (PG) lipid corresponding to atomistic C16:0/18:3(9c;12c;15c) 1-palmitoyl-2-alpha-linolenic acid tails.",
     "itp": "martini_v3.0.0_phospholipids_PG_v2.itp",
     "m2": [],
+    "m2_mapping_known": true,
     "sn1": "cCCC",
     "sn2": "CDDD"
    },
@@ -12746,6 +13225,7 @@
     "description": "A general model phosphatidylserine (PS) lipid corresponding to atomistic C16:0/18:3(9c;12c;15c) 1-palmitoyl-2-alpha-linolenic acid tails.",
     "itp": "martini_v3.0.0_phospholipids_PS_v2.itp",
     "m2": [],
+    "m2_mapping_known": true,
     "sn1": "cCCC",
     "sn2": "CDDD"
    },
@@ -12763,6 +13243,7 @@
     "description": "A general model ether lipid phosphatidic acid (EA) lipid corresponding to atomistic C16:0/20:2(11c;14c) 1-palmitoyl-2-eicosadienoyl tails.",
     "itp": "martini_v3.0.0_etherphospholipids_PA_v2.itp",
     "m2": [],
+    "m2_mapping_known": true,
     "sn1": "cCCC",
     "sn2": "cCDDC"
    },
@@ -12780,6 +13261,7 @@
     "description": "A general model ether lipid phosphatidylcholine (EC) lipid corresponding to atomistic C16:0/20:2(11c;14c) 1-palmitoyl-2-eicosadienoyl tails.",
     "itp": "martini_v3.0.0_etherphospholipids_PC_v2.itp",
     "m2": [],
+    "m2_mapping_known": true,
     "sn1": "cCCC",
     "sn2": "cCDDC"
    },
@@ -12797,6 +13279,7 @@
     "description": "A general model ether lipid phosphatidylethanolamine (EE) lipid corresponding to atomistic C16:0/20:2(11c;14c) 1-palmitoyl-2-eicosadienoyl tails.",
     "itp": "martini_v3.0.0_etherphospholipids_PE_v2.itp",
     "m2": [],
+    "m2_mapping_known": true,
     "sn1": "cCCC",
     "sn2": "cCDDC"
    },
@@ -12814,6 +13297,7 @@
     "description": "A general model ether lipid phosphatidylglycerol (EG) lipid corresponding to atomistic C16:0/20:2(11c;14c) 1-palmitoyl-2-eicosadienoyl tails.",
     "itp": "martini_v3.0.0_etherphospholipids_PG_v2.itp",
     "m2": [],
+    "m2_mapping_known": true,
     "sn1": "cCCC",
     "sn2": "cCDDC"
    },
@@ -12831,6 +13315,7 @@
     "description": "A general model ether lipid phosphatidylserine (ES) lipid corresponding to atomistic C16:0/20:2(11c;14c) 1-palmitoyl-2-eicosadienoyl tails.",
     "itp": "martini_v3.0.0_etherphospholipids_PS_v2.itp",
     "m2": [],
+    "m2_mapping_known": true,
     "sn1": "cCCC",
     "sn2": "cCDDC"
    },
@@ -12848,6 +13333,7 @@
     "description": "A general model plasmalogen phosphatidic acid (LA) lipid corresponding to atomistic C16:0/20:2(11c;14c) 1-palmitoyl-2-eicosadienoyl tails.",
     "itp": "martini_v3.0.0_plasmalogens_PA_v2.itp",
     "m2": [],
+    "m2_mapping_known": true,
     "sn1": "cCCC",
     "sn2": "cCDDC"
    },
@@ -12865,6 +13351,7 @@
     "description": "A general model plasmalogen phosphatidylcholine (LC) lipid corresponding to atomistic C16:0/20:2(11c;14c) 1-palmitoyl-2-eicosadienoyl tails.",
     "itp": "martini_v3.0.0_plasmalogens_PC_v2.itp",
     "m2": [],
+    "m2_mapping_known": true,
     "sn1": "cCCC",
     "sn2": "cCDDC"
    },
@@ -12882,6 +13369,7 @@
     "description": "A general model plasmalogen phosphatidylethanolamine (LE) lipid corresponding to atomistic C16:0/20:2(11c;14c) 1-palmitoyl-2-eicosadienoyl tails.",
     "itp": "martini_v3.0.0_plasmalogens_PE_v2.itp",
     "m2": [],
+    "m2_mapping_known": true,
     "sn1": "cCCC",
     "sn2": "cCDDC"
    },
@@ -12899,6 +13387,7 @@
     "description": "A general model plasmalogen phosphatidylglycerol (LG) lipid corresponding to atomistic C16:0/20:2(11c;14c) 1-palmitoyl-2-eicosadienoyl tails.",
     "itp": "martini_v3.0.0_plasmalogens_PG_v2.itp",
     "m2": [],
+    "m2_mapping_known": true,
     "sn1": "cCCC",
     "sn2": "cCDDC"
    },
@@ -12916,6 +13405,7 @@
     "description": "A general model plasmalogen phosphatidylserine (LS) lipid corresponding to atomistic C16:0/20:2(11c;14c) 1-palmitoyl-2-eicosadienoyl tails.",
     "itp": "martini_v3.0.0_plasmalogens_PS_v2.itp",
     "m2": [],
+    "m2_mapping_known": true,
     "sn1": "cCCC",
     "sn2": "cCDDC"
    },
@@ -12933,6 +13423,7 @@
     "description": "A general model phosphatidic acid (PA) lipid corresponding to atomistic C16:0/20:2(11c;14c) 1-palmitoyl-2-eicosadienoyl tails.",
     "itp": "martini_v3.0.0_phospholipids_PA_v2.itp",
     "m2": [],
+    "m2_mapping_known": true,
     "sn1": "cCCC",
     "sn2": "cCDDC"
    },
@@ -12952,6 +13443,7 @@
     "m2": [
      "PEPC"
     ],
+    "m2_mapping_known": true,
     "sn1": "cCCC",
     "sn2": "cCDDC"
    },
@@ -12969,6 +13461,7 @@
     "description": "A general model phosphatidylethanolamine (PE) lipid corresponding to atomistic C16:0/20:2(11c;14c) 1-palmitoyl-2-eicosadienoyl tails.",
     "itp": "martini_v3.0.0_phospholipids_PE_v2.itp",
     "m2": [],
+    "m2_mapping_known": true,
     "sn1": "cCCC",
     "sn2": "cCDDC"
    },
@@ -12986,6 +13479,7 @@
     "description": "A general model phosphatidylglycerol (PG) lipid corresponding to atomistic C16:0/20:2(11c;14c) 1-palmitoyl-2-eicosadienoyl tails.",
     "itp": "martini_v3.0.0_phospholipids_PG_v2.itp",
     "m2": [],
+    "m2_mapping_known": true,
     "sn1": "cCCC",
     "sn2": "cCDDC"
    },
@@ -13003,6 +13497,7 @@
     "description": "A general model phosphatidylserine (PS) lipid corresponding to atomistic C16:0/20:2(11c;14c) 1-palmitoyl-2-eicosadienoyl tails.",
     "itp": "martini_v3.0.0_phospholipids_PS_v2.itp",
     "m2": [],
+    "m2_mapping_known": true,
     "sn1": "cCCC",
     "sn2": "cCDDC"
    },
@@ -13020,6 +13515,7 @@
     "description": "A general model ether lipid phosphatidic acid (EA) lipid corresponding to atomistic C16:0/18:2(9c;12c) 1-palmitoyl-2-linoleoyl tails.",
     "itp": "martini_v3.0.0_etherphospholipids_PA_v2.itp",
     "m2": [],
+    "m2_mapping_known": true,
     "sn1": "cCCC",
     "sn2": "CDDC"
    },
@@ -13037,6 +13533,7 @@
     "description": "A general model ether lipid phosphatidylcholine (EC) lipid corresponding to atomistic C16:0/18:2(9c;12c) 1-palmitoyl-2-linoleoyl tails.",
     "itp": "martini_v3.0.0_etherphospholipids_PC_v2.itp",
     "m2": [],
+    "m2_mapping_known": true,
     "sn1": "cCCC",
     "sn2": "CDDC"
    },
@@ -13054,6 +13551,7 @@
     "description": "A general model ether lipid phosphatidylethanolamine (EE) lipid corresponding to atomistic C16:0/18:2(9c;12c) 1-palmitoyl-2-linoleoyl tails.",
     "itp": "martini_v3.0.0_etherphospholipids_PE_v2.itp",
     "m2": [],
+    "m2_mapping_known": true,
     "sn1": "cCCC",
     "sn2": "CDDC"
    },
@@ -13071,6 +13569,7 @@
     "description": "A general model ether lipid phosphatidylglycerol (EG) lipid corresponding to atomistic C16:0/18:2(9c;12c) 1-palmitoyl-2-linoleoyl tails.",
     "itp": "martini_v3.0.0_etherphospholipids_PG_v2.itp",
     "m2": [],
+    "m2_mapping_known": true,
     "sn1": "cCCC",
     "sn2": "CDDC"
    },
@@ -13088,6 +13587,7 @@
     "description": "A general model ether lipid phosphatidylserine (ES) lipid corresponding to atomistic C16:0/18:2(9c;12c) 1-palmitoyl-2-linoleoyl tails.",
     "itp": "martini_v3.0.0_etherphospholipids_PS_v2.itp",
     "m2": [],
+    "m2_mapping_known": true,
     "sn1": "cCCC",
     "sn2": "CDDC"
    },
@@ -13105,6 +13605,7 @@
     "description": "A general model plasmalogen phosphatidic acid (LA) lipid corresponding to atomistic C16:0/18:2(9c;12c) 1-palmitoyl-2-linoleoyl tails.",
     "itp": "martini_v3.0.0_plasmalogens_PA_v2.itp",
     "m2": [],
+    "m2_mapping_known": true,
     "sn1": "cCCC",
     "sn2": "CDDC"
    },
@@ -13122,6 +13623,7 @@
     "description": "A general model plasmalogen phosphatidylcholine (LC) lipid corresponding to atomistic C16:0/18:2(9c;12c) 1-palmitoyl-2-linoleoyl tails.",
     "itp": "martini_v3.0.0_plasmalogens_PC_v2.itp",
     "m2": [],
+    "m2_mapping_known": true,
     "sn1": "cCCC",
     "sn2": "CDDC"
    },
@@ -13139,6 +13641,7 @@
     "description": "A general model plasmalogen phosphatidylethanolamine (LE) lipid corresponding to atomistic C16:0/18:2(9c;12c) 1-palmitoyl-2-linoleoyl tails.",
     "itp": "martini_v3.0.0_plasmalogens_PE_v2.itp",
     "m2": [],
+    "m2_mapping_known": true,
     "sn1": "cCCC",
     "sn2": "CDDC"
    },
@@ -13156,6 +13659,7 @@
     "description": "A general model plasmalogen phosphatidylglycerol (LG) lipid corresponding to atomistic C16:0/18:2(9c;12c) 1-palmitoyl-2-linoleoyl tails.",
     "itp": "martini_v3.0.0_plasmalogens_PG_v2.itp",
     "m2": [],
+    "m2_mapping_known": true,
     "sn1": "cCCC",
     "sn2": "CDDC"
    },
@@ -13173,6 +13677,7 @@
     "description": "A general model plasmalogen phosphatidylserine (LS) lipid corresponding to atomistic C16:0/18:2(9c;12c) 1-palmitoyl-2-linoleoyl tails.",
     "itp": "martini_v3.0.0_plasmalogens_PS_v2.itp",
     "m2": [],
+    "m2_mapping_known": true,
     "sn1": "cCCC",
     "sn2": "CDDC"
    },
@@ -13192,6 +13697,7 @@
     "m2": [
      "PIPA"
     ],
+    "m2_mapping_known": true,
     "sn1": "cCCC",
     "sn2": "CDDC"
    },
@@ -13211,6 +13717,7 @@
     "m2": [
      "PIPC"
     ],
+    "m2_mapping_known": true,
     "sn1": "cCCC",
     "sn2": "CDDC"
    },
@@ -13230,6 +13737,7 @@
     "m2": [
      "PIPE"
     ],
+    "m2_mapping_known": true,
     "sn1": "cCCC",
     "sn2": "CDDC"
    },
@@ -13249,6 +13757,7 @@
     "m2": [
      "PIPG"
     ],
+    "m2_mapping_known": true,
     "sn1": "cCCC",
     "sn2": "CDDC"
    },
@@ -13268,6 +13777,7 @@
     "m2": [
      "PIPI"
     ],
+    "m2_mapping_known": true,
     "sn1": "cCCC",
     "sn2": "CDDC"
    },
@@ -13287,6 +13797,7 @@
     "m2": [
      "PIPS"
     ],
+    "m2_mapping_known": true,
     "sn1": "cCCC",
     "sn2": "CDDC"
    },
@@ -13304,6 +13815,7 @@
     "description": "A general model phosphatidylcholine (PC) lipid corresponding to atomistic C16:0/14:0 1-palmitoyl-2-myristoyl tails.",
     "itp": "martini_v3.0.0_phospholipids_PC_v2.itp",
     "m2": [],
+    "m2_mapping_known": false,
     "sn1": null,
     "sn2": null
    },
@@ -13321,6 +13833,7 @@
     "description": "A general model ether lipid phosphatidic acid (EA) lipid corresponding to atomistic C16:0/18:1(9c) 1-palmitoyl-2-oleoyl (POEA) tails.",
     "itp": "martini_v3.0.0_etherphospholipids_PA_v2.itp",
     "m2": [],
+    "m2_mapping_known": true,
     "sn1": "cCCC",
     "sn2": "CDCC"
    },
@@ -13338,6 +13851,7 @@
     "description": "A general model ether lipid phosphatidylcholine (EC) lipid corresponding to atomistic C16:0/18:1(9c) 1-palmitoyl-2-oleoyl (POEC) tails.",
     "itp": "martini_v3.0.0_etherphospholipids_PC_v2.itp",
     "m2": [],
+    "m2_mapping_known": true,
     "sn1": "cCCC",
     "sn2": "CDCC"
    },
@@ -13355,6 +13869,7 @@
     "description": "A general model ether lipid phosphatidylethanolamine (EE) lipid corresponding to atomistic C16:0/18:1(9c) 1-palmitoyl-2-oleoyl (POEE) tails.",
     "itp": "martini_v3.0.0_etherphospholipids_PE_v2.itp",
     "m2": [],
+    "m2_mapping_known": true,
     "sn1": "cCCC",
     "sn2": "CDCC"
    },
@@ -13372,6 +13887,7 @@
     "description": "A general model ether lipid phosphatidylglycerol (EG) lipid corresponding to atomistic C16:0/18:1(9c) 1-palmitoyl-2-oleoyl (POEG) tails.",
     "itp": "martini_v3.0.0_etherphospholipids_PG_v2.itp",
     "m2": [],
+    "m2_mapping_known": true,
     "sn1": "cCCC",
     "sn2": "CDCC"
    },
@@ -13389,6 +13905,7 @@
     "description": "A general model ether lipid phosphatidylserine (ES) lipid corresponding to atomistic C16:0/18:1(9c) 1-palmitoyl-2-oleoyl (POES) tails.",
     "itp": "martini_v3.0.0_etherphospholipids_PS_v2.itp",
     "m2": [],
+    "m2_mapping_known": true,
     "sn1": "cCCC",
     "sn2": "CDCC"
    },
@@ -13406,6 +13923,7 @@
     "description": "A general model plasmalogen phosphatidic acid (LA) lipid corresponding to atomistic C16:0/18:1(9c) 1-palmitoyl-2-oleoyl (POLA) tails.",
     "itp": "martini_v3.0.0_plasmalogens_PA_v2.itp",
     "m2": [],
+    "m2_mapping_known": true,
     "sn1": "cCCC",
     "sn2": "CDCC"
    },
@@ -13423,6 +13941,7 @@
     "description": "A general model plasmalogen phosphatidylcholine (LC) lipid corresponding to atomistic C16:0/18:1(9c) 1-palmitoyl-2-oleoyl (POLC) tails.",
     "itp": "martini_v3.0.0_plasmalogens_PC_v2.itp",
     "m2": [],
+    "m2_mapping_known": true,
     "sn1": "cCCC",
     "sn2": "CDCC"
    },
@@ -13440,6 +13959,7 @@
     "description": "A general model plasmalogen phosphatidylethanolamine (LE) lipid corresponding to atomistic C16:0/18:1(9c) 1-palmitoyl-2-oleoyl (POLE) tails.",
     "itp": "martini_v3.0.0_plasmalogens_PE_v2.itp",
     "m2": [],
+    "m2_mapping_known": true,
     "sn1": "cCCC",
     "sn2": "CDCC"
    },
@@ -13457,6 +13977,7 @@
     "description": "A general model plasmalogen phosphatidylglycerol (LG) lipid corresponding to atomistic C16:0/18:1(9c) 1-palmitoyl-2-oleoyl (POLG) tails.",
     "itp": "martini_v3.0.0_plasmalogens_PG_v2.itp",
     "m2": [],
+    "m2_mapping_known": true,
     "sn1": "cCCC",
     "sn2": "CDCC"
    },
@@ -13474,6 +13995,7 @@
     "description": "A general model plasmalogen phosphatidylserine (LS) lipid corresponding to atomistic C16:0/18:1(9c) 1-palmitoyl-2-oleoyl (POLS) tails.",
     "itp": "martini_v3.0.0_plasmalogens_PS_v2.itp",
     "m2": [],
+    "m2_mapping_known": true,
     "sn1": "cCCC",
     "sn2": "CDCC"
    },
@@ -13491,6 +14013,7 @@
     "description": "A general model phosphatidylinositol phosphate (PIP1(3)) lipid corresponding to atomistic C16:0/18:1 1-palmitoyl-2-oleoyl (PO-PIP1(3)) tails.",
     "itp": "martini_v3.0.0_phospholipids_PI_v2.itp",
     "m2": [],
+    "m2_mapping_known": true,
     "note": "PI(3)P. Martini 2 has a single generic PIP (POP1) without ring position.",
     "sn1": "cCCC",
     "sn2": "CDCC"
@@ -13509,6 +14032,7 @@
     "description": "A general model phosphatidylinositol bisphosphat (PIP2(3,4)) lipid corresponding to atomistic C16:0/18:1 1-palmitoyl-2-oleoyl (PO-PIP2(3,4)) tails.",
     "itp": "martini_v3.0.0_phospholipids_PI_v2.itp",
     "m2": [],
+    "m2_mapping_known": true,
     "note": "PI(3,4)P2 - NOT the common PI(4,5)P2, which is POP6 in the lipidome.",
     "sn1": "cCCC",
     "sn2": "CDCC"
@@ -13529,6 +14053,7 @@
     "m2": [
      "POP3"
     ],
+    "m2_mapping_known": true,
     "note": "PI(3,4,5)P3.",
     "sn1": "cCCC",
     "sn2": "CDCC"
@@ -13549,6 +14074,7 @@
     "m2": [
      "POP1"
     ],
+    "m2_mapping_known": true,
     "note": "PI(4)P. Closest M2: generic PIP POP1 (ring position not encoded in M2).",
     "sn1": "cCCC",
     "sn2": "CDCC"
@@ -13567,6 +14093,7 @@
     "description": "A general model phosphatidylinositol phosphate (PIP1(5)) lipid corresponding to atomistic C16:0/18:1 1-palmitoyl-2-oleoyl (PO-PIP1(5)) tails.",
     "itp": "martini_v3.0.0_phospholipids_PI_v2.itp",
     "m2": [],
+    "m2_mapping_known": true,
     "note": "PI(5)P. Martini 2 has a single generic PIP (POP1) without ring position.",
     "sn1": "cCCC",
     "sn2": "CDCC"
@@ -13587,6 +14114,7 @@
     "m2": [
      "POP2"
     ],
+    "m2_mapping_known": true,
     "note": "PI(4,5)P2. Closest M2: generic PIP2 POP2 (ring positions not encoded in M2).",
     "sn1": "cCCC",
     "sn2": "CDCC"
@@ -13605,6 +14133,7 @@
     "description": "A general model phosphatidylinositol bisphosphat (PIP2(3,5)) lipid corresponding to atomistic C16:0/18:1 1-palmitoyl-2-oleoyl (PO-PIP2(3,5)) tails.",
     "itp": "martini_v3.0.0_phospholipids_PI_v2.itp",
     "m2": [],
+    "m2_mapping_known": true,
     "note": "PI(3,5)P2.",
     "sn1": "cCCC",
     "sn2": "CDCC"
@@ -13625,6 +14154,7 @@
     "m2": [
      "POPA"
     ],
+    "m2_mapping_known": true,
     "sn1": "cCCC",
     "sn2": "CDCC"
    },
@@ -13644,6 +14174,7 @@
     "m2": [
      "POPC"
     ],
+    "m2_mapping_known": true,
     "sn1": "cCCC",
     "sn2": "CDCC"
    },
@@ -13663,6 +14194,7 @@
     "m2": [
      "POPE"
     ],
+    "m2_mapping_known": true,
     "sn1": "cCCC",
     "sn2": "CDCC"
    },
@@ -13682,6 +14214,7 @@
     "m2": [
      "POPG"
     ],
+    "m2_mapping_known": true,
     "sn1": "cCCC",
     "sn2": "CDCC"
    },
@@ -13701,6 +14234,7 @@
     "m2": [
      "POPI"
     ],
+    "m2_mapping_known": true,
     "sn1": "cCCC",
     "sn2": "CDCC"
    },
@@ -13720,6 +14254,7 @@
     "m2": [
      "POPS"
     ],
+    "m2_mapping_known": true,
     "sn1": "cCCC",
     "sn2": "CDCC"
    },
@@ -13737,6 +14272,7 @@
     "description": "A general model ether lipid phosphatidic acid (EA) lipid corresponding to atomistic C18:0/20:2(8c;11c;14c) 1-palmitoyl-2-eicosatrienoyl tails.",
     "itp": "martini_v3.0.0_etherphospholipids_PA_v2.itp",
     "m2": [],
+    "m2_mapping_known": true,
     "sn1": "cCCC",
     "sn2": "cDDDC"
    },
@@ -13754,6 +14290,7 @@
     "description": "A general model ether lipid phosphatidylcholine (EC) lipid corresponding to atomistic C18:0/20:2(8c;11c;14c) 1-palmitoyl-2-eicosatrienoyl tails.",
     "itp": "martini_v3.0.0_etherphospholipids_PC_v2.itp",
     "m2": [],
+    "m2_mapping_known": true,
     "sn1": "cCCC",
     "sn2": "cDDDC"
    },
@@ -13771,6 +14308,7 @@
     "description": "A general model ether lipid phosphatidylethanolamine (EE) lipid corresponding to atomistic C18:0/20:2(8c;11c;14c) 1-palmitoyl-2-eicosatrienoyl tails.",
     "itp": "martini_v3.0.0_etherphospholipids_PE_v2.itp",
     "m2": [],
+    "m2_mapping_known": true,
     "sn1": "cCCC",
     "sn2": "cDDDC"
    },
@@ -13788,6 +14326,7 @@
     "description": "A general model ether lipid phosphatidylglycerol (EG) lipid corresponding to atomistic C18:0/20:2(8c;11c;14c) 1-palmitoyl-2-eicosatrienoyl tails.",
     "itp": "martini_v3.0.0_etherphospholipids_PG_v2.itp",
     "m2": [],
+    "m2_mapping_known": true,
     "sn1": "cCCC",
     "sn2": "cDDDC"
    },
@@ -13805,6 +14344,7 @@
     "description": "A general model ether lipid phosphatidylserine (ES) lipid corresponding to atomistic C18:0/20:2(8c;11c;14c) 1-palmitoyl-2-eicosatrienoyl tails.",
     "itp": "martini_v3.0.0_etherphospholipids_PS_v2.itp",
     "m2": [],
+    "m2_mapping_known": true,
     "sn1": "cCCC",
     "sn2": "cDDDC"
    },
@@ -13822,6 +14362,7 @@
     "description": "A general model plasmalogen phosphatidic acid (LA) lipid corresponding to atomistic C18:0/20:2(8c;11c;14c) 1-palmitoyl-2-eicosatrienoyl tails.",
     "itp": "martini_v3.0.0_plasmalogens_PA_v2.itp",
     "m2": [],
+    "m2_mapping_known": true,
     "sn1": "cCCC",
     "sn2": "cDDDC"
    },
@@ -13839,6 +14380,7 @@
     "description": "A general model plasmalogen phosphatidylcholine (LC) lipid corresponding to atomistic C18:0/20:2(8c;11c;14c) 1-palmitoyl-2-eicosatrienoyl tails.",
     "itp": "martini_v3.0.0_plasmalogens_PC_v2.itp",
     "m2": [],
+    "m2_mapping_known": true,
     "sn1": "cCCC",
     "sn2": "cDDDC"
    },
@@ -13856,6 +14398,7 @@
     "description": "A general model plasmalogen phosphatidylethanolamine (LE) lipid corresponding to atomistic C18:0/20:2(8c;11c;14c) 1-palmitoyl-2-eicosatrienoyl tails.",
     "itp": "martini_v3.0.0_plasmalogens_PE_v2.itp",
     "m2": [],
+    "m2_mapping_known": true,
     "sn1": "cCCC",
     "sn2": "cDDDC"
    },
@@ -13873,6 +14416,7 @@
     "description": "A general model plasmalogen phosphatidylglycerol (LG) lipid corresponding to atomistic C18:0/20:2(8c;11c;14c) 1-palmitoyl-2-eicosatrienoyl tails.",
     "itp": "martini_v3.0.0_plasmalogens_PG_v2.itp",
     "m2": [],
+    "m2_mapping_known": true,
     "sn1": "cCCC",
     "sn2": "cDDDC"
    },
@@ -13890,6 +14434,7 @@
     "description": "A general model plasmalogen phosphatidylserine (LS) lipid corresponding to atomistic C18:0/20:2(8c;11c;14c) 1-palmitoyl-2-eicosatrienoyl tails.",
     "itp": "martini_v3.0.0_plasmalogens_PS_v2.itp",
     "m2": [],
+    "m2_mapping_known": true,
     "sn1": "cCCC",
     "sn2": "cDDDC"
    },
@@ -13907,6 +14452,7 @@
     "description": "A general model phosphatidic acid (PA) lipid corresponding to atomistic C18:0/20:2(8c;11c;14c) 1-palmitoyl-2-eicosatrienoyl tails.",
     "itp": "martini_v3.0.0_phospholipids_PA_v2.itp",
     "m2": [],
+    "m2_mapping_known": true,
     "sn1": "cCCC",
     "sn2": "cDDDC"
    },
@@ -13924,6 +14470,7 @@
     "description": "A general model phosphatidylcholine (PC) lipid corresponding to atomistic C18:0/20:2(8c;11c;14c) 1-palmitoyl-2-eicosatrienoyl tails.",
     "itp": "martini_v3.0.0_phospholipids_PC_v2.itp",
     "m2": [],
+    "m2_mapping_known": true,
     "sn1": "cCCC",
     "sn2": "cDDDC"
    },
@@ -13943,6 +14490,7 @@
     "m2": [
      "PQPE"
     ],
+    "m2_mapping_known": true,
     "sn1": "cCCC",
     "sn2": "cDDDC"
    },
@@ -13960,6 +14508,7 @@
     "description": "A general model phosphatidylglycerol (PG) lipid corresponding to atomistic C18:0/20:2(8c;11c;14c) 1-palmitoyl-2-eicosatrienoyl tails.",
     "itp": "martini_v3.0.0_phospholipids_PG_v2.itp",
     "m2": [],
+    "m2_mapping_known": true,
     "sn1": "cCCC",
     "sn2": "cDDDC"
    },
@@ -13979,6 +14528,7 @@
     "m2": [
      "PQPS"
     ],
+    "m2_mapping_known": true,
     "sn1": "cCCC",
     "sn2": "cDDDC"
    },
@@ -13996,6 +14546,7 @@
     "description": "A general model ether lipid phosphatidic acid (EA) lipid corresponding to atomistic C16:0/18:0 1-palmitoyl-2-stearoyl tails.",
     "itp": "martini_v3.0.0_etherphospholipids_PA_v2.itp",
     "m2": [],
+    "m2_mapping_known": true,
     "sn1": "cCCC",
     "sn2": "CCCC"
    },
@@ -14013,6 +14564,7 @@
     "description": "A general model ether lipid phosphatidylcholine (EC) lipid corresponding to atomistic C16:0/18:0 1-palmitoyl-2-stearoyl tails.",
     "itp": "martini_v3.0.0_etherphospholipids_PC_v2.itp",
     "m2": [],
+    "m2_mapping_known": true,
     "sn1": "cCCC",
     "sn2": "CCCC"
    },
@@ -14030,6 +14582,7 @@
     "description": "A general model ether lipid phosphatidylethanolamine (EE) lipid corresponding to atomistic C16:0/18:0 1-palmitoyl-2-stearoyl tails.",
     "itp": "martini_v3.0.0_etherphospholipids_PE_v2.itp",
     "m2": [],
+    "m2_mapping_known": true,
     "sn1": "cCCC",
     "sn2": "CCCC"
    },
@@ -14047,6 +14600,7 @@
     "description": "A general model ether lipid phosphatidylglycerol (EG) lipid corresponding to atomistic C16:0/18:0 1-palmitoyl-2-stearoyl tails.",
     "itp": "martini_v3.0.0_etherphospholipids_PG_v2.itp",
     "m2": [],
+    "m2_mapping_known": true,
     "sn1": "cCCC",
     "sn2": "CCCC"
    },
@@ -14064,6 +14618,7 @@
     "description": "A general model ether lipid phosphatidylserine (ES) lipid corresponding to atomistic C16:0/18:0 1-palmitoyl-2-stearoyl tails.",
     "itp": "martini_v3.0.0_etherphospholipids_PS_v2.itp",
     "m2": [],
+    "m2_mapping_known": true,
     "sn1": "cCCC",
     "sn2": "CCCC"
    },
@@ -14081,6 +14636,7 @@
     "description": "A general model plasmalogen phosphatidic acid (LA) lipid corresponding to atomistic C16:0/18:0 1-palmitoyl-2-stearoyl tails.",
     "itp": "martini_v3.0.0_plasmalogens_PA_v2.itp",
     "m2": [],
+    "m2_mapping_known": true,
     "sn1": "cCCC",
     "sn2": "CCCC"
    },
@@ -14098,6 +14654,7 @@
     "description": "A general model plasmalogen phosphatidylcholine (LC) lipid corresponding to atomistic C16:0/18:0 1-palmitoyl-2-stearoyl tails.",
     "itp": "martini_v3.0.0_plasmalogens_PC_v2.itp",
     "m2": [],
+    "m2_mapping_known": true,
     "sn1": "cCCC",
     "sn2": "CCCC"
    },
@@ -14115,6 +14672,7 @@
     "description": "A general model plasmalogen phosphatidylethanolamine (LE) lipid corresponding to atomistic C16:0/18:0 1-palmitoyl-2-stearoyl tails.",
     "itp": "martini_v3.0.0_plasmalogens_PE_v2.itp",
     "m2": [],
+    "m2_mapping_known": true,
     "sn1": "cCCC",
     "sn2": "CCCC"
    },
@@ -14132,6 +14690,7 @@
     "description": "A general model plasmalogen phosphatidylglycerol (LG) lipid corresponding to atomistic C16:0/18:0 1-palmitoyl-2-stearoyl tails.",
     "itp": "martini_v3.0.0_plasmalogens_PG_v2.itp",
     "m2": [],
+    "m2_mapping_known": true,
     "sn1": "cCCC",
     "sn2": "CCCC"
    },
@@ -14149,6 +14708,7 @@
     "description": "A general model plasmalogen phosphatidylserine (LS) lipid corresponding to atomistic C16:0/18:0 1-palmitoyl-2-stearoyl tails.",
     "itp": "martini_v3.0.0_plasmalogens_PS_v2.itp",
     "m2": [],
+    "m2_mapping_known": true,
     "sn1": "cCCC",
     "sn2": "CCCC"
    },
@@ -14168,6 +14728,7 @@
     "m2": [
      "DPSM"
     ],
+    "m2_mapping_known": true,
     "sn1": "tCCC",
     "sn2": "cCCC"
    },
@@ -14187,6 +14748,7 @@
     "m2": [
      "DPPA"
     ],
+    "m2_mapping_known": true,
     "sn1": "cCCC",
     "sn2": "CCCC"
    },
@@ -14206,6 +14768,7 @@
     "m2": [
      "DPPC"
     ],
+    "m2_mapping_known": true,
     "sn1": "cCCC",
     "sn2": "CCCC"
    },
@@ -14225,6 +14788,7 @@
     "m2": [
      "DPPE"
     ],
+    "m2_mapping_known": true,
     "sn1": "cCCC",
     "sn2": "CCCC"
    },
@@ -14244,6 +14808,7 @@
     "m2": [
      "DPPG"
     ],
+    "m2_mapping_known": true,
     "sn1": "cCCC",
     "sn2": "CCCC"
    },
@@ -14263,6 +14828,7 @@
     "m2": [
      "DPPS"
     ],
+    "m2_mapping_known": true,
     "sn1": "cCCC",
     "sn2": "CCCC"
    },
@@ -14280,6 +14846,7 @@
     "description": "A general model ether lipid phosphatidic acid (EA) lipid corresponding to atomistic C16:0/16:1(9c) 1-palmitoyl-2-palmitoleoyl tails.",
     "itp": "martini_v3.0.0_etherphospholipids_PA_v2.itp",
     "m2": [],
+    "m2_mapping_known": true,
     "sn1": "cCCC",
     "sn2": "cCDC"
    },
@@ -14297,6 +14864,7 @@
     "description": "A general model ether lipid phosphatidylcholine (EC) lipid corresponding to atomistic C16:0/16:1(9c) 1-palmitoyl-2-palmitoleoyl tails.",
     "itp": "martini_v3.0.0_etherphospholipids_PC_v2.itp",
     "m2": [],
+    "m2_mapping_known": true,
     "sn1": "cCCC",
     "sn2": "cCDC"
    },
@@ -14314,6 +14882,7 @@
     "description": "A general model ether lipid phosphatidylethanolamine (EE) lipid corresponding to atomistic C16:0/16:1(9c) 1-palmitoyl-2-palmitoleoyl tails.",
     "itp": "martini_v3.0.0_etherphospholipids_PE_v2.itp",
     "m2": [],
+    "m2_mapping_known": true,
     "sn1": "cCCC",
     "sn2": "cCDC"
    },
@@ -14331,6 +14900,7 @@
     "description": "A general model ether lipid phosphatidylglycerol (EG) lipid corresponding to atomistic C16:0/16:1(9c) 1-palmitoyl-2-palmitoleoyl tails.",
     "itp": "martini_v3.0.0_etherphospholipids_PG_v2.itp",
     "m2": [],
+    "m2_mapping_known": true,
     "sn1": "cCCC",
     "sn2": "cCDC"
    },
@@ -14348,6 +14918,7 @@
     "description": "A general model ether lipid phosphatidylserine (ES) lipid corresponding to atomistic C16:0/16:1(9c) 1-palmitoyl-2-palmitoleoyl tails.",
     "itp": "martini_v3.0.0_etherphospholipids_PS_v2.itp",
     "m2": [],
+    "m2_mapping_known": true,
     "sn1": "cCCC",
     "sn2": "cCDC"
    },
@@ -14365,6 +14936,7 @@
     "description": "A general model plasmalogen phosphatidic acid (LA) lipid corresponding to atomistic C16:0/16:1(9c) 1-palmitoyl-2-palmitoleoyl tails.",
     "itp": "martini_v3.0.0_plasmalogens_PA_v2.itp",
     "m2": [],
+    "m2_mapping_known": true,
     "sn1": "cCCC",
     "sn2": "cCDC"
    },
@@ -14382,6 +14954,7 @@
     "description": "A general model plasmalogen phosphatidylcholine (LC) lipid corresponding to atomistic C16:0/16:1(9c) 1-palmitoyl-2-palmitoleoyl tails.",
     "itp": "martini_v3.0.0_plasmalogens_PC_v2.itp",
     "m2": [],
+    "m2_mapping_known": true,
     "sn1": "cCCC",
     "sn2": "cCDC"
    },
@@ -14399,6 +14972,7 @@
     "description": "A general model plasmalogen phosphatidylethanolamine (LE) lipid corresponding to atomistic C16:0/16:1(9c) 1-palmitoyl-2-palmitoleoyl tails.",
     "itp": "martini_v3.0.0_plasmalogens_PE_v2.itp",
     "m2": [],
+    "m2_mapping_known": true,
     "sn1": "cCCC",
     "sn2": "cCDC"
    },
@@ -14416,6 +14990,7 @@
     "description": "A general model plasmalogen phosphatidylglycerol (LG) lipid corresponding to atomistic C16:0/16:1(9c) 1-palmitoyl-2-palmitoleoyl tails.",
     "itp": "martini_v3.0.0_plasmalogens_PG_v2.itp",
     "m2": [],
+    "m2_mapping_known": true,
     "sn1": "cCCC",
     "sn2": "cCDC"
    },
@@ -14433,6 +15008,7 @@
     "description": "A general model plasmalogen phosphatidylserine (LS) lipid corresponding to atomistic C16:0/16:1(9c) 1-palmitoyl-2-palmitoleoyl tails.",
     "itp": "martini_v3.0.0_plasmalogens_PS_v2.itp",
     "m2": [],
+    "m2_mapping_known": true,
     "sn1": "cCCC",
     "sn2": "cCDC"
    },
@@ -14452,6 +15028,7 @@
     "m2": [
      "POPA"
     ],
+    "m2_mapping_known": true,
     "sn1": "cCCC",
     "sn2": "cCDC"
    },
@@ -14471,6 +15048,7 @@
     "m2": [
      "POPC"
     ],
+    "m2_mapping_known": true,
     "sn1": "cCCC",
     "sn2": "cCDC"
    },
@@ -14490,6 +15068,7 @@
     "m2": [
      "POPE"
     ],
+    "m2_mapping_known": true,
     "sn1": "cCCC",
     "sn2": "cCDC"
    },
@@ -14509,6 +15088,7 @@
     "m2": [
      "POPG"
     ],
+    "m2_mapping_known": true,
     "sn1": "cCCC",
     "sn2": "cCDC"
    },
@@ -14528,6 +15108,7 @@
     "m2": [
      "POPS"
     ],
+    "m2_mapping_known": true,
     "sn1": "cCCC",
     "sn2": "cCDC"
    },
@@ -14545,6 +15126,7 @@
     "description": null,
     "itp": "martini_v3.0.0_fattyacids_v2.itp",
     "m2": [],
+    "m2_mapping_known": false,
     "sn1": null,
     "sn2": null
    },
@@ -14562,6 +15144,7 @@
     "description": "A general model ether lipid phosphatidic acid (EA) lipid corresponding to atomistic C16:0/20:4(5c;8c;11c;14c) 1-stearoyl-2-arachidonoyl tails.",
     "itp": "martini_v3.0.0_etherphospholipids_PA_v2.itp",
     "m2": [],
+    "m2_mapping_known": true,
     "sn1": "CCCC",
     "sn2": "cFFDC"
    },
@@ -14579,6 +15162,7 @@
     "description": "A general model ether lipid phosphatidylcholine (EC) lipid corresponding to atomistic C16:0/20:4(5c;8c;11c;14c) 1-stearoyl-2-arachidonoyl tails.",
     "itp": "martini_v3.0.0_etherphospholipids_PC_v2.itp",
     "m2": [],
+    "m2_mapping_known": true,
     "sn1": "CCCC",
     "sn2": "cFFDC"
    },
@@ -14596,6 +15180,7 @@
     "description": "A general model ether lipid phosphatidylethanolamine (EE) lipid corresponding to atomistic C16:0/20:4(5c;8c;11c;14c) 1-stearoyl-2-arachidonoyl tails.",
     "itp": "martini_v3.0.0_etherphospholipids_PE_v2.itp",
     "m2": [],
+    "m2_mapping_known": true,
     "sn1": "CCCC",
     "sn2": "cFFDC"
    },
@@ -14613,6 +15198,7 @@
     "description": "A general model ether lipid phosphatidylglycerol (EG) lipid corresponding to atomistic C16:0/20:4(5c;8c;11c;14c) 1-stearoyl-2-arachidonoyl tails.",
     "itp": "martini_v3.0.0_etherphospholipids_PG_v2.itp",
     "m2": [],
+    "m2_mapping_known": true,
     "sn1": "CCCC",
     "sn2": "cFFDC"
    },
@@ -14630,6 +15216,7 @@
     "description": "A general model ether lipid phosphatidylserine (ES) lipid corresponding to atomistic C16:0/20:4(5c;8c;11c;14c) 1-stearoyl-2-arachidonoyl tails.",
     "itp": "martini_v3.0.0_etherphospholipids_PS_v2.itp",
     "m2": [],
+    "m2_mapping_known": true,
     "sn1": "CCCC",
     "sn2": "cFFDC"
    },
@@ -14647,6 +15234,7 @@
     "description": "A general model plasmalogen phosphatidic acid (LA) lipid corresponding to atomistic C16:0/20:4(5c;8c;11c;14c) 1-stearoyl-2-arachidonoyl tails.",
     "itp": "martini_v3.0.0_plasmalogens_PA_v2.itp",
     "m2": [],
+    "m2_mapping_known": true,
     "sn1": "CCCC",
     "sn2": "cFFDC"
    },
@@ -14664,6 +15252,7 @@
     "description": "A general model plasmalogen phosphatidylcholine (LC) lipid corresponding to atomistic C16:0/20:4(5c;8c;11c;14c) 1-stearoyl-2-arachidonoyl tails.",
     "itp": "martini_v3.0.0_plasmalogens_PC_v2.itp",
     "m2": [],
+    "m2_mapping_known": true,
     "sn1": "CCCC",
     "sn2": "cFFDC"
    },
@@ -14681,6 +15270,7 @@
     "description": "A general model plasmalogen phosphatidylethanolamine (LE) lipid corresponding to atomistic C16:0/20:4(5c;8c;11c;14c) 1-stearoyl-2-arachidonoyl tails.",
     "itp": "martini_v3.0.0_plasmalogens_PE_v2.itp",
     "m2": [],
+    "m2_mapping_known": true,
     "sn1": "CCCC",
     "sn2": "cFFDC"
    },
@@ -14698,6 +15288,7 @@
     "description": "A general model plasmalogen phosphatidylglycerol (LG) lipid corresponding to atomistic C16:0/20:4(5c;8c;11c;14c) 1-stearoyl-2-arachidonoyl tails.",
     "itp": "martini_v3.0.0_plasmalogens_PG_v2.itp",
     "m2": [],
+    "m2_mapping_known": true,
     "sn1": "CCCC",
     "sn2": "cFFDC"
    },
@@ -14715,6 +15306,7 @@
     "description": "A general model plasmalogen phosphatidylserine (LS) lipid corresponding to atomistic C16:0/20:4(5c;8c;11c;14c) 1-stearoyl-2-arachidonoyl tails.",
     "itp": "martini_v3.0.0_plasmalogens_PS_v2.itp",
     "m2": [],
+    "m2_mapping_known": true,
     "sn1": "CCCC",
     "sn2": "cFFDC"
    },
@@ -14732,6 +15324,7 @@
     "description": "A general model phosphatidylinositol phosphate (PIP1(3)) lipid corresponding to atomistic C18:0/20:4 1-stearoyl-2-arachidonoyl tails.",
     "itp": "martini_v3.0.0_phospholipids_PI_v2.itp",
     "m2": [],
+    "m2_mapping_known": true,
     "note": "PI(3)P.",
     "sn1": "CCCC",
     "sn2": "cFFDC"
@@ -14750,6 +15343,7 @@
     "description": "A general model phosphatidylinositol bisphosphat (PIP2(3,4)) lipid corresponding to atomistic C18:0/20:4 1-stearoyl-2-arachidonoyl tails.",
     "itp": "martini_v3.0.0_phospholipids_PI_v2.itp",
     "m2": [],
+    "m2_mapping_known": true,
     "note": "PI(3,4)P2 - NOT PI(4,5)P2 (that is SAP6).",
     "sn1": "CCCC",
     "sn2": "cFFDC"
@@ -14770,6 +15364,7 @@
     "m2": [
      "PAP3"
     ],
+    "m2_mapping_known": true,
     "note": "PI(3,4,5)P3.",
     "sn1": "CCCC",
     "sn2": "cFFDC"
@@ -14790,6 +15385,7 @@
     "m2": [
      "PAP1"
     ],
+    "m2_mapping_known": true,
     "note": "PI(4)P. Closest M2: generic PIP PAP1.",
     "sn1": "CCCC",
     "sn2": "cFFDC"
@@ -14808,6 +15404,7 @@
     "description": "A general model phosphatidylinositol phosphate (PIP1(5)) lipid corresponding to atomistic C18:0/20:4 1-stearoyl-2-arachidonoyl tails.",
     "itp": "martini_v3.0.0_phospholipids_PI_v2.itp",
     "m2": [],
+    "m2_mapping_known": true,
     "note": "PI(5)P.",
     "sn1": "CCCC",
     "sn2": "cFFDC"
@@ -14828,6 +15425,7 @@
     "m2": [
      "PAP2"
     ],
+    "m2_mapping_known": true,
     "note": "PI(4,5)P2. Closest M2: generic PIP2 PAP2.",
     "sn1": "CCCC",
     "sn2": "cFFDC"
@@ -14846,6 +15444,7 @@
     "description": "A general model phosphatidylinositol bisphosphat (PIP2(3,5)) lipid corresponding to atomistic C18:0/20:4 1-stearoyl-2-arachidonoyl tails.",
     "itp": "martini_v3.0.0_phospholipids_PI_v2.itp",
     "m2": [],
+    "m2_mapping_known": true,
     "note": "PI(3,5)P2.",
     "sn1": "CCCC",
     "sn2": "cFFDC"
@@ -14866,6 +15465,7 @@
     "m2": [
      "PAPA"
     ],
+    "m2_mapping_known": true,
     "sn1": "CCCC",
     "sn2": "cFFDC"
    },
@@ -14885,6 +15485,7 @@
     "m2": [
      "PAPC"
     ],
+    "m2_mapping_known": true,
     "sn1": "CCCC",
     "sn2": "cFFDC"
    },
@@ -14904,6 +15505,7 @@
     "m2": [
      "PAPE"
     ],
+    "m2_mapping_known": true,
     "sn1": "CCCC",
     "sn2": "cFFDC"
    },
@@ -14923,6 +15525,7 @@
     "m2": [
      "PAPG"
     ],
+    "m2_mapping_known": true,
     "sn1": "CCCC",
     "sn2": "cFFDC"
    },
@@ -14942,6 +15545,7 @@
     "m2": [
      "PAPI"
     ],
+    "m2_mapping_known": true,
     "sn1": "CCCC",
     "sn2": "cFFDC"
    },
@@ -14961,6 +15565,7 @@
     "m2": [
      "PAPS"
     ],
+    "m2_mapping_known": true,
     "sn1": "CCCC",
     "sn2": "cFFDC"
    },
@@ -14980,6 +15585,7 @@
     "m2": [
      "DPCE"
     ],
+    "m2_mapping_known": true,
     "sn1": "tCCC",
     "sn2": "CCCC"
    },
@@ -14997,6 +15603,7 @@
     "description": "A general model ether lipid phosphatidic acid (EA) lipid corresponding to atomistic C18:0/22:6(4c;7c;10c;13c;16c;19c) 1-stearoyl-2-docosahexaenoyl tails.",
     "itp": "martini_v3.0.0_etherphospholipids_PA_v2.itp",
     "m2": [],
+    "m2_mapping_known": true,
     "sn1": "CCCC",
     "sn2": "DFFDD"
    },
@@ -15014,6 +15621,7 @@
     "description": "A general model ether lipid phosphatidylcholine (EC) lipid corresponding to atomistic C18:0/22:6(4c;7c;10c;13c;16c;19c) 1-stearoyl-2-docosahexaenoyl tails.",
     "itp": "martini_v3.0.0_etherphospholipids_PC_v2.itp",
     "m2": [],
+    "m2_mapping_known": true,
     "sn1": "CCCC",
     "sn2": "DFFDD"
    },
@@ -15031,6 +15639,7 @@
     "description": "A general model ether lipid phosphatidylethanolamine (EE) lipid corresponding to atomistic C18:0/22:6(4c;7c;10c;13c;16c;19c) 1-stearoyl-2-docosahexaenoyl tails.",
     "itp": "martini_v3.0.0_etherphospholipids_PE_v2.itp",
     "m2": [],
+    "m2_mapping_known": true,
     "sn1": "CCCC",
     "sn2": "DFFDD"
    },
@@ -15048,6 +15657,7 @@
     "description": "A general model ether lipid phosphatidylglycerol (EG) lipid corresponding to atomistic C18:0/22:6(4c;7c;10c;13c;16c;19c) 1-stearoyl-2-docosahexaenoyl tails.",
     "itp": "martini_v3.0.0_etherphospholipids_PG_v2.itp",
     "m2": [],
+    "m2_mapping_known": true,
     "sn1": "CCCC",
     "sn2": "DFFDD"
    },
@@ -15065,6 +15675,7 @@
     "description": "A general model ether lipid phosphatidylserine (ES) lipid corresponding to atomistic C18:0/22:6(4c;7c;10c;13c;16c;19c) 1-stearoyl-2-docosahexaenoyl tails.",
     "itp": "martini_v3.0.0_etherphospholipids_PS_v2.itp",
     "m2": [],
+    "m2_mapping_known": true,
     "sn1": "CCCC",
     "sn2": "DFFDD"
    },
@@ -15082,6 +15693,7 @@
     "description": "A general model plasmalogen phosphatidic acid (LA) lipid corresponding to atomistic C18:0/22:6(4c;7c;10c;13c;16c;19c) 1-stearoyl-2-docosahexaenoyl tails.",
     "itp": "martini_v3.0.0_plasmalogens_PA_v2.itp",
     "m2": [],
+    "m2_mapping_known": true,
     "sn1": "CCCC",
     "sn2": "DFFDD"
    },
@@ -15099,6 +15711,7 @@
     "description": "A general model plasmalogen phosphatidylcholine (LC) lipid corresponding to atomistic C18:0/22:6(4c;7c;10c;13c;16c;19c) 1-stearoyl-2-docosahexaenoyl tails.",
     "itp": "martini_v3.0.0_plasmalogens_PC_v2.itp",
     "m2": [],
+    "m2_mapping_known": true,
     "sn1": "CCCC",
     "sn2": "DFFDD"
    },
@@ -15116,6 +15729,7 @@
     "description": "A general model plasmalogen phosphatidylethanolamine (LE) lipid corresponding to atomistic C18:0/22:6(4c;7c;10c;13c;16c;19c) 1-stearoyl-2-docosahexaenoyl tails.",
     "itp": "martini_v3.0.0_plasmalogens_PE_v2.itp",
     "m2": [],
+    "m2_mapping_known": true,
     "sn1": "CCCC",
     "sn2": "DFFDD"
    },
@@ -15133,6 +15747,7 @@
     "description": "A general model plasmalogen phosphatidylglycerol (LG) lipid corresponding to atomistic C18:0/22:6(4c;7c;10c;13c;16c;19c) 1-stearoyl-2-docosahexaenoyl tails.",
     "itp": "martini_v3.0.0_plasmalogens_PG_v2.itp",
     "m2": [],
+    "m2_mapping_known": true,
     "sn1": "CCCC",
     "sn2": "DFFDD"
    },
@@ -15150,6 +15765,7 @@
     "description": "A general model plasmalogen phosphatidylserine (LS) lipid corresponding to atomistic C18:0/22:6(4c;7c;10c;13c;16c;19c) 1-stearoyl-2-docosahexaenoyl tails.",
     "itp": "martini_v3.0.0_plasmalogens_PS_v2.itp",
     "m2": [],
+    "m2_mapping_known": true,
     "sn1": "CCCC",
     "sn2": "DFFDD"
    },
@@ -15169,6 +15785,7 @@
     "m2": [
      "PUPA"
     ],
+    "m2_mapping_known": true,
     "sn1": "CCCC",
     "sn2": "DFFDD"
    },
@@ -15188,6 +15805,7 @@
     "m2": [
      "PUPC"
     ],
+    "m2_mapping_known": true,
     "sn1": "CCCC",
     "sn2": "DFFDD"
    },
@@ -15207,6 +15825,7 @@
     "m2": [
      "PUPE"
     ],
+    "m2_mapping_known": true,
     "sn1": "CCCC",
     "sn2": "DFFDD"
    },
@@ -15224,6 +15843,7 @@
     "description": "A general model phosphatidylglycerol (PG) lipid corresponding to atomistic C18:0/22:6(4c;7c;10c;13c;16c;19c) 1-stearoyl-2-docosahexaenoyl tails.",
     "itp": "martini_v3.0.0_phospholipids_PG_v2.itp",
     "m2": [],
+    "m2_mapping_known": true,
     "sn1": "CCCC",
     "sn2": "DFFDD"
    },
@@ -15243,6 +15863,7 @@
     "m2": [
      "PUPI"
     ],
+    "m2_mapping_known": true,
     "sn1": "CCCC",
     "sn2": "DFFDD"
    },
@@ -15262,6 +15883,7 @@
     "m2": [
      "PUPS"
     ],
+    "m2_mapping_known": true,
     "sn1": "CCCC",
     "sn2": "DFFDD"
    },
@@ -15279,6 +15901,7 @@
     "description": "A general model ether lipid phosphatidic acid (EA) lipid corresponding to atomistic C18:0/18:2(9c;12c) 1-stearoyl-2-linoleoyl tails.",
     "itp": "martini_v3.0.0_etherphospholipids_PA_v2.itp",
     "m2": [],
+    "m2_mapping_known": true,
     "sn1": "CCCC",
     "sn2": "CDDC"
    },
@@ -15296,6 +15919,7 @@
     "description": "A general model ether lipid phosphatidylcholine (EC) lipid corresponding to atomistic C18:0/18:2(9c;12c) 1-stearoyl-2-linoleoyl tails.",
     "itp": "martini_v3.0.0_etherphospholipids_PC_v2.itp",
     "m2": [],
+    "m2_mapping_known": true,
     "sn1": "CCCC",
     "sn2": "CDDC"
    },
@@ -15313,6 +15937,7 @@
     "description": "A general model ether lipid phosphatidylethanolamine (EE) lipid corresponding to atomistic C18:0/18:2(9c;12c) 1-stearoyl-2-linoleoyl tails.",
     "itp": "martini_v3.0.0_etherphospholipids_PE_v2.itp",
     "m2": [],
+    "m2_mapping_known": true,
     "sn1": "CCCC",
     "sn2": "CDDC"
    },
@@ -15330,6 +15955,7 @@
     "description": "A general model ether lipid phosphatidylglycerol (EG) lipid corresponding to atomistic C18:0/18:2(9c;12c) 1-stearoyl-2-linoleoyl tails.",
     "itp": "martini_v3.0.0_etherphospholipids_PG_v2.itp",
     "m2": [],
+    "m2_mapping_known": true,
     "sn1": "CCCC",
     "sn2": "CDDC"
    },
@@ -15347,6 +15973,7 @@
     "description": "A general model ether lipid phosphatidylserine (ES) lipid corresponding to atomistic C18:0/18:2(9c;12c) 1-stearoyl-2-linoleoyl tails.",
     "itp": "martini_v3.0.0_etherphospholipids_PS_v2.itp",
     "m2": [],
+    "m2_mapping_known": true,
     "sn1": "CCCC",
     "sn2": "CDDC"
    },
@@ -15364,6 +15991,7 @@
     "description": "A general model plasmalogen phosphatidic acid (LA) lipid corresponding to atomistic C18:0/18:2(9c;12c) 1-stearoyl-2-linoleoyl tails.",
     "itp": "martini_v3.0.0_plasmalogens_PA_v2.itp",
     "m2": [],
+    "m2_mapping_known": true,
     "sn1": "CCCC",
     "sn2": "CDDC"
    },
@@ -15381,6 +16009,7 @@
     "description": "A general model plasmalogen phosphatidylcholine (LC) lipid corresponding to atomistic C18:0/18:2(9c;12c) 1-stearoyl-2-linoleoyl tails.",
     "itp": "martini_v3.0.0_plasmalogens_PC_v2.itp",
     "m2": [],
+    "m2_mapping_known": true,
     "sn1": "CCCC",
     "sn2": "CDDC"
    },
@@ -15398,6 +16027,7 @@
     "description": "A general model plasmalogen phosphatidylethanolamine (LE) lipid corresponding to atomistic C18:0/18:2(9c;12c) 1-stearoyl-2-linoleoyl tails.",
     "itp": "martini_v3.0.0_plasmalogens_PE_v2.itp",
     "m2": [],
+    "m2_mapping_known": true,
     "sn1": "CCCC",
     "sn2": "CDDC"
    },
@@ -15415,6 +16045,7 @@
     "description": "A general model plasmalogen phosphatidylglycerol (LG) lipid corresponding to atomistic C18:0/18:2(9c;12c) 1-stearoyl-2-linoleoyl tails.",
     "itp": "martini_v3.0.0_plasmalogens_PG_v2.itp",
     "m2": [],
+    "m2_mapping_known": true,
     "sn1": "CCCC",
     "sn2": "CDDC"
    },
@@ -15432,6 +16063,7 @@
     "description": "A general model plasmalogen phosphatidylserine (LS) lipid corresponding to atomistic C18:0/18:2(9c;12c) 1-stearoyl-2-linoleoyl tails.",
     "itp": "martini_v3.0.0_plasmalogens_PS_v2.itp",
     "m2": [],
+    "m2_mapping_known": true,
     "sn1": "CCCC",
     "sn2": "CDDC"
    },
@@ -15451,6 +16083,7 @@
     "m2": [
      "PIPA"
     ],
+    "m2_mapping_known": true,
     "sn1": "CCCC",
     "sn2": "CDDC"
    },
@@ -15470,6 +16103,7 @@
     "m2": [
      "PIPC"
     ],
+    "m2_mapping_known": true,
     "sn1": "CCCC",
     "sn2": "CDDC"
    },
@@ -15489,6 +16123,7 @@
     "m2": [
      "PIPE"
     ],
+    "m2_mapping_known": true,
     "sn1": "CCCC",
     "sn2": "CDDC"
    },
@@ -15508,6 +16143,7 @@
     "m2": [
      "PIPG"
     ],
+    "m2_mapping_known": true,
     "sn1": "CCCC",
     "sn2": "CDDC"
    },
@@ -15527,6 +16163,7 @@
     "m2": [
      "PIPS"
     ],
+    "m2_mapping_known": true,
     "sn1": "CCCC",
     "sn2": "CDDC"
    },
@@ -15544,6 +16181,7 @@
     "description": "A general model phosphatidylcholine (PC) lipid corresponding to atomistic C18:0/14:0 1-stearoyl-2-myristoyl tails.",
     "itp": "martini_v3.0.0_phospholipids_PC_v2.itp",
     "m2": [],
+    "m2_mapping_known": false,
     "sn1": null,
     "sn2": null
    },
@@ -15561,6 +16199,7 @@
     "description": "A general model ether lipid phosphatidic acid (EA) lipid corresponding to atomistic C18:0/18:1(9c) 1-stearoyl-2-oleoyl (SOEA) tails.",
     "itp": "martini_v3.0.0_etherphospholipids_PA_v2.itp",
     "m2": [],
+    "m2_mapping_known": true,
     "sn1": "CCCC",
     "sn2": "CDCC"
    },
@@ -15578,6 +16217,7 @@
     "description": "A general model ether lipid phosphatidylcholine (EC) lipid corresponding to atomistic C18:0/18:1(9c) 1-stearoyl-2-oleoyl (SOEC) tails.",
     "itp": "martini_v3.0.0_etherphospholipids_PC_v2.itp",
     "m2": [],
+    "m2_mapping_known": true,
     "sn1": "CCCC",
     "sn2": "CDCC"
    },
@@ -15595,6 +16235,7 @@
     "description": "A general model ether lipid phosphatidylethanolamine (EE) lipid corresponding to atomistic C18:0/18:1(9c) 1-stearoyl-2-oleoyl (SOEE) tails.",
     "itp": "martini_v3.0.0_etherphospholipids_PE_v2.itp",
     "m2": [],
+    "m2_mapping_known": true,
     "sn1": "CCCC",
     "sn2": "CDCC"
    },
@@ -15612,6 +16253,7 @@
     "description": "A general model ether lipid phosphatidylglycerol (EG) lipid corresponding to atomistic C18:0/18:1(9c) 1-stearoyl-2-oleoyl (SOEG) tails.",
     "itp": "martini_v3.0.0_etherphospholipids_PG_v2.itp",
     "m2": [],
+    "m2_mapping_known": true,
     "sn1": "CCCC",
     "sn2": "CDCC"
    },
@@ -15629,6 +16271,7 @@
     "description": "A general model ether lipid phosphatidylserine (ES) lipid corresponding to atomistic C18:0/18:1(9c) 1-stearoyl-2-oleoyl (SOES) tails.",
     "itp": "martini_v3.0.0_etherphospholipids_PS_v2.itp",
     "m2": [],
+    "m2_mapping_known": true,
     "sn1": "CCCC",
     "sn2": "CDCC"
    },
@@ -15646,6 +16289,7 @@
     "description": "A general model plasmalogen phosphatidic acid (LA) lipid corresponding to atomistic C18:0/18:1(9c) 1-stearoyl-2-oleoyl (SOLA) tails.",
     "itp": "martini_v3.0.0_plasmalogens_PA_v2.itp",
     "m2": [],
+    "m2_mapping_known": true,
     "sn1": "CCCC",
     "sn2": "CDCC"
    },
@@ -15663,6 +16307,7 @@
     "description": "A general model plasmalogen phosphatidylcholine (LC) lipid corresponding to atomistic C18:0/18:1(9c) 1-stearoyl-2-oleoyl (SOLC) tails.",
     "itp": "martini_v3.0.0_plasmalogens_PC_v2.itp",
     "m2": [],
+    "m2_mapping_known": true,
     "sn1": "CCCC",
     "sn2": "CDCC"
    },
@@ -15680,6 +16325,7 @@
     "description": "A general model plasmalogen phosphatidylethanolamine (LE) lipid corresponding to atomistic C18:0/18:1(9c) 1-stearoyl-2-oleoyl (SOLE) tails.",
     "itp": "martini_v3.0.0_plasmalogens_PE_v2.itp",
     "m2": [],
+    "m2_mapping_known": true,
     "sn1": "CCCC",
     "sn2": "CDCC"
    },
@@ -15697,6 +16343,7 @@
     "description": "A general model plasmalogen phosphatidylglycerol (LG) lipid corresponding to atomistic C18:0/18:1(9c) 1-stearoyl-2-oleoyl (SOLG) tails.",
     "itp": "martini_v3.0.0_plasmalogens_PG_v2.itp",
     "m2": [],
+    "m2_mapping_known": true,
     "sn1": "CCCC",
     "sn2": "CDCC"
    },
@@ -15714,6 +16361,7 @@
     "description": "A general model plasmalogen phosphatidylserine (LS) lipid corresponding to atomistic C18:0/18:1(9c) 1-stearoyl-2-oleoyl (SOLS) tails.",
     "itp": "martini_v3.0.0_plasmalogens_PS_v2.itp",
     "m2": [],
+    "m2_mapping_known": true,
     "sn1": "CCCC",
     "sn2": "CDCC"
    },
@@ -15733,6 +16381,7 @@
     "m2": [
      "POPA"
     ],
+    "m2_mapping_known": true,
     "sn1": "CCCC",
     "sn2": "CDCC"
    },
@@ -15752,6 +16401,7 @@
     "m2": [
      "POPC"
     ],
+    "m2_mapping_known": true,
     "sn1": "CCCC",
     "sn2": "CDCC"
    },
@@ -15771,6 +16421,7 @@
     "m2": [
      "POPE"
     ],
+    "m2_mapping_known": true,
     "sn1": "CCCC",
     "sn2": "CDCC"
    },
@@ -15790,6 +16441,7 @@
     "m2": [
      "POPG"
     ],
+    "m2_mapping_known": true,
     "sn1": "CCCC",
     "sn2": "CDCC"
    },
@@ -15809,6 +16461,7 @@
     "m2": [
      "POPS"
     ],
+    "m2_mapping_known": true,
     "sn1": "CCCC",
     "sn2": "CDCC"
    },
@@ -15828,6 +16481,7 @@
     "m2": [
      "DPSM"
     ],
+    "m2_mapping_known": true,
     "sn1": "tCCC",
     "sn2": "CCCC"
    },
@@ -15845,6 +16499,7 @@
     "description": null,
     "itp": "martini_v3.0.0_triglycerides_v2.itp",
     "m2": [],
+    "m2_mapping_known": false,
     "sn1": null,
     "sn2": null
    },
@@ -15862,6 +16517,7 @@
     "description": null,
     "itp": "martini_v3.0.0_triglycerides_v2.itp",
     "m2": [],
+    "m2_mapping_known": false,
     "sn1": null,
     "sn2": null
    },
@@ -15879,6 +16535,7 @@
     "description": null,
     "itp": "martini_v3.0.0_triglycerides_v2.itp",
     "m2": [],
+    "m2_mapping_known": false,
     "sn1": null,
     "sn2": null
    },
@@ -15896,6 +16553,7 @@
     "description": null,
     "itp": "martini_v3.0.0_triglycerides_v2.itp",
     "m2": [],
+    "m2_mapping_known": false,
     "sn1": null,
     "sn2": null
    },
@@ -15919,6 +16577,7 @@
     "description": null,
     "itp": "martini_v3.0.0_phospholipids_CL_v2.itp",
     "m2": [],
+    "m2_mapping_known": true,
     "note": "Always 2- in Martini 3.",
     "sn1": null,
     "sn2": null
@@ -15937,6 +16596,7 @@
     "description": null,
     "itp": "martini_v3.0.0_triglycerides_v2.itp",
     "m2": [],
+    "m2_mapping_known": false,
     "sn1": null,
     "sn2": null
    },
@@ -15980,6 +16640,7 @@
      "CDL1",
      "CDL0"
     ],
+    "m2_mapping_known": true,
     "note": "Always 2- in Martini 3. M2 CDL0/CDL1/CDL2 are the 0/1-/2- protonation states with four 5-bead tails; only CDL2 has the same charge. Closest M3 match by tail type.",
     "sn1": null,
     "sn2": null
@@ -15998,6 +16659,7 @@
     "description": null,
     "itp": "martini_v3.0.0_triglycerides_v2.itp",
     "m2": [],
+    "m2_mapping_known": false,
     "sn1": null,
     "sn2": null
    },
@@ -16015,6 +16677,7 @@
     "description": null,
     "itp": "martini_v3.0.0_triglycerides_v2.itp",
     "m2": [],
+    "m2_mapping_known": false,
     "sn1": null,
     "sn2": null
    },
@@ -16032,6 +16695,7 @@
     "description": "A general model ceramide (CER) lipid corresponding to atomistic e.g. C(d18:1/12:0) N-lauroyl-D-erythro tails.",
     "itp": "martini_v3.0.0_ceramides_v2.itp",
     "m2": [],
+    "m2_mapping_known": true,
     "sn1": "tCCC",
     "sn2": "cCC"
    },
@@ -16049,6 +16713,7 @@
     "description": "A general model sphingomyelin (SM) lipid corresponding to atomistic e.g. C(d18:1/12:0) N-lauroyl-D-erythro tails.",
     "itp": "martini_v3.0.0_phospholipids_SM_v2.itp",
     "m2": [],
+    "m2_mapping_known": true,
     "sn1": "tCCC",
     "sn2": "cCC"
    },
@@ -16068,6 +16733,7 @@
     "m2": [
      "PXCE"
     ],
+    "m2_mapping_known": true,
     "sn1": "tCCC",
     "sn2": "cCCCCC"
    },
@@ -16085,6 +16751,7 @@
     "description": "A general model sphingomyelin (SM) lipid corresponding to atomistic e.g. C(d18:1/24:0) N-lignoceroyl-D-erythro tails (often called LSM).",
     "itp": "martini_v3.0.0_phospholipids_SM_v2.itp",
     "m2": [],
+    "m2_mapping_known": true,
     "sn1": "tCCC",
     "sn2": "cCCCCC"
    },
@@ -16102,6 +16769,7 @@
     "description": "A general model ether lipid phosphatidic acid (EA) lipid corresponding to atomistic C16:1(9c)/18:1(9c) 1-palmitoleoyl-2-oleoyl tails.",
     "itp": "martini_v3.0.0_etherphospholipids_PA_v2.itp",
     "m2": [],
+    "m2_mapping_known": true,
     "sn1": "cCDC",
     "sn2": "CDCC"
    },
@@ -16119,6 +16787,7 @@
     "description": "A general model ether lipid phosphatidylcholine (EC) lipid corresponding to atomistic C16:1(9c)/18:1(9c) 1-palmitoleoyl-2-oleoyl tails.",
     "itp": "martini_v3.0.0_etherphospholipids_PC_v2.itp",
     "m2": [],
+    "m2_mapping_known": true,
     "sn1": "cCDC",
     "sn2": "CDCC"
    },
@@ -16136,6 +16805,7 @@
     "description": "A general model ether lipid phosphatidylethanolamine (EE) lipid corresponding to atomistic C16:1(9c)/18:1(9c) 1-palmitoleoyl-2-oleoyl tails.",
     "itp": "martini_v3.0.0_etherphospholipids_PE_v2.itp",
     "m2": [],
+    "m2_mapping_known": true,
     "sn1": "cCDC",
     "sn2": "CDCC"
    },
@@ -16153,6 +16823,7 @@
     "description": "A general model ether lipid phosphatidylglycerol (EG) lipid corresponding to atomistic C16:1(9c)/18:1(9c) 1-palmitoleoyl-2-oleoyl tails.",
     "itp": "martini_v3.0.0_etherphospholipids_PG_v2.itp",
     "m2": [],
+    "m2_mapping_known": true,
     "sn1": "cCDC",
     "sn2": "CDCC"
    },
@@ -16170,6 +16841,7 @@
     "description": "A general model ether lipid phosphatidylserine (ES) lipid corresponding to atomistic C16:1(9c)/18:1(9c) 1-palmitoleoyl-2-oleoyl tails.",
     "itp": "martini_v3.0.0_etherphospholipids_PS_v2.itp",
     "m2": [],
+    "m2_mapping_known": true,
     "sn1": "cCDC",
     "sn2": "CDCC"
    },
@@ -16187,6 +16859,7 @@
     "description": "A general model plasmalogen phosphatidic acid (LA) lipid corresponding to atomistic C16:1(9c)/18:1(9c) 1-palmitoleoyl-2-oleoyl tails.",
     "itp": "martini_v3.0.0_plasmalogens_PA_v2.itp",
     "m2": [],
+    "m2_mapping_known": true,
     "sn1": "cCDC",
     "sn2": "CDCC"
    },
@@ -16204,6 +16877,7 @@
     "description": "A general model plasmalogen phosphatidylcholine (LC) lipid corresponding to atomistic C16:1(9c)/18:1(9c) 1-palmitoleoyl-2-oleoyl tails.",
     "itp": "martini_v3.0.0_plasmalogens_PC_v2.itp",
     "m2": [],
+    "m2_mapping_known": true,
     "sn1": "cCDC",
     "sn2": "CDCC"
    },
@@ -16221,6 +16895,7 @@
     "description": "A general model plasmalogen phosphatidylethanolamine (LE) lipid corresponding to atomistic C16:1(9c)/18:1(9c) 1-palmitoleoyl-2-oleoyl tails.",
     "itp": "martini_v3.0.0_plasmalogens_PE_v2.itp",
     "m2": [],
+    "m2_mapping_known": true,
     "sn1": "cCDC",
     "sn2": "CDCC"
    },
@@ -16238,6 +16913,7 @@
     "description": "A general model plasmalogen phosphatidylglycerol (LG) lipid corresponding to atomistic C16:1(9c)/18:1(9c) 1-palmitoleoyl-2-oleoyl tails.",
     "itp": "martini_v3.0.0_plasmalogens_PG_v2.itp",
     "m2": [],
+    "m2_mapping_known": true,
     "sn1": "cCDC",
     "sn2": "CDCC"
    },
@@ -16255,6 +16931,7 @@
     "description": "A general model plasmalogen phosphatidylserine (LS) lipid corresponding to atomistic C16:1(9c)/18:1(9c) 1-palmitoleoyl-2-oleoyl tails.",
     "itp": "martini_v3.0.0_plasmalogens_PS_v2.itp",
     "m2": [],
+    "m2_mapping_known": true,
     "sn1": "cCDC",
     "sn2": "CDCC"
    },
@@ -16274,6 +16951,7 @@
     "m2": [
      "DOPA"
     ],
+    "m2_mapping_known": true,
     "sn1": "cCDC",
     "sn2": "CDCC"
    },
@@ -16293,6 +16971,7 @@
     "m2": [
      "DOPC"
     ],
+    "m2_mapping_known": true,
     "sn1": "cCDC",
     "sn2": "CDCC"
    },
@@ -16312,6 +16991,7 @@
     "m2": [
      "DOPE"
     ],
+    "m2_mapping_known": true,
     "sn1": "cCDC",
     "sn2": "CDCC"
    },
@@ -16331,6 +17011,7 @@
     "m2": [
      "DOPG"
     ],
+    "m2_mapping_known": true,
     "sn1": "cCDC",
     "sn2": "CDCC"
    },
@@ -16350,6 +17031,7 @@
     "m2": [
      "DOPS"
     ],
+    "m2_mapping_known": true,
     "sn1": "cCDC",
     "sn2": "CDCC"
    }

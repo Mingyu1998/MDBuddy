@@ -132,6 +132,15 @@ def cmd_lipids(args) -> int:
                         flag = f"  !! CHARGE CHANGES {q_src:+g} -> {e['charge']:+g}"
                     print(f"   -> {lipids.describe(n, dst)}   [COBY: {e['coby']['status']}]{flag}")
         return status
+    if args.action == "report":
+        text = lipids.report_markdown()
+        if args.names == ["-"]:
+            print(text, end="")
+        else:
+            from pathlib import Path
+            Path(args.names[0]).write_text(text)
+            print(f"wrote {args.names[0]}")
+        return 0
     if args.action == "search":
         lib = _lib(args.ff) if args.ff else None
         hits = lipids.search(" ".join(args.names), lib)
@@ -183,10 +192,10 @@ def main(argv=None) -> int:
     p.set_defaults(func=cmd_build)
 
     p = sub.add_parser("lipids", help="look up lipid names across Martini 2, Martini 3 and the M3 lipidome")
-    p.add_argument("action", choices=("show", "convert", "search"),
+    p.add_argument("action", choices=("show", "convert", "search", "report"),
                    help="show NAME...: meaning in every version; convert NAME... --from m2 --to m3; "
-                        "search TEXT [--ff m3]")
-    p.add_argument("names", nargs="+")
+                        "search TEXT [--ff m3]; report FILE|-: Markdown list of every changed/clashing name")
+    p.add_argument("names", nargs="*", default=["-"])
     p.add_argument("--from", dest="source", default="m2")
     p.add_argument("--to", dest="target", default="m3")
     p.add_argument("--ff", help="restrict search to one force field (m2, m3, m3-2021)")
