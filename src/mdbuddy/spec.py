@@ -81,6 +81,7 @@ DEFAULTS: dict[str, Any] = {
         "salt_molarity": 0.15,
     },
     "forcefield_files": {
+        "martini3_lipids": "lipidome",
         "optional": [],
         "extra_itps": [],
         "ff_dir": None,
@@ -250,6 +251,9 @@ def _validate(d: dict, problems: list[str]) -> None:
         if not isinstance(m[key], (int, float)) or m[key] <= 0:
             problems.append(f"membrane.{key} must be a positive number")
 
+    if d["forcefield_files"]["martini3_lipids"] not in ("lipidome", "release2021"):
+        problems.append("forcefield_files.martini3_lipids must be 'lipidome' (Martini 3 lipidome, 2025) "
+                        "or 'release2021' (lipids of the original Martini 3 release)")
     if not isinstance(s["salt_molarity"], (int, float)) or s["salt_molarity"] < 0:
         problems.append("solvent.salt_molarity must be >= 0")
 

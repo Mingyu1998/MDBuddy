@@ -12,7 +12,7 @@ import shutil
 from pathlib import Path
 from typing import Callable, Optional
 
-from . import assemble, citations, doctor, fetch, forcefields, martinize, membrane, prepare
+from . import assemble, citations, doctor, fetch, forcefields, lipids, martinize, membrane, prepare
 from .provenance import Lock, sha256
 from .structure import read_pdb
 from .tools import find_gmx
@@ -71,6 +71,19 @@ def build(spec, from_stage: str = "fetch", until_stage: str = "check", grompp_ch
     lock.data["tools"] = {c.name: c.version for c in doctor.run_checks() if c.version}
     lock.data["spec"] = spec.data
     lock.save()
+
+    # Lipid names are checked before anything runs: unknown names, cross-version name clashes,
+    # and lipids COBY cannot build (see lipids.py)
+    lib = lipids.library_for(spec)
+    lipid_check = lipids.check(spec.lipid_names(), lib)
+    lock.data["lipids"] = {"library": lib, "warnings": lipid_check.warnings,
+                           "coby_renames": {k: {str(i): list(v) for i, v in t.items()}
+                                            for k, t in lipid_check.renames.items()}}
+    lock.save()
+    for w in lipid_check.warnings:
+        log(f"    LIPID NOTE {w}")
+    if lipid_check.errors:
+        raise BuildError("membrane lipids:\n  - " + "\n  - ".join(lipid_check.errors))
 
     for i, stage in enumerate(STAGES):
         if i < start or i > stop:
@@ -146,6 +159,8 @@ def build(spec, from_stage: str = "fetch", until_stage: str = "check", grompp_ch
             lock.finish(entry, res["outputs"], base=out)
             v = res["validation"]
             log(f"    {v['atoms']} beads, net charge {v['net_charge']:+g} e")
+            for lipid, n in (v.get("coby_renames") or {}).items():
+                log(f"    renamed {n} atoms of {lipid} to match its itp (known COBY naming issue)")
             for w in v["warnings"]:
                 log(f"    WARNING {w}")
 

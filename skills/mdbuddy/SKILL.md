@@ -65,10 +65,18 @@ and how it differs from the lab's reference files. Read `references/decisions.md
 parameters, Go vs elastic, Martini 2 vs 3, lipid names per force field, leaflet
 orientation). Read `references/spec_reference.md` for every spec key.
 
-Lipid names must exist in the chosen force field. For Martini 3, MDBuddy ships the
-phospholipids and cholesterol. For **Martini 2**, only POPE, POPG and CDL0 are
-pinned. Most other Martini 2 lipids (POPC, CHOL, ...) must come from the user via
-`forcefield_files.extra_itps`. Say this up front when the user picks Martini 2.
+**Lipid names differ between Martini versions. Read `references/lipids.md` before writing
+any lipid into a spec.** The same name can be a different molecule. Lipidome `DLPC` is
+dilinoleoyl, Martini 2 `DLPC` is dilauroyl. Lipidome `POP2` is PI(3,4)P2, while PI(4,5)P2 is `POP6`.
+Cardiolipin is `CDL0/1/2` in M2 and `TOCL` (2−) in M3. Use `mdbuddy lipids show|convert|search`
+to translate, always state the chemistry and any charge change to the user, and never
+rename silently.
+
+For Martini 3, MDBuddy pins the 2025 lipidome (default; `forcefield_files.martini3_lipids:
+release2021` selects the 2021 lipids) and cholesterol. For **Martini 2**, only POPE and POPG are
+both pinned and buildable by COBY. Other Martini 2 lipid itps (POPC, ...) must come from the
+user via `forcefield_files.extra_itps`, and COBY 1.0.15 has no Martini 2 cardiolipin,
+cholesterol or PIP definitions. Say this up front when the user picks Martini 2.
 
 ## Step 3: Write and validate the spec
 
@@ -93,6 +101,8 @@ The build prints a summary after each stage. Act on it:
   solvent-exposed loop is usually acceptable with an elastic network. Tell the user
   which it is, and suggest modelling the loop first (MODELLER, AlphaFold) if it matters.
   Warn if `orientation: opm` but no OPM REMARK was found.
+- **before fetch**: `LIPID NOTE` lines explain cross-version name clashes and charge facts. Relay
+  them. Unknown or unbuildable lipids stop the build with a suggested replacement.
 - **martinize**: report the molecules and any WARNING lines from
   `02_cg/martinize2.log`. Missing-atom warnings are common for flexible side chains.
   martinize2 rebuilds what it can. If it stops on warnings, explain them and,

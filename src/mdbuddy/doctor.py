@@ -52,6 +52,19 @@ def check_module(name: str, dist: Optional[str], required: bool, fix: str, purpo
     return Check(name, "ok", required, v, purpose)
 
 
+def check_coby() -> Check:
+    from . import lipids
+    v = tools.module_version("COBY", "COBY")
+    if v is None:
+        return Check("COBY", "missing", True, None, "builds membrane, inserts protein, solvates", "pip install COBY")
+    tested = lipids.database()["sources"]["coby"].split()[-1]
+    if v != tested:
+        return Check("COBY", "warn", True, v, "builds membrane, inserts protein, solvates",
+                     f"MDBuddy's lipid compatibility table was made with COBY {tested}; with {v} the "
+                     "atom-name validation after COBY still guards every build")
+    return Check("COBY", "ok", True, v, "builds membrane, inserts protein, solvates")
+
+
 def check_martinize2() -> Check:
     exe = shutil.which("martinize2")
     if not exe:
@@ -129,7 +142,7 @@ def run_checks(network: bool = False) -> list[Check]:
         check_module("yaml", "PyYAML", True, "pip install pyyaml", "reads spec files"),
         check_martinize2(),
         check_module("vermouth", None, True, "pip install vermouth", "martinize2 library"),
-        check_module("COBY", "COBY", True, "pip install COBY", "builds membrane, inserts protein, solvates"),
+        check_coby(),
         check_dssp(),
         check_gmx(),
         check_module("mdtraj", None, False, "pip install mdtraj", "optional DSSP backend"),

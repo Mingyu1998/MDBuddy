@@ -13,7 +13,7 @@ from __future__ import annotations
 import shutil
 from pathlib import Path
 
-from . import mdp, topology
+from . import lipids, mdp, topology
 from .structure import read_gro
 
 # Names COBY may write that differ from the moleculetype names in Martini 2 files
@@ -57,6 +57,50 @@ def write_index(path: Path, spec, molecules, info: topology.TopologyInfo,
         lines.append("")
     path.write_text("\n".join(lines))
     return {g: len(groups[g]) for g in order}
+
+
+def fix_coby_names(gro_path: Path, pdb_path: Path, molecules, info: topology.TopologyInfo,
+                   renames: dict[str, dict[int, tuple[str, str]]]) -> dict[str, int]:
+    """Rename atoms COBY names differently from the itp (known COBY definition typos).
+
+    Only exact, pre-verified renames from data/lipids.json are applied: same bead count, same
+    bead order, an atom is renamed only if it carries the known wrong name. Returns counts.
+    """
+    if not renames:
+        return {}
+    lines = gro_path.read_text().splitlines()
+    natoms = int(lines[1])
+    new_names: dict[int, str] = {}
+    counts: dict[str, int] = {}
+    i = 0
+    for name, count in molecules:
+        n = info.moleculetypes[name].natoms if name in info.moleculetypes else 0
+        table = renames.get(name)
+        for _ in range(count):
+            if table:
+                for pos, (wrong, right) in table.items():
+                    if i + pos < natoms and lines[2 + i + pos][10:15].strip() == wrong:
+                        new_names[i + pos] = right
+                        counts[name] = counts.get(name, 0) + 1
+            i += n
+    if not new_names:
+        return {}
+    for idx, right in new_names.items():
+        line = lines[2 + idx]
+        lines[2 + idx] = line[:10] + f"{right:>5}" + line[15:]
+    gro_path.write_text("\n".join(lines) + "\n")
+    if pdb_path.exists():
+        out, k = [], -1
+        for line in pdb_path.read_text().splitlines():
+            if line.startswith(("ATOM", "HETATM")):
+                k += 1
+                if k in new_names:
+                    right = new_names[k]
+                    field = f" {right:<3}" if len(right) < 4 else right[:4]
+                    line = line[:12] + field + line[16:]
+            out.append(line)
+        pdb_path.write_text("\n".join(out) + "\n")
+    return counts
 
 
 def validate(gro_path: Path, molecules, info: topology.TopologyInfo) -> dict:
@@ -183,7 +227,10 @@ def assemble(spec, coby_dir: Path, gmx_dir: Path, ff_includes: list[str], protei
                                "Do not edit by hand: change the spec and rebuild."])
 
     info = topology.parse(top)
+    renames = lipids.check(spec.lipid_names(), lipids.library_for(spec)).renames
+    renamed = fix_coby_names(gmx_dir / "step5_input.gro", gmx_dir / "step5_input.pdb", molecules, info, renames)
     report = validate(gmx_dir / "step5_input.gro", molecules, info)
+    report["coby_renames"] = renamed
     if report["errors"]:
         raise AssembleError("system failed validation:\n  - " + "\n  - ".join(report["errors"]))
 

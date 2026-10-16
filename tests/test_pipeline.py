@@ -98,6 +98,22 @@ def test_checksum_mismatch_is_fatal(tmp_path, opm_pdb, fake_tools, monkeypatch):
 def test_unknown_lipid_fails_before_martinize(tmp_path, opm_pdb, fake_tools):
     s = make_spec(tmp_path, opm_pdb)
     s.data["membrane"]["lipids"] = {"POPC": 1, "XXPC": 1}
-    with pytest.raises(ForceFieldError, match="XXPC"):
+    with pytest.raises(pipeline.BuildError, match="XXPC"):
         pipeline.build(s, log=lambda m: None)
-    assert not (s.output_dir() / "02_cg").exists()
+    assert not (s.output_dir() / "00_input").exists()
+
+
+def test_cross_version_name_is_explained(tmp_path, opm_pdb, fake_tools):
+    s = make_spec(tmp_path, opm_pdb)
+    s.data["membrane"]["lipids"] = {"POPC": 1, "CDL2": 1}
+    with pytest.raises(pipeline.BuildError) as exc:
+        pipeline.build(s, log=lambda m: None)
+    assert "Martini 2.x name" in str(exc.value) and "TOCL" in str(exc.value)
+
+
+def test_lipidome_files_included_on_demand(tmp_path, opm_pdb, fake_tools):
+    s = make_spec(tmp_path, opm_pdb)
+    pipeline.build(s, until_stage="forcefield", log=lambda m: None)
+    top_files = [r["file"] for r in json.loads((s.output_dir() / "mdbuddy.lock.json").read_text())["forcefield_files"]]
+    assert top_files[0] == "martini_v3.0.0.itp" and top_files[1] == "martini_v3.0.0_ffbonded_v2.itp"
+    assert top_files[-1] == "martini_v3.0.0_phospholipids_PC_v2.itp"

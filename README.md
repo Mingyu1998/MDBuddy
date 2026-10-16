@@ -57,7 +57,7 @@ cd kcsa/gromacs && ./run.sh
 |---|---|---|
 | Python ≥ 3.9, PyYAML | everything | |
 | vermouth (martinize2) | coarse-graining | `pip install vermouth` |
-| COBY | membrane, insertion, solvation | `pip install COBY` |
+| COBY (tested 1.0.15) | membrane, insertion, solvation | `pip install COBY` |
 | DSSP 2.2.1/3.0.0 **or** mdtraj | secondary structure | `pip install mdtraj` or `conda install -c salilab dssp` |
 | GROMACS ≥ 2021 | final `grompp` check and running | `conda install -c conda-forge gromacs` / `module load gromacs` |
 
@@ -85,6 +85,17 @@ simulation:
 ```
 
 All options: [`skills/mdbuddy/references/spec_reference.md`](skills/mdbuddy/references/spec_reference.md).
+
+Lipid names differ between Martini 2, the 2021 Martini 3 release and the 2025 Martini 3 lipidome. For example,
+`DLPC`, `PIPC` and `POP2` are different molecules, and cardiolipin is `CDL2` vs `TOCL`. MDBuddy checks every
+lipid against a table generated from the official lipidome naming spreadsheet and converts between them:
+
+```bash
+mdbuddy lipids show DLPC CDL2 POP2
+mdbuddy lipids convert CDL2 POP2 PIPC --from m2 --to m3
+```
+
+Details and the full list of pitfalls: [`skills/mdbuddy/references/lipids.md`](skills/mdbuddy/references/lipids.md).
 Background on the choices: [`skills/mdbuddy/references/decisions.md`](skills/mdbuddy/references/decisions.md).
 Every mdp parameter, line by line: [`skills/mdbuddy/references/mdp_parameters.md`](skills/mdbuddy/references/mdp_parameters.md).
 More examples: [`examples/`](examples).

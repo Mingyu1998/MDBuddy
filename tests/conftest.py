@@ -137,7 +137,10 @@ FF_FILES = {
         [ atoms ]
         1 W 1 W W 1 0
     """,
-    "martini_v3.0.0_phospholipids_v1.itp": """
+    "martini_v3.0.0_ffbonded_v2.itp": """
+        #define b_fake 1 0.47 1250
+    """,
+    "martini_v3.0.0_phospholipids_PC_v2.itp": """
         [ moleculetype ]
         POPC 1
         [ atoms ]
@@ -166,12 +169,18 @@ def fake_tools(tmp_path: Path, monkeypatch):
 
     ffdir = tmp_path / "ffsrc"
     ffdir.mkdir()
-    registry = []
+    files = {}
     for name, content in FF_FILES.items():
         p = ffdir / name
         p.write_text(textwrap.dedent(content).lstrip())
-        registry.append(forcefields.FFFile(name, p.as_uri(), hashlib.sha256(p.read_bytes()).hexdigest(), "core"))
-    monkeypatch.setitem(forcefields.REGISTRY, "martini3", registry)
+        files[name] = forcefields.FFFile(name, p.as_uri(), hashlib.sha256(p.read_bytes()).hexdigest(), "core")
+    lipid_files = ("martini_v3.0.0_ffbonded_v2.itp", "martini_v3.0.0_phospholipids_PC_v2.itp")
+    monkeypatch.setitem(forcefields.REGISTRY, "martini3", [f for n, f in files.items() if n not in lipid_files])
+    pc = files["martini_v3.0.0_phospholipids_PC_v2.itp"]
+    monkeypatch.setitem(forcefields.LIPID_SETS, "lipidome", [
+        files["martini_v3.0.0_ffbonded_v2.itp"],
+        forcefields.FFFile(pc.name, pc.url, pc.sha256, "lipid"),
+    ])
     monkeypatch.setenv("MDBUDDY_CACHE", str(tmp_path / "cache"))
     monkeypatch.delenv("MDBUDDY_GMX", raising=False)
     monkeypatch.delenv("GMX", raising=False)

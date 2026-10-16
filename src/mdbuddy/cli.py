@@ -7,7 +7,7 @@ import json
 import sys
 from pathlib import Path
 
-from . import __version__, doctor, spec as spec_mod
+from . import __version__, doctor, lipids, spec as spec_mod
 from .pipeline import STAGES, BuildError, build
 
 
@@ -66,6 +66,83 @@ def cmd_build(args) -> int:
     return 0
 
 
+LIB_ALIASES = {
+    "m2": "martini2", "martini2": "martini2", "martini22": "martini2", "elnedyn22": "martini2",
+    "m3": "martini3_lipidome", "martini3": "martini3_lipidome", "lipidome": "martini3_lipidome",
+    "martini3_lipidome": "martini3_lipidome",
+    "m3-2021": "martini3_2021", "release2021": "martini3_2021", "martini3_2021": "martini3_2021",
+}
+
+
+def _lib(name: str) -> str:
+    try:
+        return LIB_ALIASES[name.lower()]
+    except KeyError:
+        raise SystemExit(f"unknown force field '{name}'; use one of: m2, m3 (lipidome), m3-2021")
+
+
+def _entry_line(lib: str, name: str) -> str:
+    e = lipids.lookup(name, lib)
+    if e is None:
+        return f"  {lipids.LIBRARY_LABELS[lib]:<44} -"
+    charge = f"{e['charge']:+g}" if e.get("charge") is not None else "?"
+    coby = e["coby"]["status"]
+    return (f"  {lipids.LIBRARY_LABELS[lib]:<44} {name:<6} {e.get('chemistry') or '':<18} "
+            f"charge {charge:<4} COBY: {coby}")
+
+
+def cmd_lipids(args) -> int:
+    if args.action == "show":
+        for name in args.names:
+            print(f"{name}")
+            for lib in lipids.LIBRARIES:
+                print(_entry_line(lib, name))
+            for src in lipids.LIBRARIES:
+                if lipids.lookup(name, src) is None:
+                    continue
+                for dst in lipids.LIBRARIES:
+                    if dst != src:
+                        eq = lipids.equivalents(name, src, dst)
+                        if eq and eq != [name]:
+                            print(f"  {src} {name} -> {dst}: {', '.join(eq)}")
+            for lib in lipids.LIBRARIES:
+                note = (lipids.lookup(name, lib) or {}).get("note")
+                if note:
+                    print(f"  note ({lib}): {note}")
+            print()
+        return 0
+    if args.action == "convert":
+        src, dst = _lib(args.source), _lib(args.target)
+        status = 0
+        for name in args.names:
+            eq = lipids.equivalents(name, src, dst)
+            if lipids.lookup(name, src) is None:
+                print(f"{name}: not a {lipids.LIBRARY_LABELS[src]} lipid")
+                status = 1
+            elif not eq:
+                print(f"{name} ({lipids.describe(name, src)}) -> no equivalent in {lipids.LIBRARY_LABELS[dst]}")
+                status = 1
+            else:
+                print(f"{lipids.describe(name, src)}")
+                q_src = lipids.lookup(name, src).get("charge")
+                for n in eq:
+                    e = lipids.lookup(n, dst)
+                    flag = ""
+                    if q_src is not None and e.get("charge") is not None and abs(q_src - e["charge"]) > 1e-6:
+                        flag = f"  !! CHARGE CHANGES {q_src:+g} -> {e['charge']:+g}"
+                    print(f"   -> {lipids.describe(n, dst)}   [COBY: {e['coby']['status']}]{flag}")
+        return status
+    if args.action == "search":
+        lib = _lib(args.ff) if args.ff else None
+        hits = lipids.search(" ".join(args.names), lib)
+        for lname, name, e in hits[: args.limit]:
+            print(f"{lname:<18} {name:<6} {e.get('common') or e.get('chemistry') or ''}")
+        if len(hits) > args.limit:
+            print(f"... {len(hits) - args.limit} more (use --limit)")
+        return 0 if hits else 1
+    return 2
+
+
 def cmd_stages(args) -> int:
     for s in STAGES:
         print(s)
@@ -104,6 +181,17 @@ def main(argv=None) -> int:
     p.add_argument("--skip-doctor", action="store_true", help="do not check the environment first")
     p.add_argument("--force", action="store_true", help="overwrite an existing output directory")
     p.set_defaults(func=cmd_build)
+
+    p = sub.add_parser("lipids", help="look up lipid names across Martini 2, Martini 3 and the M3 lipidome")
+    p.add_argument("action", choices=("show", "convert", "search"),
+                   help="show NAME...: meaning in every version; convert NAME... --from m2 --to m3; "
+                        "search TEXT [--ff m3]")
+    p.add_argument("names", nargs="+")
+    p.add_argument("--from", dest="source", default="m2")
+    p.add_argument("--to", dest="target", default="m3")
+    p.add_argument("--ff", help="restrict search to one force field (m2, m3, m3-2021)")
+    p.add_argument("--limit", type=int, default=40)
+    p.set_defaults(func=cmd_lipids)
 
     p = sub.add_parser("stages", help="list pipeline stages")
     p.set_defaults(func=cmd_stages)

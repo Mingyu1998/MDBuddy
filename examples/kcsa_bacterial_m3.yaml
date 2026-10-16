@@ -1,0 +1,16 @@
+# KcsA in a bacterial-like inner membrane, Martini 3 lipidome (2025) parameters.
+# TOCL = tetraoleoyl cardiolipin, always 2- in Martini 3 (Martini 2 equivalent: CDL2).
+# Run `mdbuddy lipids show TOCL` for details.
+mdbuddy: 1
+name: kcsa_bacterial_m3
+protein:
+  source: opm
+  id: 1bl8
+coarse_grain:
+  forcefield: martini3
+  model: elastic
+membrane:
+  lipids: {POPE: 7, POPG: 2, TOCL: 1}
+simulation:
+  temperature: 310
+  production_ns: 1000

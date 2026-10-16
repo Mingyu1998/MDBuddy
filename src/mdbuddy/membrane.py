@@ -10,6 +10,7 @@ import math
 import sys
 from pathlib import Path
 
+from . import lipids
 from .structure import centre_of_geometry, extents, read_pdb
 
 
@@ -44,18 +45,26 @@ def protein_offset_nm(spec, cg_atoms) -> float:
     return (cz - float(spec.protein["membrane_center_z"])) / 10.0
 
 
-def _composition(comp: dict) -> str:
-    return " ".join(f"lipid:{name}:{_fmt(float(ratio))}" for name, ratio in comp.items())
+def _composition(comp: dict, lib: str) -> str:
+    """COBY lipid sub-arguments, each with the COBY parameter library that matches its itp."""
+    parts = []
+    for name, ratio in comp.items():
+        arg = f"lipid:{name}:{_fmt(float(ratio))}"
+        if lipids.lookup(name, lib):
+            arg += f":params:{lipids.coby_params(name, lib)}"
+        parts.append(arg)
+    return " ".join(parts)
 
 
 def membrane_arg(spec) -> str:
     m = spec.membrane
+    lib = lipids.library_for(spec)
     leaflets = spec.leaflets()
     upper_apl = m["upper_apl"] or m["apl"]
     lower_apl = m["lower_apl"] or m["apl"]
     return " ".join([
-        f"leaflet:upper {_composition(leaflets['upper'])} apl:{_fmt(upper_apl)}",
-        f"leaflet:lower {_composition(leaflets['lower'])} apl:{_fmt(lower_apl)}",
+        f"leaflet:upper {_composition(leaflets['upper'], lib)} apl:{_fmt(upper_apl)}",
+        f"leaflet:lower {_composition(leaflets['lower'], lib)} apl:{_fmt(lower_apl)}",
     ])
 
 

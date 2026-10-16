@@ -19,6 +19,8 @@ REFS = {
             "Biological Systems. J. Chem. Inf. Model. doi:10.1021/acs.jcim.5c00069",
     "opm": "Lomize et al. (2012) OPM database and PPM web server: resources for positioning of proteins in "
            "membranes. Nucleic Acids Res. 40, D370-D376. doi:10.1093/nar/gkr703",
+    "lipidome": "Pedersen et al. (2025) The Martini 3 Lipidome: Expanded and Refined Parameters Improve Lipid Phase "
+                "Behavior. ACS Cent. Sci. doi:10.1021/acscentsci.5c00755",
     "sterols": "Borges-Araujo et al. (2023) Martini 3 coarse-grained force field for cholesterol. "
                "J. Chem. Theory Comput. 19, 7387-7404. doi:10.1021/acs.jctc.3c00547",
     "gromacs": "Abraham et al. (2015) GROMACS: High performance molecular simulations through multi-level "
@@ -31,6 +33,8 @@ def for_spec(spec) -> list[str]:
     ff = spec.cg["forcefield"]
     if ff == "martini3":
         keys.append("martini3")
+        if spec.ff_files["martini3_lipids"] == "lipidome":
+            keys.append("lipidome")
         if "CHOL" in spec.lipid_names():
             keys.append("sterols")
     else:

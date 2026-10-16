@@ -11,7 +11,7 @@ override what they ask for.
 | COBY parameter library | `default` | `M2` | `M2` |
 | Elastic defaults (ef / el / eu) | 700 / 0.5 / 0.9 | 500 / 0.5 / 0.9 | 500 / 0.0 / 0.9 |
 | Go model | yes | no | no |
-| Lipid/ion files shipped | phospholipids, CHOL, ions, water (pinned) | core FF, ions, POPE, POPG, CDL0 (pinned) | same as Martini 2.2 |
+| Lipid files shipped (pinned) | Martini 3 lipidome 2025 (PC/PE/PS/PG/PA/PI/PIPs/CL/SM/CER/glycerides…), CHOL; or the 2021 release lipids | core FF, ions, POPE, POPG, CDL0 | same as Martini 2.2 |
 
 Martini 3 is the default for new work. Use Martini 2.2 when the user is extending or
 comparing with earlier Martini 2 studies. Never mix the two in one system.
@@ -19,6 +19,11 @@ comparing with earlier Martini 2 studies. Never mix the two in one system.
 Martini 2 lipids beyond POPE/POPG/CDL0 (POPC, DPPC, CHOL, PIP2, ...) are distributed by
 the Martini developers (cgmartini.nl). Ask the user for the itp file(s) and add them to
 `forcefield_files.extra_itps`. MDBuddy records them with checksums, marked unpinned.
+COBY 1.0.15 cannot place Martini 2 cardiolipin, cholesterol or PIPs at all.
+
+The lipidome (Pedersen et al. 2025) is the default Martini 3 lipid set: it refines the 2021
+lipids and adds hundreds more. Its names differ from Martini 2 / the 2021 release in places
+(see `lipids.md`). Use `martini3_lipids: release2021` only to reproduce earlier Martini 3 work.
 
 ## Protein model
 

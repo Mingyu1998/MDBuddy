@@ -20,10 +20,13 @@ from .provenance import sha256
 
 MARTINI_FF_COMMIT = "784591ebdc91d762ed4df986c4650546c938f776"  # marrink-lab/martini-forcefields
 COBY_COMMIT = "143dc533176ac1f9c04a7075ccfd5ffd330a16ff"  # MikkelDA/COBY
+LIPIDOME_COMMIT = "2121527045696345069deb4d3df754724888a4f9"  # Martini-Force-Field-Initiative/M3-Lipid-Parameters
 
 _M3 = (f"https://raw.githubusercontent.com/marrink-lab/martini-forcefields/{MARTINI_FF_COMMIT}"
        "/martini_forcefields/regular/v3.0.0/gmx_files/")
 _COBY = f"https://raw.githubusercontent.com/MikkelDA/COBY/{COBY_COMMIT}/Tutorial/toppar/"
+_LIPIDOME = (f"https://raw.githubusercontent.com/Martini-Force-Field-Initiative/M3-Lipid-Parameters/"
+             f"{LIPIDOME_COMMIT}/ITPs/")
 
 
 @dataclass(frozen=True)
@@ -31,7 +34,7 @@ class FFFile:
     name: str
     url: str
     sha256: str
-    role: str  # "core" (always included) or "optional"
+    role: str  # "core" (always included), "optional" (by key) or "lipid" (when a membrane lipid needs it)
     key: str = ""  # short name used in forcefield_files.optional
 
 
@@ -43,8 +46,6 @@ REGISTRY: dict[str, list[FFFile]] = {
                "699aba132755b0ef13a0d7b41e6230a27777781bdc8075507413b89499c2be4f", "core"),
         FFFile("martini_v3.0.0_solvents_v1.itp", _M3 + "martini_v3.0.0_solvents_v1.itp",
                "e6a78414b317c38a1a816eded4aee6082a5da1ed229a126359f0cc92314dcb4e", "core"),
-        FFFile("martini_v3.0.0_phospholipids_v1.itp", _M3 + "martini_v3.0.0_phospholipids_v1.itp",
-               "21fb2eb6d8a1d48854d179dc71981c1210f608486efb3e6644347391ba9cf392", "core"),
         FFFile("martini_v3.0_sterols_v1.0.itp", _COBY + "martini_v3/martini_v3.0_sterols_v1.0.itp",
                "b7cf06babd2699bc54e8538a4bab4108378de9b2ab355eb13fa01a18b5f9b69f", "core"),
         FFFile("martini_v3.0.0_sugars_v1.itp", _M3 + "martini_v3.0.0_sugars_v1.itp",
@@ -65,6 +66,45 @@ REGISTRY: dict[str, list[FFFile]] = {
         FFFile("martini_v2.0_CDL0_01.itp", _COBY + "M2_BacterialMembrane/Lipids/martini_v2.0_CDL0_01.itp",
                "50b70b584e1d1f6cd834e6155a2b63eccf955fbca4009d41c43181db97564e0b", "optional", "CDL0"),
     ],
+}
+
+# Martini 3 lipid parameter sets (forcefield_files.martini3_lipids). File order matters for the
+# lipidome: martini_v3.0.0_ffbonded_v2.itp defines the bonded macros and must precede the lipids.
+_LIPIDOME_FILES = {
+    "martini_v3.0.0_DOTAP_v2.itp": "57f68c5ff3abaca51fcca8d1a30ad2f6abb9eab53afcf71be7631becd7d1bd10",
+    "martini_v3.0.0_ceramides_v2.itp": "aa10f614161b5722b9075a257aaa6638cde896d37b94fa5a2d1366cc6e6fd74b",
+    "martini_v3.0.0_diglycerides_v2.itp": "3cd1dc52e3c8d99076d6f3da0a9c1c048500383d3a0afd7534b4956a212c4392",
+    "martini_v3.0.0_etherphospholipids_PA_v2.itp": "9694b27ab08899aeeec4f0d08246b43e7d6591dec9c57aac98ab508a0f46bd13",
+    "martini_v3.0.0_etherphospholipids_PC_v2.itp": "8177f9a373d91011b49183ffc2d1f738f4c5909d26ddbcdca859352799966b37",
+    "martini_v3.0.0_etherphospholipids_PE_v2.itp": "b7bbe0260030cad8fe7dc85c88a853b3f96ef36c6613123e76e3b8f58c26fe92",
+    "martini_v3.0.0_etherphospholipids_PG_v2.itp": "b5db1de6763a4037ada37e11a452756de52b70a97aef0b2fad52fc23bcb426f4",
+    "martini_v3.0.0_etherphospholipids_PS_v2.itp": "01d6d2d3220134f72e7e1c546f044ed235cb3fa6efe22e157d8467de825aa27a",
+    "martini_v3.0.0_fattyacids_v2.itp": "f390b85fc16866fa202a7ba59d69113f34a613a7f60374bf7250741428c77763",
+    "martini_v3.0.0_hydrocarbons_v2.itp": "272e3a4c25b0d5efee5a2293ba36c6c63f40d107de914455919c463906c900db",
+    "martini_v3.0.0_monoglycerides_v2.itp": "d13bb2c58770aa37b46b9560cde5e48aa0d53bed9d2ce1e70e470a5881ae36e3",
+    "martini_v3.0.0_phospholipids_2,2-BMP_v2.itp": "d04abc391956a9d15d790e7f0a7528e8a5556f9a13b77e76cde735910b980599",
+    "martini_v3.0.0_phospholipids_3,3-BMP_v2.itp": "cbfbbaff2dc722b4a51907cfa4cbe9e189dae018409acc64d7736f615d7d750c",
+    "martini_v3.0.0_phospholipids_CL_v2.itp": "e98cfa3afa1b0f13f14b8474bed73bc4154c5f946bf29871bce3dfad6f3461b0",
+    "martini_v3.0.0_phospholipids_PA_v2.itp": "62c83e6eabde0d6d20f5364486eae098c69ed408199ca9adb900e0edc5a235c5",
+    "martini_v3.0.0_phospholipids_PC_v2.itp": "43fc3e9976ea2a11af1b3df5d841ed1d2677dddd93a73a7e86304ad875ffb150",
+    "martini_v3.0.0_phospholipids_PE_v2.itp": "497c06ba81b47e28b95125e9bc56272f77b15f3df9acd53cc7e22339a0cc2bb2",
+    "martini_v3.0.0_phospholipids_PG_v2.itp": "37c65865088bd3944a50a646cc3489db040475d165a87595ad5b7f38a6c7c258",
+    "martini_v3.0.0_phospholipids_PI_v2.itp": "98f868d024a4f4cf4c7d83508f171bac5c2d47a79085239a894e30ea21cc4351",
+    "martini_v3.0.0_phospholipids_PS_v2.itp": "b6af8cefb4bf4e91bea5caec37bac23b2fd6b2a334603902cce2915950fedd55",
+    "martini_v3.0.0_phospholipids_SM_v2.itp": "9ad7ed22cdf5829f076b0a386e5c5322bd6fb042ce57434fde9ea4308414f8fd",
+    "martini_v3.0.0_plasmalogens_PA_v2.itp": "52cb6f83756b1781633fcf73e3bbe4bd3fb4557539a23977d6c2884ecc2e926e",
+    "martini_v3.0.0_plasmalogens_PC_v2.itp": "55dc543d11bd6a097e144cc2fedf398e54b9a2d594798d2e82b688285c93eee9",
+    "martini_v3.0.0_plasmalogens_PE_v2.itp": "68133ad0128b4279d7fc231a9aacdefbba6e6f574da606d11fa85ece230b568b",
+    "martini_v3.0.0_plasmalogens_PG_v2.itp": "b5fe4473eaf8cb7b4c178c82378d4b61182aabbfae71530a195df8014325e5b3",
+    "martini_v3.0.0_plasmalogens_PS_v2.itp": "6495c6edaf8eb9e803ef829fab3aad540075349735daf53fffe505643977319b",
+    "martini_v3.0.0_triglycerides_v2.itp": "11efbcf2bda7fd2e225e697684bead384d7718962c88d03adfba2c37c8457089",
+}
+LIPID_SETS: dict[str, list[FFFile]] = {
+    "lipidome": [FFFile("martini_v3.0.0_ffbonded_v2.itp", _LIPIDOME + "martini_v3.0.0_ffbonded_v2.itp",
+                        "149f98c48e32a9aab95e205b36c10e68332349d831aec3980bc55b4b428ab3fb", "core")]
+                + [FFFile(n, _LIPIDOME + n, h, "lipid") for n, h in sorted(_LIPIDOME_FILES.items())],
+    "release2021": [FFFile("martini_v3.0.0_phospholipids_v1.itp", _M3 + "martini_v3.0.0_phospholipids_v1.itp",
+                           "21fb2eb6d8a1d48854d179dc71981c1210f608486efb3e6644347391ba9cf392", "core")],
 }
 
 FAMILY = {"martini3": "martini3", "martini22": "martini2", "elnedyn22": "martini2"}
@@ -128,10 +168,18 @@ def install_forcefield(spec, toppar: Path) -> list[dict]:
         raise ForceFieldError(f"forcefield_files.optional: unknown {sorted(unknown)}; "
                               f"available for {family}: {sorted(known_optional)}")
 
-    records = []
-    for f in REGISTRY[family]:
-        if f.role == "core" or f.key in wanted_optional:
-            records.append(_obtain(f, toppar, ff_dir))
+    files = [f for f in REGISTRY[family] if f.role == "core" or f.key in wanted_optional]
+    if family == "martini3":
+        from . import lipids
+        lipid_set = LIPID_SETS[spec.ff_files["martini3_lipids"]]
+        lib = lipids.library_for(spec)
+        needed = set(lipids.itp_files([n for n in spec.lipid_names() if lipids.lookup(n, lib)], lib))
+        chosen = [f for f in lipid_set if f.role == "core" or f.name in needed]
+        # main parameter file first, then the lipid set (ffbonded before any lipid), then the rest
+        files = files[:1] + [f for f in chosen if f.role == "core"] + files[1:] + \
+            [f for f in chosen if f.role != "core"]
+
+    records = [_obtain(f, toppar, ff_dir) for f in files]
 
     for extra in spec.ff_files["extra_itps"]:
         src = spec.resolve_path(extra)

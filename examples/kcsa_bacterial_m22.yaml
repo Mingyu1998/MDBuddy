@@ -1,6 +1,7 @@
-# KcsA in a bacterial-like POPE/POPG/cardiolipin bilayer, Martini 2.2 + elastic network.
-# All three lipid files are pinned by MDBuddy. For POPC/CHOL etc. in Martini 2,
-# add the itp from cgmartini.nl under forcefield_files.extra_itps.
+# KcsA in a bacterial-like POPE/POPG bilayer, Martini 2.2 + elastic network.
+# Both lipid files are pinned by MDBuddy and COBY's Martini 2 library builds them.
+# Cardiolipin (CDL0/1/2) and cholesterol have no COBY Martini 2 definition (COBY 1.0.15);
+# for a cardiolipin-containing bacterial membrane use Martini 3 (kcsa_bacterial_m3.yaml).
 mdbuddy: 1
 name: kcsa_bacterial_m22
 protein:
@@ -10,7 +11,7 @@ coarse_grain:
   forcefield: martini22
   model: elastic
 membrane:
-  lipids: {POPE: 7, POPG: 2, CDL0: 1}
+  lipids: {POPE: 3, POPG: 1}
 simulation:
   temperature: 310
   production_ns: 1000

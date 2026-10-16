@@ -56,6 +56,7 @@ solvent:
   salt_molarity: 0.15      # mol/L, added on top of neutralising counter-ions
 
 forcefield_files:
+  martini3_lipids: lipidome  # lipidome (Martini 3 lipidome 2025, default) | release2021 (original M3 lipids)
   optional: []             # martini3: sugars, small_molecules ; martini2: POPE, POPG, CDL0 (auto when used)
   extra_itps: []           # your own itp files (e.g. Martini 2 lipids); copied to toppar/ and included
   ff_dir: null             # folder with copies of the pinned files (offline use; checksums still verified)

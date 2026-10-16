@@ -144,7 +144,11 @@ def test_protein_offset_puts_membrane_centre_at_box_centre():
 def test_membrane_argument_asymmetric():
     s = mkspec(membrane={"upper": {"POPC": 7, "CHOL": 3}, "lower": {"POPE": 1}, "lower_apl": 0.55})
     arg = membrane.membrane_arg(s)
-    assert arg == "leaflet:upper lipid:POPC:7 lipid:CHOL:3 apl:0.6 leaflet:lower lipid:POPE:1 apl:0.55"
+    assert arg == ("leaflet:upper lipid:POPC:7:params:LTF lipid:CHOL:3:params:default apl:0.6 "
+                   "leaflet:lower lipid:POPE:1:params:LTF apl:0.55")
+    s21 = mkspec(membrane={"lipids": {"POPC": 1}}, forcefield_files={"martini3_lipids": "release2021"})
+    assert membrane.membrane_arg(s21) == ("leaflet:upper lipid:POPC:1:params:default apl:0.6 "
+                                          "leaflet:lower lipid:POPC:1:params:default apl:0.6")
     assert s.lipid_names() == ["POPC", "CHOL", "POPE"]
 
 
