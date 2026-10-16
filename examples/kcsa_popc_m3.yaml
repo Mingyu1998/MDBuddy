@@ -1,0 +1,16 @@
+# KcsA potassium channel (tetramer) in POPC, Martini 3 with an elastic network.
+mdbuddy: 1
+name: kcsa_popc_m3
+protein:
+  source: opm
+  id: 1bl8
+coarse_grain:
+  forcefield: martini3
+  model: elastic
+membrane:
+  lipids: {POPC: 1}
+solvent:
+  salt_molarity: 0.15
+simulation:
+  temperature: 310
+  production_ns: 1000

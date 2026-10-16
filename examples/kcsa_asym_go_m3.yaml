@@ -1,0 +1,17 @@
+# KcsA in an asymmetric plasma-membrane-like bilayer, GoMartini 3.
+# Check on the OPM entry page which side (+z / -z) is extracellular before trusting the leaflets.
+mdbuddy: 1
+name: kcsa_asym_go_m3
+protein:
+  source: opm
+  id: 1bl8
+coarse_grain:
+  forcefield: martini3
+  model: go
+membrane:
+  upper: {POPC: 7, CHOL: 3}
+  lower: {POPE: 5, POPS: 2, CHOL: 3}
+  lipid_padding: 4.0
+simulation:
+  temperature: 310
+  production_ns: 2000

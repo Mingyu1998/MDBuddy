@@ -1,0 +1,26 @@
+[build-system]
+requires = ["setuptools>=64"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "mdbuddy"
+version = "0.1.0"
+description = "Agentic, reproducible builder for Martini coarse-grained membrane-protein systems in GROMACS"
+readme = "README.md"
+requires-python = ">=3.9"
+license = { text = "Apache-2.0" }
+authors = [{ name = "Mingyu Qin" }]
+dependencies = ["pyyaml>=5.1"]
+
+[project.optional-dependencies]
+build = ["vermouth>=0.13", "COBY>=1.0.15"]
+dev = ["pytest>=7"]
+
+[project.scripts]
+mdbuddy = "mdbuddy.cli:main"
+
+[tool.setuptools.packages.find]
+where = ["src"]
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]

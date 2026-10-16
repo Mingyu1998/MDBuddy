@@ -1,0 +1,11 @@
+{
+  "name": "mdbuddy",
+  "owner": { "name": "Mingyu Qin" },
+  "plugins": [
+    {
+      "name": "mdbuddy",
+      "source": "./",
+      "description": "Reproducible Martini membrane-protein system builder for GROMACS (CHARMM-GUI Martini Maker alternative)."
+    }
+  ]
+}

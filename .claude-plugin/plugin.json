@@ -1,0 +1,9 @@
+{
+  "name": "mdbuddy",
+  "version": "0.1.0",
+  "description": "Build Martini (2.2 / 3) coarse-grained membrane-protein systems for GROMACS from a PDB/OPM entry: martinize2 + COBY + mdp/topology/run files, fully reproducible.",
+  "author": { "name": "Mingyu Qin" },
+  "repository": "https://github.com/Mingyu1998/MDBuddy",
+  "license": "Apache-2.0",
+  "keywords": ["molecular-dynamics", "martini", "gromacs", "coarse-grained", "membrane-protein"]
+}
