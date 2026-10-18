@@ -1,0 +1,24 @@
+# Pre-coarse-grained protein islands (e.g. clusters from an earlier simulation) placed, as arranged,
+# into a fresh Martini 3 membrane. Nothing is re-coarse-grained or re-oriented.
+#   islands.gro  CG coordinates of all island proteins, with the box line of that simulation
+#   islands.top  its topology: the [ molecules ] in structure order, #includes of the protein itps
+# placement: keep  -> COBY center_protein:False: coordinates kept relative to the box centre;
+# membrane.box: from_structure -> the box of islands.gro, so they are kept exactly.
+mdbuddy: 1
+name: islands_m3
+protein:
+  source: none            # no atomistic protein: martinize2 is not needed
+cg_proteins:
+  - structure: islands.gro
+    topology: islands.top
+    placement: keep
+coarse_grain:
+  forcefield: martini3
+membrane:
+  box: from_structure
+  cz: 0.0                 # nm: membrane midplane relative to the box centre (match the islands)
+  lipids: {POPE: 7, POPG: 2, TOCL: 1}
+  lipid_apl: {TOCL: 1.2}  # nm^2; per-lipid area changes how many fit (illustrative value)
+simulation:
+  temperature: 310
+  production_ns: 1000

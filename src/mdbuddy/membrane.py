@@ -7,10 +7,13 @@ call is kept with the outputs and can be re-run by hand.
 from __future__ import annotations
 
 import math
+import shutil
 import sys
 from pathlib import Path
+from typing import Optional
 
-from . import lipids
+from . import cgprotein, lipids
+from .provenance import sha256
 from .structure import centre_of_geometry, extents, read_pdb
 
 
@@ -22,12 +25,14 @@ def _fmt(x: float) -> str:
     return f"{x:.3f}".rstrip("0").rstrip(".")
 
 
-def box_size(spec, cg_atoms) -> list[float]:
-    """Box in nm. 'auto' = protein extent + padding (square in x/y)."""
+def box_size(spec, cg_atoms=None, extent_nm: Optional[tuple[float, float, float]] = None) -> list[float]:
+    """Box in nm. 'auto' = protein extent + padding (square in x/y); 'from_structure' = first cg_proteins box."""
     m = spec.membrane
+    if m["box"] == "from_structure":
+        return cgprotein.box_from_structure(spec)
     if m["box"] != "auto":
         return [float(v) for v in m["box"]]
-    ex, ey, ez = (e / 10.0 for e in extents(cg_atoms))
+    ex, ey, ez = extent_nm if extent_nm else (e / 10.0 for e in extents(cg_atoms))
     xy = max(ex, ey) + 2 * m["lipid_padding"]
     z = max(ez + 2 * m["water_padding"], m["min_box_z"])
     # round up to 0.5 nm so boxes are tidy and stable across tiny coordinate changes
@@ -45,68 +50,171 @@ def protein_offset_nm(spec, cg_atoms, membrane_center_z_A: float = 0.0) -> float
     return (cz - float(membrane_center_z_A)) / 10.0
 
 
-def _composition(comp: dict, lib: str) -> str:
-    """COBY lipid sub-arguments, each with the COBY parameter library that matches its itp."""
+def _composition(comp: dict, lib: str, lipid_apl: Optional[dict] = None) -> str:
+    """COBY lipid sub-arguments, each with the COBY parameter library that matches its itp.
+
+    ``lipid_apl`` gives single lipids their own area per lipid (nm^2), which changes how many of
+    them fit in the leaflet (their density) while the ratios stay as given.
+    """
     parts = []
     for name, ratio in comp.items():
         arg = f"lipid:{name}:{_fmt(float(ratio))}"
         if lipids.lookup(name, lib):
             arg += f":params:{lipids.coby_params(name, lib)}"
+        if lipid_apl and name in lipid_apl:
+            arg += f":apl:{_fmt(float(lipid_apl[name]))}"
         parts.append(arg)
     return " ".join(parts)
 
 
-def membrane_arg(spec) -> str:
+def membrane_arg(spec, extra: Optional[str] = None) -> str:
+    """The generated membrane: membrane-wide options first (COBY applies later ones to a leaflet)."""
     m = spec.membrane
     lib = lipids.library_for(spec)
     leaflets = spec.leaflets()
     upper_apl = m["upper_apl"] or m["apl"]
     lower_apl = m["lower_apl"] or m["apl"]
-    return " ".join([
-        f"leaflet:upper {_composition(leaflets['upper'], lib)} apl:{_fmt(upper_apl)}",
-        f"leaflet:lower {_composition(leaflets['lower'], lib)} apl:{_fmt(lower_apl)}",
+    head = []
+    if float(m["cz"]):
+        head.append(f"cz:{_fmt(float(m['cz']))}")
+    extra = spec.data["coby"]["membrane_args"] if extra is None else extra
+    if extra:
+        head.append(extra)
+    return " ".join(head + [
+        f"leaflet:upper {_composition(leaflets['upper'], lib, m['lipid_apl'])} apl:{_fmt(upper_apl)}",
+        f"leaflet:lower {_composition(leaflets['lower'], lib, m['lipid_apl'])} apl:{_fmt(lower_apl)}",
     ])
 
 
-def protein_arg(spec, cg_pdb_rel: str, molecules: list[tuple[str, int]], cz: float) -> str:
+def protein_arg(spec, cg_pdb_rel: str, molecules: list[tuple[str, int]], cz: float,
+                extra: Optional[str] = None) -> str:
     moltypes = " ".join(f"moleculetypes:{name}:{count}" for name, count in molecules)
-    return f"file:{cg_pdb_rel} {moltypes} cz:{cz:.3f}"
+    extra = spec.data["coby"]["protein_args"] if extra is None else extra
+    return f"file:{cg_pdb_rel} {moltypes} cz:{cz:.3f}" + (f" {extra}" if extra else "")
 
 
-def solvation_arg(spec) -> str:
+def solvation_arg(spec, extra: Optional[str] = None) -> str:
     s = spec.solvent
+    extra = spec.data["coby"]["solvation_args"] if extra is None else extra
     return (f"solv:{s['water']} pos:{s['cation']} neg:{s['anion']} "
-            f"salt_molarity:{_fmt(float(s['salt_molarity']))}")
+            f"salt_molarity:{_fmt(float(s['salt_molarity']))}" + (f" {extra}" if extra else ""))
 
 
-def write_script(spec, work: Path, cg_pdb: Path, molecules, itp_files: list[Path],
-                 membrane_center_z_A: float = 0.0) -> tuple[Path, dict]:
+class _UserFiles:
+    """Copies files named in raw COBY strings (file:X, import_library) into 03_membrane/user_files."""
+
+    def __init__(self, spec, work: Path):
+        self.spec, self.dir, self.records = spec, work / "user_files", []
+
+    def _copy(self, path: str) -> str:
+        src = self.spec.resolve_path(path)
+        if not src.exists():
+            raise MembraneError(f"file referenced in the coby section not found: {src}")
+        self.dir.mkdir(parents=True, exist_ok=True)
+        digest = sha256(src)
+        for r in self.records:
+            if r["sha256"] == digest:
+                return r["copied_to"]
+        name = src.name
+        if (self.dir / name).exists():
+            name = f"{len(self.records)}_{src.name}"
+        shutil.copyfile(src, self.dir / name)
+        rel = f"user_files/{name}"
+        self.records.append({"source": str(src), "copied_to": rel, "sha256": digest})
+        return rel
+
+    def string(self, text: str) -> str:
+        return " ".join(f"file:{self._copy(t[5:])}" if t.startswith("file:") and len(t) > 5 else t
+                        for t in str(text).split())
+
+    def value(self, key: str, value):
+        if isinstance(value, (list, tuple)):
+            return [self.value(key, v) for v in value]
+        if isinstance(value, str):
+            if key == "import_library" and value.endswith(".py") and not value.startswith("file:"):
+                return self._copy(value)
+            return self.string(value)
+        return value
+
+
+def fill_params(raw: str, lib: str) -> str:
+    """Add the matching COBY parameter library to lipid tokens of a raw membrane string that lack one."""
+    out = []
+    for tok in raw.split():
+        parts = tok.split(":")
+        kind = parts[0].lower()
+        if kind in ("lipid", "lipid_extra") and len(parts) > 1 and "params" not in parts:
+            name = (parts[2 + parts[1:].index("name")] if "name" in parts[1:-1] else
+                    parts[1] if kind == "lipid" else None)
+            if name and lipids.lookup(name, lib):
+                tok += f":params:{lipids.coby_params(name, lib)}"
+        out.append(tok)
+    return " ".join(out)
+
+
+def _extent_nm(xyz) -> tuple[float, float, float]:
+    return tuple(max(p[k] for p in xyz) - min(p[k] for p in xyz) for k in range(3))
+
+
+def write_script(spec, work: Path, cg_pdb: Optional[Path], molecules, itp_files: list[Path],
+                 membrane_center_z_A: float = 0.0, cg_entries: list[dict] = ()) -> tuple[Path, dict]:
+    """Write coby_build.py. ``cg_pdb``/``molecules``: the martinized protein (None if there is none);
+    ``cg_entries``: pre-coarse-grained proteins from cgprotein.prepare."""
     work.mkdir(parents=True, exist_ok=True)
-    atoms, _ = read_pdb(cg_pdb)
-    if not atoms:
-        raise MembraneError(f"{cg_pdb} contains no beads")
-    box = box_size(spec, atoms)
-    cz = protein_offset_nm(spec, atoms, membrane_center_z_A)
-    if abs(cz) > box[2] / 2:
-        raise MembraneError(
-            f"protein would be shifted by {cz:.1f} nm, outside the box; the input does not look "
-            "membrane-oriented. Use an OPM structure or set protein.membrane_center_z.")
-
     rel = lambda p: Path(_relpath(p, work)).as_posix()
+    files = _UserFiles(spec, work)
+    proteins, cz = [], None
+    if cg_pdb is not None:
+        atoms, _ = read_pdb(cg_pdb)
+        if not atoms:
+            raise MembraneError(f"{cg_pdb} contains no beads")
+        box = box_size(spec, atoms)
+        cz = protein_offset_nm(spec, atoms, membrane_center_z_A)
+        if abs(cz) > box[2] / 2:
+            raise MembraneError(
+                f"protein would be shifted by {cz:.1f} nm, outside the box; the input does not look "
+                "membrane-oriented. Use an OPM structure or set protein.membrane_center_z.")
+        proteins.append(protein_arg(spec, rel(cg_pdb), molecules, cz,
+                                    files.string(spec.data["coby"]["protein_args"])))
+    else:
+        box = box_size(spec, extent_nm=_extent_nm(cg_entries[0]["xyz"]) if cg_entries else None)
+    notes = []
+    for e in cg_entries:
+        proteins.append(cgprotein.coby_arg({**e, "coby_args": files.string(e["coby_args"])}, rel(e["structure"])))
+        if e["placement"] == "keep" and any(abs(x - y) > 1e-3 for x, y in zip(e["box"][:3], box)):
+            notes.append(f"{e['structure'].name}: box {e['box'][:3]} nm differs from the new box; its coordinates "
+                         "are kept relative to the box centre")
+
+    coby = spec.data["coby"]
+    lib = lipids.library_for(spec)
+    membranes = [fill_params(files.string(m), lib) for m in coby["membranes"]] or [membrane_arg(spec, files.string(coby["membrane_args"]))]
     kwargs = {
         "randseed": spec.seed,
         "box": box,
         "box_type": spec.membrane["box_type"],
         "params": spec.ff_info["coby_params"],
-        "membrane": membrane_arg(spec),
-        "protein": protein_arg(spec, rel(cg_pdb), molecules, cz),
-        "solvation": solvation_arg(spec),
+        "membrane": membranes[0] if len(membranes) == 1 else membranes,
+    }
+    if proteins:
+        kwargs["protein"] = proteins[0] if len(proteins) == 1 else proteins
+    kwargs["solvation"] = solvation_arg(spec, files.string(coby["solvation_args"]))
+    for key, value in coby["kwargs"].items():
+        kwargs[key] = files.value(key, value)
+    if "molecule_import" in kwargs:
+        # an imported lipid is looked up under the parameter library of the membrane it goes into
+        # (the system's, as MDBuddy writes no params: for lipids it does not know)
+        imports = kwargs["molecule_import"]
+        imports = [imports] if isinstance(imports, str) else imports
+        kwargs["molecule_import"] = [
+            m + f" params:{spec.ff_info['coby_params']}"
+            if "library_type" in m and "lipid" in m and "params:" not in m else m for m in imports]
+    kwargs.update({
         "itp_input": [f"include:{rel(p)}" for p in itp_files],
         "out_sys": "system",
         "out_top": "coby_topol.top",
         "out_log": "coby.log",
         "sn": spec.name,
-    }
+    })
     body = ",\n".join(f"    {k}={v!r}" for k, v in kwargs.items())
     script = (
         "# Generated by MDBuddy. Run from this directory: python coby_build.py\n"
@@ -115,7 +223,11 @@ def write_script(spec, work: Path, cg_pdb: Path, molecules, itp_files: list[Path
     )
     path = work / "coby_build.py"
     path.write_text(script)
-    return path, {"box_nm": box, "protein_cz_nm": round(cz, 3), "coby_kwargs": kwargs}
+    info = {"box_nm": box, "protein_cz_nm": round(cz, 3) if cz is not None else None,
+            "proteins": len(proteins), "membranes": len(membranes), "notes": notes, "coby_kwargs": kwargs}
+    if files.records:
+        info["user_files"] = files.records
+    return path, info
 
 
 def _relpath(path: Path, start: Path) -> str:

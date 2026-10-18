@@ -62,6 +62,16 @@ message says which, and points to the log).
 - **lipid not found in COBY library**: COBY's lipid names follow Martini naming. The
   library is selected by force field (`default` = Martini 3, `M2` = Martini 2).
 - You can re-run COBY by hand: `cd 03_membrane && python coby_build.py`.
+- **cg_proteins shifted by half a box**: should not happen with MDBuddy. COBY 1.0.15 ignores the
+  box line of a `.gro` for `center_protein:False`, so MDBuddy always gives COBY a PDB with CRYST1
+  (`02_cg/cg_protein_<i>.pdb`; your file is kept as `cg_protein_<i>_input.*`).
+- **"has N beads but the moleculetypes have M" / bead name mismatch** (cg_proteins): the structure
+  and the `[ molecules ]` (or `moleculetypes`) are not in the same order or count. Fix the input.
+- **custom lipid: bead-count mismatch in COBY, or "detected multiple times"**: COBY already has a
+  lipid of that name in its library and silently keeps its own (it generates many 4-letter
+  phospholipid names, e.g. MYPC). Rename your lipid in the itp and the structure file.
+- **membranes overlap**: with several `coby.membranes`, give each a `cz` (nm from the box centre)
+  and make the box tall enough for both bilayers plus water between them.
 
 ## gromacs (validation)
 - **atom-name mismatches**: the protein in `cg.pdb` does not match its itp (often a

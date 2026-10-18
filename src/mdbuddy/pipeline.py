@@ -12,7 +12,7 @@ import shutil
 from pathlib import Path
 from typing import Callable, Optional
 
-from . import assemble, citations, doctor, fetch, forcefields, lipids, martinize, membrane, prepare
+from . import assemble, cgprotein, citations, doctor, fetch, forcefields, lipids, martinize, membrane, prepare, topology
 from .provenance import Lock, sha256
 from .structure import read_pdb
 from . import tools
@@ -47,6 +47,33 @@ def _save_state(out: Path, state: dict) -> None:
     _state_path(out).write_text(json.dumps(state, indent=2, default=str) + "\n")
 
 
+def user_lipid_definitions(spec) -> dict[str, str]:
+    """Moleculetypes defined in forcefield_files.extra_itps (name -> file), for custom lipids."""
+    found: dict[str, str] = {}
+    for extra in spec.ff_files["extra_itps"]:
+        path = spec.resolve_path(extra)
+        if path.exists():
+            for name in topology.parse(path).moleculetypes:
+                found.setdefault(name, path.name)
+    return found
+
+
+def coby_definitions(spec):
+    """Molecules the coby section gives COBY a structure for: names from molecule_import, or True
+    when an import_library file is given (its contents are only known to COBY)."""
+    kw = spec.data["coby"]["kwargs"]
+    if kw.get("import_library"):
+        return True
+    imports = kw.get("molecule_import") or []
+    names = set()
+    for m in [imports] if isinstance(imports, str) else imports:
+        for tok in str(m).split():
+            key, _, value = tok.partition(":")
+            if key in ("moleculetype", "moleculetypes", "name", "refname") and value:
+                names.add(value)
+    return names
+
+
 def build(spec, from_stage: str = "fetch", until_stage: str = "check", grompp_check: bool = True,
           log: Callable[[str], None] = print, force: bool = False) -> dict:
     if from_stage not in STAGES or until_stage not in STAGES:
@@ -77,7 +104,8 @@ def build(spec, from_stage: str = "fetch", until_stage: str = "check", grompp_ch
     # Lipid names are checked before anything runs: unknown names, cross-version name clashes,
     # and lipids COBY cannot build (see lipids.py)
     lib = lipids.library_for(spec)
-    lipid_check = lipids.check(spec.lipid_names(), lib)
+    lipid_check = lipids.check(spec.lipid_names(), lib, custom=user_lipid_definitions(spec),
+                               coby_definitions=coby_definitions(spec))
     lock.data["lipids"] = {"library": lib, "warnings": lipid_check.warnings,
                            "coby_renames": {k: {str(i): list(v) for i, v in t.items()}
                                             for k, t in lipid_check.renames.items()}}
@@ -99,6 +127,12 @@ def build(spec, from_stage: str = "fetch", until_stage: str = "check", grompp_ch
             continue
         log(f"==> [{stage}]")
         entry = lock.stage(stage)
+
+        if stage in ("fetch", "clean", "orient") and not spec.has_atomistic_protein:
+            log("    skipped: no atomistic protein (protein.source: none)")
+            lock.finish(entry)
+            _save_state(out, state)
+            continue
 
         if stage == "fetch":
             origin = fetch.fetch_structure(spec, out / DIRS["fetch"])
@@ -169,21 +203,45 @@ def build(spec, from_stage: str = "fetch", until_stage: str = "check", grompp_ch
             log(f"    {len(records)} parameter files -> {toppar.relative_to(out)}")
 
         elif stage == "martinize":
-            res = martinize.run(spec, lock, entry, out / DIRS["orient"] / "protein_oriented.pdb",
-                                state["chains"], out / DIRS["martinize"], toppar)
-            state["protein_molecules"] = res["molecules"]
-            state["protein_itps"] = res["itps"]
-            entry["notes"].append({"dssp": res["dssp"], "warnings": res["warnings"]})
-            lock.finish(entry, res["outputs"], base=out)
-            log(f"    molecules {res['molecules']}")
-            for w in res["warnings"][:10]:
-                log(f"    {w.strip()}")
+            outputs = []
+            state["protein_molecules"], state["protein_itps"] = [], []
+            if spec.has_atomistic_protein:
+                res = martinize.run(spec, lock, entry, out / DIRS["orient"] / "protein_oriented.pdb",
+                                    state["chains"], out / DIRS["martinize"], toppar)
+                state["protein_molecules"] = res["molecules"]
+                state["protein_itps"] = res["itps"]
+                entry["notes"].append({"dssp": res["dssp"], "warnings": res["warnings"]})
+                outputs += res["outputs"]
+                log(f"    molecules {res['molecules']}")
+                for w in res["warnings"][:10]:
+                    log(f"    {w.strip()}")
+            state["cg_molecules"], state["cg_itps"], state["cg_entries"] = [], [], []
+            if spec.cg_proteins:
+                try:
+                    cg = cgprotein.prepare(spec, out / DIRS["martinize"], toppar,
+                                           state["ff_includes"] + state["protein_itps"])
+                except cgprotein.CGProteinError as exc:
+                    raise BuildError(str(exc)) from exc
+                state["cg_molecules"], state["cg_itps"] = cg["molecules"], cg["itps"]
+                state["cg_entries"] = [{**{k: v for k, v in e.items() if k not in ("xyz", "box")},
+                                        "structure": e["structure"].name} for e in cg["entries"]]
+                entry["notes"].append({"cg_proteins": cg["records"]})
+                outputs += [e["structure"] for e in cg["entries"]] + [toppar / f for f in cg["itps"]]
+                for r in cg["records"]:
+                    log(f"    pre-coarse-grained {r['copied_to']}: {r['beads']} beads, {r['molecules']}, "
+                        f"placement {r['placement']}")
+                    if not r["posres_in_itps"] and spec.cg["position_restraints"] != "none":
+                        log(f"    NOTE its itps have no #ifdef POSRES block, so it is not restrained during "
+                            "equilibration (add one if the arrangement must be held)")
+            if not state["protein_molecules"] and not state["cg_molecules"]:
+                log("    no protein: membrane-only system")
+            lock.finish(entry, outputs, base=out)
 
         elif stage == "membrane":
             d = out / DIRS["membrane"]
-            itp_files = [toppar / f for f in state["ff_includes"] + state["protein_itps"]]
+            itp_files = [toppar / f for f in state["ff_includes"] + state["protein_itps"] + state.get("cg_itps", [])]
             molecules = [tuple(m) for m in state["protein_molecules"]]
-            cg_pdb = out / DIRS["martinize"] / "cg.pdb"
+            cg_pdb = out / DIRS["martinize"] / "cg.pdb" if spec.has_atomistic_protein else None
             if spec.protein["orientation"] == "self_assembly":
                 script, info = membrane.write_selfassembly_script(spec, d, cg_pdb, molecules, itp_files)
                 log(f"    self-assembly soup: {info['lipid_counts']} in a {info['box_nm']} nm box "
@@ -191,17 +249,29 @@ def build(spec, from_stage: str = "fetch", until_stage: str = "check", grompp_ch
                 for w in info["warnings"]:
                     log(f"    WARNING {w}")
             else:
-                script, info = membrane.write_script(spec, d, cg_pdb, molecules, itp_files,
-                                                     membrane_center_z_A=state.get("membrane_center_z_A", 0.0))
-                log(f"    box {info['box_nm']} nm, protein z-offset {info['protein_cz_nm']} nm")
+                cg_entries = cgprotein.entries_from_state(spec, out / DIRS["martinize"], state.get("cg_entries", []))
+                try:
+                    script, info = membrane.write_script(spec, d, cg_pdb, molecules, itp_files,
+                                                         membrane_center_z_A=state.get("membrane_center_z_A", 0.0),
+                                                         cg_entries=cg_entries)
+                except cgprotein.CGProteinError as exc:
+                    raise BuildError(str(exc)) from exc
+                log(f"    box {info['box_nm']} nm, {info['membranes']} membrane(s), {info['proteins']} protein "
+                    "structure(s)" + (f", protein z-offset {info['protein_cz_nm']} nm"
+                                      if info["protein_cz_nm"] is not None else ""))
+                for n in info["notes"]:
+                    log(f"    NOTE {n}")
+                for r in info.get("user_files", []):
+                    log(f"    user file {r['source']} -> 03_membrane/{r['copied_to']}")
             entry["notes"].append({k: v for k, v in info.items() if k != "coby_kwargs"})
             res = membrane.run(spec, lock, entry, d, script)
             lock.finish(entry, [script, *res["outputs"]], base=out)
 
         elif stage == "gromacs":
-            protein_moltypes = [m[0] for m in state["protein_molecules"]]
+            protein_moltypes = [m[0] for m in state["protein_molecules"] + state.get("cg_molecules", [])]
             res = assemble.assemble(spec, out / DIRS["membrane"], out / DIRS["gromacs"],
-                                    state["ff_includes"], state["protein_itps"], protein_moltypes)
+                                    state["ff_includes"], state["protein_itps"] + state.get("cg_itps", []),
+                                    protein_moltypes)
             state["system_molecules"] = res["molecules"]
             entry["notes"].append({"validation": res["validation"], "index": res["index"]})
             used = frozenset({state["repaired_with"]} if state.get("repaired_with") else ())

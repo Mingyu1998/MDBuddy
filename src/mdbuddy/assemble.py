@@ -240,7 +240,7 @@ def assemble(spec, coby_dir: Path, gmx_dir: Path, ff_includes: list[str], protei
             if g != "System" and index_counts.get(g, 0) == 0:
                 raise AssembleError(f"index group {g} is empty; change simulation.{key}")
 
-    posres = spec.cg["position_restraints"] != "none"
+    posres = spec.cg["position_restraints"] != "none" and bool(protein_moltypes)
     stage_list = mdp.stages(spec)
     for st in stage_list:
         (gmx_dir / f"{st.name}.mdp").write_text(mdp.render(st, spec, posres))

@@ -93,15 +93,34 @@ class LipidCheck:
     renames: dict[str, dict[int, tuple[str, str]]] = field(default_factory=dict)
 
 
-def check(names: list[str], lib: str) -> LipidCheck:
+CUSTOM_HINT = ("COBY also needs its structure: add it under coby.kwargs, e.g. molecule_import: "
+               "['file:{name}.gro moleculetype:{name} library_types:lipid'] or import_library: [my_lipids.py]")
+
+
+def check(names: list[str], lib: str, custom: Optional[dict[str, str]] = None,
+          coby_definitions=False) -> LipidCheck:
     """Validate membrane lipid names for one library.
 
     Errors: unknown names (with suggestions from other libraries) and lipids COBY cannot build.
     Warnings: names that mean a different molecule in another Martini version.
+    ``custom`` maps lipids defined in user-supplied itps (forcefield_files.extra_itps) to the file;
+    they are accepted (with a warning) when the coby section gives COBY their structure:
+    ``coby_definitions`` is the set of molecule_import names, or True for an import_library.
     """
     result = LipidCheck()
+    custom = custom or {}
     for name in names:
         entry = lookup(name, lib)
+        if name in custom and (entry is None or entry["coby"]["status"] in ("missing", "unsupported")):
+            if coby_definitions is True or (coby_definitions and name in coby_definitions):
+                result.warnings.append(
+                    f"{name}: custom lipid (itp {custom[name]}, structure from the coby section); MDBuddy cannot "
+                    "check its name mapping or COBY definition: the atom-name validation after COBY still runs. "
+                    "The name must not exist in COBY's own library (COBY silently keeps its own definition; "
+                    "it generates many 4-letter phospholipid names such as MYPC)")
+            else:
+                result.errors.append(f"lipid {name} is defined in {custom[name]}, but " + CUSTOM_HINT.format(name=name))
+            continue
         if entry is None:
             hints = []
             for other in LIBRARIES:
@@ -116,7 +135,8 @@ def check(names: list[str], lib: str) -> LipidCheck:
                                  f"but has no equivalent in {LIBRARY_LABELS[lib]}")
             msg = f"lipid {name} is not defined in {LIBRARY_LABELS[lib]}"
             result.errors.append(msg + (":\n      " + "\n      ".join(hints) if hints else
-                                        " (check spelling; `mdbuddy lipids search` lists names)"))
+                                        (" (check spelling; `mdbuddy lipids search` lists names; for a lipid MDBuddy does not "
+                                        "ship, list its itp in forcefield_files.extra_itps)")))
             continue
 
         status = entry["coby"]["status"]

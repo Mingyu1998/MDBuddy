@@ -165,8 +165,13 @@ def run_checks(network: bool = False) -> list[Check]:
     return checks
 
 
-def ready(checks: list[Check]) -> bool:
-    return all(c.status != "missing" for c in checks if c.required)
+# only needed to coarse-grain an atomistic protein
+MARTINIZE_TOOLS = ("martinize2", "vermouth", "dssp")
+
+
+def ready(checks: list[Check], needs_martinize: bool = True) -> bool:
+    return all(c.status != "missing" for c in checks
+               if c.required and (needs_martinize or c.name not in MARTINIZE_TOOLS))
 
 
 def report(checks: list[Check], as_json: bool = False) -> str:

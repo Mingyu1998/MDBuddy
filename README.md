@@ -68,6 +68,25 @@ mdbuddy orient guess design.pdb --html view.html
 
 Method, benchmark and limitations: [`skills/mdbuddy/references/orientation.md`](skills/mdbuddy/references/orientation.md).
 
+## Pre-coarse-grained proteins, large patches, custom lipids
+
+For protein islands or clusters that are already Martini models (e.g. taken from an earlier
+simulation), and for membranes built to a precise design:
+
+| Spec | What it does |
+|---|---|
+| `protein.source: none` | no atomistic protein; martinize2 is not needed. Alone it builds a membrane-only patch |
+| `cg_proteins: [{structure, topology, placement: keep}]` | inserts CG structures as arranged (COBY `center_protein:False`), checking bead count and names against the topology |
+| `membrane.box: from_structure` | uses the box of the first CG structure, so kept coordinates stay exact |
+| `membrane.lipid_apl: {LIPID: nm²}` | per-lipid area per lipid, to tune lipid density |
+| `coby.membranes: [...]` | raw COBY membrane strings: several membranes (inner + outer, with `cz`), domains via hole + patch |
+| `coby.kwargs` | other COBY keywords (`import_library`, `molecule_import`, `flooding`, ...). Referenced files are copied into the build and checksummed |
+| custom lipids (e.g. LPS) | accepted when your itp (`forcefield_files.extra_itps`) defines them and `coby.kwargs` gives COBY their structure |
+
+Examples: [`examples/protein_islands_m3.yaml`](examples/protein_islands_m3.yaml),
+[`examples/membrane_patch_m3.yaml`](examples/membrane_patch_m3.yaml),
+[`examples/cell_envelope_m22.yaml`](examples/cell_envelope_m22.yaml).
+
 ## Requirements
 
 `mdbuddy doctor` checks all of these and prints the install command for anything missing:
@@ -160,10 +179,13 @@ they run anywhere without the real tools.
 
 ## Status
 
-v0.2.0. Tested end-to-end with the real tools (martinize2 0.15.0, COBY 1.0.15, PDBFixer/OpenMM 8):
+v0.3.0. Tested end-to-end with the real tools (martinize2 0.15.0, COBY 1.0.15, PDBFixer/OpenMM 8):
 - **KcsA (OPM):** Martini 3 / POPC, 20 incomplete residues rebuilt.
 - **Bacteriorhodopsin:** randomly rotated, placed with `hydrophobic` (normal recovered within 0.7°).
 - **KcsA self-assembly soup:** POPC, analysed on a synthetic assembled frame.
+- **CG protein islands** (10 pre-coarse-grained rods kept in place, 0.0 nm displacement) in POPE/POPG/TOCL;
+  a membrane-only 20 nm patch with a DPPC/CHOL domain (hole + patch); a custom lipid imported with
+  `molecule_import`. COBY only, no martinize2.
 
 GROMACS itself (grompp/mdrun) has not been run in the development environment yet. Please open an
 issue with the `mdbuddy.lock.json` of any build that fails.

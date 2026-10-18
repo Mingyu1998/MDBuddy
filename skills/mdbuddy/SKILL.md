@@ -1,6 +1,6 @@
 ---
 name: mdbuddy
-description: Build Martini coarse-grained membrane-protein systems for GROMACS, a reproducible replacement for CHARMM-GUI Martini Maker. Use when the user wants to set up, build or prepare a coarse-grained (Martini 2.2 / Martini 3) simulation of a membrane protein from a PDB ID, OPM entry or PDB file; place a protein without OPM data in a membrane (hydrophobic guess, manual placement, or lipid self-assembly); embed a protein in a lipid bilayer; translate lipid names between Martini versions; run martinize2 or COBY; or get topology, itp, mdp and run files for GROMACS.
+description: Build Martini coarse-grained membrane-protein systems for GROMACS, a reproducible replacement for CHARMM-GUI Martini Maker. Use when the user wants to set up, build or prepare a coarse-grained (Martini 2.2 / Martini 3) simulation of a membrane protein from a PDB ID, OPM entry or PDB file; place a protein without OPM data in a membrane (hydrophobic guess, manual placement, or lipid self-assembly); embed a protein in a lipid bilayer; insert pre-coarse-grained proteins or protein islands as arranged; build large or multi-membrane patches (e.g. a bacterial cell envelope) or tune lipid density with COBY; translate lipid names between Martini versions; run martinize2 or COBY; or get topology, itp, mdp and run files for GROMACS.
 ---
 
 # MDBuddy: Martini membrane-protein builder
@@ -68,7 +68,7 @@ compact table, and ask them to confirm or change it. Do not ask one question at 
 | Lipids | POPC, symmetric | Asymmetric: separate `upper`/`lower` |
 | Salt | 0.15 M NaCl (+ neutralising ions) | |
 | Temperature | 310 K | Keep above lipid phase transitions (DPPC is usually run at 323 K) |
-| Box | auto: protein + 3 nm lipid per side, 2.5 nm water above/below | |
+| Box | auto: protein + 3 nm lipid per side, 2.5 nm water above/below | Several proteins or no protein: give `[x, y, z]` (or `from_structure`) |
 | Production | 1000 ns, 20 fs | |
 
 If the user asks about simulation parameters, `references/mdp_parameters.md` explains every mdp line
@@ -193,6 +193,32 @@ proteins have none. Tell the user, then pick with them (details and benchmark in
      bilayer formed, whether the protein spans it, and prints `orientation: manual` lines. Use these
      to **rebuild a clean system with COBY** in the found orientation, with any composition
      including asymmetric leaflets. If no bilayer formed, say so and suggest extending the run.
+
+## Pre-coarse-grained proteins, membrane-only patches, custom lipids
+
+Use these when the user already has Martini models (protein islands or clusters from an earlier
+simulation, a cell-envelope model) or wants a membrane built to a precise design. Spec keys are in
+`references/spec_reference.md`; examples in `examples/`.
+
+- **CG proteins as arranged**: `protein.source: none` plus `cg_proteins` (structure + its `.top`, or
+  itps + moleculetypes). `placement: keep` keeps coordinates relative to the file's box centre;
+  with `membrane.box: from_structure` they are kept exactly. Ask where the old membrane midplane was
+  and set `membrane.cz` (nm from the box centre) to match. MDBuddy checks bead count and names; no
+  martinize2, DSSP or orientation is used. Tell the user that restraints during equilibration come
+  from `#ifdef POSRES` in their itps (MDBuddy warns if there are none).
+- **Membrane only**: `protein.source: none` without `cg_proteins`, with an explicit `membrane.box`.
+  Temperature coupling defaults to `[MEMBRANE, SOLVENT]`.
+- **Lipid density**: `membrane.lipid_apl: {LIPID: area_nm2}` for single lipids; leaflet values via
+  `upper_apl`/`lower_apl`.
+- **Anything else COBY can do** (several membranes, domains with hole/patch, flooding, imported
+  molecules): `coby.membranes` (raw strings, replace the generated membrane), `coby.membrane_args`,
+  `coby.protein_args`, `coby.solvation_args`, `coby.kwargs`. Raw strings are passed through, so read
+  COBY's documentation for the syntax; MDBuddy adds `params:` for lipids it knows, copies every
+  `file:` it finds into the build and records it in the lock.
+- **Custom lipids (LPS, lipid A, ...)**: allowed when an itp in `forcefield_files.extra_itps`
+  defines them and `coby.kwargs.molecule_import` (`... library_types:lipid`) or `import_library`
+  gives COBY their structure. MDBuddy cannot check these beyond the atom-name validation: say so.
+  The name must not already exist in COBY's library (see `references/troubleshooting.md`).
 
 ## Rules
 
