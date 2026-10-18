@@ -15,13 +15,15 @@ from typing import Callable, Optional
 from . import assemble, citations, doctor, fetch, forcefields, lipids, martinize, membrane, prepare
 from .provenance import Lock, sha256
 from .structure import read_pdb
+from . import tools
 from .tools import find_gmx
 
-STAGES = ("fetch", "clean", "forcefield", "martinize", "membrane", "gromacs", "check")
+STAGES = ("fetch", "clean", "orient", "forcefield", "martinize", "membrane", "gromacs", "check")
 
 DIRS = {
     "fetch": "00_input",
     "clean": "01_clean",
+    "orient": "01_orient",
     "martinize": "02_cg",
     "membrane": "03_membrane",
     "gromacs": "gromacs",
@@ -80,6 +82,13 @@ def build(spec, from_stage: str = "fetch", until_stage: str = "check", grompp_ch
                            "coby_renames": {k: {str(i): list(v) for i, v in t.items()}
                                             for k, t in lipid_check.renames.items()}}
     lock.save()
+    if spec.protein["orientation"] == "self_assembly":
+        sa_check = lipids.self_assembly_check(spec.leaflets()["upper"], spec.leaflets()["lower"], lib,
+                                              float(spec.sim["temperature"]))
+        lipid_check.errors += sa_check.errors
+        lipid_check.warnings += sa_check.warnings
+        lock.data["lipids"]["warnings"] = lipid_check.warnings
+        lock.save()
     for w in lipid_check.warnings:
         log(f"    LIPID NOTE {w}")
     if lipid_check.errors:
@@ -101,6 +110,30 @@ def build(spec, from_stage: str = "fetch", until_stage: str = "check", grompp_ch
             d = out / DIRS["clean"]
             d.mkdir(parents=True, exist_ok=True)
             report = prepare.prepare(spec, out / DIRS["fetch"] / "input.pdb", d / "protein_clean.pdb")
+            incomplete = report["incomplete_residues"]
+            if incomplete:
+                summary = ", ".join(f"{r['chain']}:{r['resname']}{r['resid']}" for r in incomplete[:12])
+                summary += f" (+{len(incomplete) - 12} more)" if len(incomplete) > 12 else ""
+                log(f"    {len(incomplete)} residue(s) with missing heavy atoms: {summary}")
+                mode = spec.protein["repair"]
+                if mode == "off":
+                    raise BuildError("residues with missing heavy atoms cannot be coarse-grained (martinize2 "
+                                     "writes nan coordinates for beads without atoms). Set protein.repair: auto "
+                                     "(needs `pip install pdbfixer`) or complete the structure yourself.")
+                if not tools.has_module("pdbfixer"):
+                    raise BuildError("missing heavy atoms must be rebuilt before martinize2, and PDBFixer is not "
+                                     "installed: `pip install pdbfixer` (or conda install -c conda-forge pdbfixer), "
+                                     "then rerun with --from clean")
+                raw = d / "protein_clean_unrepaired.pdb"
+                (d / "protein_clean.pdb").rename(raw)
+                prepare.repair_with_pdbfixer(lock, entry, raw, d / "protein_clean.pdb", spec.seed)
+                still = prepare.find_incomplete(read_pdb(d / "protein_clean.pdb")[0])
+                if still:
+                    raise BuildError(f"PDBFixer left {len(still)} residue(s) incomplete; see 01_clean/repair_pdbfixer.log")
+                report["repaired_with"] = "pdbfixer"
+                state["repaired_with"] = "pdbfixer"
+                report["output_atoms"] = len(read_pdb(d / "protein_clean.pdb")[0])
+                log(f"    rebuilt missing atoms with PDBFixer -> 01_clean/protein_clean.pdb")
             (d / "clean_report.json").write_text(json.dumps(report, indent=2) + "\n")
             state["chains"] = report["chains"]
             state["opm_half_thickness_A"] = report["opm_half_thickness_A"]
@@ -114,6 +147,13 @@ def build(spec, from_stage: str = "fetch", until_stage: str = "check", grompp_ch
             if spec.protein["orientation"] == "opm" and report["opm_half_thickness_A"] is None:
                 log("    WARNING orientation is 'opm' but the file has no OPM bilayer REMARK; "
                     "check that the structure is membrane-oriented")
+
+        elif stage == "orient":
+            info = place_protein(spec, out / DIRS["clean"] / "protein_clean.pdb", out / DIRS["orient"], log)
+            state["membrane_center_z_A"] = info["membrane_center_z_A"]
+            state["orientation"] = info["record"]
+            entry["notes"].append(info["record"])
+            lock.finish(entry, [out / DIRS["orient"] / "protein_oriented.pdb"], base=out)
 
         elif stage == "forcefield":
             records = forcefields.install_forcefield(spec, toppar)
@@ -129,7 +169,7 @@ def build(spec, from_stage: str = "fetch", until_stage: str = "check", grompp_ch
             log(f"    {len(records)} parameter files -> {toppar.relative_to(out)}")
 
         elif stage == "martinize":
-            res = martinize.run(spec, lock, entry, out / DIRS["clean"] / "protein_clean.pdb",
+            res = martinize.run(spec, lock, entry, out / DIRS["orient"] / "protein_oriented.pdb",
                                 state["chains"], out / DIRS["martinize"], toppar)
             state["protein_molecules"] = res["molecules"]
             state["protein_itps"] = res["itps"]
@@ -142,12 +182,21 @@ def build(spec, from_stage: str = "fetch", until_stage: str = "check", grompp_ch
         elif stage == "membrane":
             d = out / DIRS["membrane"]
             itp_files = [toppar / f for f in state["ff_includes"] + state["protein_itps"]]
-            script, info = membrane.write_script(spec, d, out / DIRS["martinize"] / "cg.pdb",
-                                                 [tuple(m) for m in state["protein_molecules"]], itp_files)
-            entry["notes"].append({"box_nm": info["box_nm"], "protein_cz_nm": info["protein_cz_nm"]})
+            molecules = [tuple(m) for m in state["protein_molecules"]]
+            cg_pdb = out / DIRS["martinize"] / "cg.pdb"
+            if spec.protein["orientation"] == "self_assembly":
+                script, info = membrane.write_selfassembly_script(spec, d, cg_pdb, molecules, itp_files)
+                log(f"    self-assembly soup: {info['lipid_counts']} in a {info['box_nm']} nm box "
+                    f"(~{info['water_target']} water beads requested)")
+                for w in info["warnings"]:
+                    log(f"    WARNING {w}")
+            else:
+                script, info = membrane.write_script(spec, d, cg_pdb, molecules, itp_files,
+                                                     membrane_center_z_A=state.get("membrane_center_z_A", 0.0))
+                log(f"    box {info['box_nm']} nm, protein z-offset {info['protein_cz_nm']} nm")
+            entry["notes"].append({k: v for k, v in info.items() if k != "coby_kwargs"})
             res = membrane.run(spec, lock, entry, d, script)
             lock.finish(entry, [script, *res["outputs"]], base=out)
-            log(f"    box {info['box_nm']} nm, protein z-offset {info['protein_cz_nm']} nm")
 
         elif stage == "gromacs":
             protein_moltypes = [m[0] for m in state["protein_molecules"]]
@@ -155,7 +204,8 @@ def build(spec, from_stage: str = "fetch", until_stage: str = "check", grompp_ch
                                     state["ff_includes"], state["protein_itps"], protein_moltypes)
             state["system_molecules"] = res["molecules"]
             entry["notes"].append({"validation": res["validation"], "index": res["index"]})
-            (out / "CITATIONS.md").write_text(citations.markdown(spec))
+            used = frozenset({state["repaired_with"]} if state.get("repaired_with") else ())
+            (out / "CITATIONS.md").write_text(citations.markdown(spec, used))
             lock.finish(entry, res["outputs"], base=out)
             v = res["validation"]
             log(f"    {v['atoms']} beads, net charge {v['net_charge']:+g} e")
@@ -178,8 +228,67 @@ def build(spec, from_stage: str = "fetch", until_stage: str = "check", grompp_ch
     return {"output_dir": out, "lock": lock_path, "state": state}
 
 
-# One mdp of each kind: soft-core EM, first NPT stage (gen-vel, C-rescale), production
-GROMPP_CHECK_STAGES = ("step6.0_minimization", "step6.2_equilibration", "step7_production")
+def place_protein(spec, clean_pdb: Path, work: Path, log: Callable[[str], None]) -> dict:
+    """The orient stage: write 01_orient/protein_oriented.pdb in the frame the membrane builder expects."""
+    from . import orient, viewer
+    from .structure import write_pdb
+
+    work.mkdir(parents=True, exist_ok=True)
+    out_pdb = work / "protein_oriented.pdb"
+    atoms, header = read_pdb(clean_pdb)
+    p = spec.protein
+    mode = p["orientation"]
+    centre_z = 0.0
+    if mode in ("opm", "as_is"):
+        shutil.copyfile(clean_pdb, out_pdb)
+        centre_z = float(p["membrane_center_z"])
+        record = {"method": mode, "membrane_center_z_A": centre_z}
+        log(f"    {mode}: using the input frame (membrane centre at z = {centre_z:g} A)")
+    elif mode == "manual":
+        placed, record = orient.manual(atoms, p["manual"])
+        write_pdb(out_pdb, placed)
+        log("    manual placement applied")
+    else:  # hydrophobic, or the initial alignment for self_assembly
+        if mode == "self_assembly" and spec.data["self_assembly"]["align"] == "as_is":
+            shutil.copyfile(clean_pdb, out_pdb)
+            record = {"method": "as_is (self-assembly start)"}
+            log("    self-assembly: protein kept in the input frame")
+        else:
+            placed, record = orient.hydrophobic(atoms, topology=p["topology"], pore_correction=p["pore_correction"])
+            pl = record["placement"]
+            log(f"    hydrophobic placement: {pl['verdict']}")
+            log(f"    thickness {pl['thickness_A']:g} A, transfer energy {pl['energy_kcal']:g} kcal/mol, "
+                f"orientation spread {pl['uncertainty_deg']:g} deg, TM segments {', '.join(pl['tm_segments']) or '-'}")
+            log(f"    cytoplasmic side (-z) by positive-inside rule: {pl['kr_inside']} vs {pl['kr_outside']} Lys/Arg")
+            for n in pl["notes"]:
+                log(f"    NOTE {n}")
+            if pl["verdict"].startswith("not a"):
+                if mode == "self_assembly":
+                    shutil.copyfile(clean_pdb, out_pdb)
+                    record = {"method": "as_is (self-assembly start; no hydrophobic belt found)"}
+                else:
+                    raise BuildError("no clear transmembrane placement was found. Check the structure, place it "
+                                     "yourself (orientation: manual; `mdbuddy orient view` helps) or let the "
+                                     "lipids find it (orientation: self_assembly).")
+            else:
+                write_pdb(out_pdb, placed)
+    normal, centre = (orient.membrane_in_input_frame(record) if "rotation" in record else (None, None))
+    if normal is not None:
+        record["membrane_normal_input_frame"] = normal
+        record["membrane_centre_input_frame_A"] = centre
+    (work / "orient_report.json").write_text(json.dumps(record, indent=2) + "\n")
+    if mode in ("manual", "hydrophobic", "self_assembly"):
+        viewer.write_html(work / "orientation_view.html", read_pdb(clean_pdb)[0], record,
+                          thickness_A=(record.get("placement") or {}).get("thickness_A", 30.0), title=spec.name)
+        log("    check it: open 01_orient/orientation_view.html in a browser (adjust and copy the spec lines)")
+    return {"membrane_center_z_A": centre_z, "record": record}
+
+
+def grompp_check_stages(gmx_dir: Path) -> list[str]:
+    """One mdp of each kind: soft-core EM, first MD stage (gen-vel), and the final run."""
+    names = sorted(p.stem for p in gmx_dir.glob("step*.mdp") if not p.stem.endswith(".mdout"))
+    md = [n for n in names if not n.endswith("minimization")]
+    return list(dict.fromkeys([names[0], md[0], md[-1]])) if md else names[:1]
 
 
 def grompp_dry_run(gmx_dir: Path, lock: Lock, entry: dict) -> Optional[str]:
@@ -189,11 +298,12 @@ def grompp_dry_run(gmx_dir: Path, lock: Lock, entry: dict) -> Optional[str]:
         return "not run: GROMACS not found (the inputs are still complete)"
     check_dir = gmx_dir / ".check"
     check_dir.mkdir(exist_ok=True)
-    for stage in GROMPP_CHECK_STAGES:
+    stages = grompp_check_stages(gmx_dir)
+    for stage in stages:
         cmd = [gmx, "grompp", "-f", f"../{stage}.mdp", "-c", "../step5_input.gro",
                "-r", "../step5_input.gro", "-p", "../topol.top", "-n", "../index.ndx",
                "-o", "check.tpr", "-po", "check.mdout.mdp", "-maxwarn", "0"]
         lock.run(entry, cmd, cwd=check_dir, log_name=f"grompp_{stage}.log")
         for f in ("check.tpr", "check.mdout.mdp"):
             (check_dir / f).unlink(missing_ok=True)
-    return f"passed with 0 warnings for {', '.join(GROMPP_CHECK_STAGES)}"
+    return f"passed with 0 warnings for {', '.join(stages)}"

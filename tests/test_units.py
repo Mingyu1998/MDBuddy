@@ -75,7 +75,8 @@ def test_prepare_cleans_and_reports(opm_pdb, tmp_path):
     names = {(a.resname, a.name) for a in atoms}
     assert ("HOH", "O") not in names and ("DUM", "O") not in names and ("RET", "C1") not in names
     assert not any(a.name == "H" for a in atoms)
-    assert sum(1 for a in atoms if a.name == "CB") == 2  # one altloc per chain
+    assert sum(1 for a in atoms if a.name == "CB" and a.resname == "LYS") == 2  # one altloc per chain
+    assert report["incomplete_residues"] == []
     assert report["chains"] == ["A", "B"]
     assert report["opm_half_thickness_A"] == 16.2
     assert report["dropped"]["hetatm:RET"] == 1
@@ -137,8 +138,7 @@ def test_box_auto_and_explicit():
 def test_protein_offset_puts_membrane_centre_at_box_centre():
     beads = _beads([-10.0, 30.0])  # COG z = 10 A above the OPM membrane centre
     assert membrane.protein_offset_nm(mkspec(), beads) == pytest.approx(1.0)
-    s = mkspec(protein={"source": "file", "path": "x.pdb", "membrane_center_z": 10.0})
-    assert membrane.protein_offset_nm(s, beads) == pytest.approx(0.0)
+    assert membrane.protein_offset_nm(mkspec(), beads, 10.0) == pytest.approx(0.0)
 
 
 def test_membrane_argument_asymmetric():
@@ -308,7 +308,7 @@ def test_cli_init_and_validate(tmp_path, capsys):
 def test_doctor_reports_missing_required(monkeypatch):
     from mdbuddy import doctor, tools
     monkeypatch.setattr(tools, "module_version", lambda name, dist=None: None)
-    monkeypatch.setattr(doctor.shutil, "which", lambda name: None)
+    monkeypatch.setattr(tools, "find_program", lambda name: None)
     monkeypatch.setattr(tools, "find_gmx", lambda: None)
     monkeypatch.setattr(tools, "find_dssp", lambda: None)
     monkeypatch.setattr(tools, "has_module", lambda name: False)

@@ -117,3 +117,56 @@ def test_lipidome_files_included_on_demand(tmp_path, opm_pdb, fake_tools):
     top_files = [r["file"] for r in json.loads((s.output_dir() / "mdbuddy.lock.json").read_text())["forcefield_files"]]
     assert top_files[0] == "martini_v3.0.0.itp" and top_files[1] == "martini_v3.0.0_ffbonded_v2.itp"
     assert top_files[-1] == "martini_v3.0.0_phospholipids_PC_v2.itp"
+
+
+def test_manual_orientation_stage(tmp_path, opm_pdb, fake_tools):
+    s = make_spec(tmp_path, opm_pdb)
+    s.data["protein"]["orientation"] = "manual"
+    s.data["protein"]["manual"]["rotate"] = [180, 0, 0]
+    pipeline.build(s, until_stage="orient", log=lambda m: None)
+    d = s.output_dir() / "01_orient"
+    rec = json.loads((d / "orient_report.json").read_text())
+    assert rec["method"] == "manual" and (d / "orientation_view.html").exists()
+    from mdbuddy.structure import read_pdb
+    before = {(a.chain, a.resid, a.name): a.z for a in read_pdb(s.output_dir() / "01_clean" / "protein_clean.pdb")[0]}
+    after = {(a.chain, a.resid, a.name): a.z for a in read_pdb(d / "protein_oriented.pdb")[0]}
+    k1, k2 = ("A", 1, "CA"), ("A", 3, "CA")
+    assert (after[k2] - after[k1]) == pytest.approx(-(before[k2] - before[k1]), abs=1e-3)  # flipped
+
+
+def test_self_assembly_build(tmp_path, opm_pdb, fake_tools):
+    s = make_spec(tmp_path, opm_pdb)
+    s.data["protein"]["orientation"] = "self_assembly"
+    s.data["self_assembly"]["align"] = "as_is"
+    s.data["self_assembly"]["lipid_count"] = 40
+    pipeline.build(s, log=lambda m: None)
+    out = s.output_dir()
+    script = (out / "03_membrane" / "coby_build.py").read_text()
+    assert "molecule_import=imports" in script and "count:True" in script and "('POPC', 'LTF', 40)" in script
+    assert (out / "03_membrane" / "POPC_single.gro").exists()
+    gmx = out / "gromacs"
+    assert (gmx / "step7_self_assembly.mdp").exists() and not (gmx / "step7_production.mdp").exists()
+    assert "isotropic" in (gmx / "step7_self_assembly.mdp").read_text()
+    assert ("POPC", 40) in topology.parse(gmx / "topol.top").molecules
+
+
+def test_self_assembly_refuses_asymmetric_membrane(tmp_path, opm_pdb, fake_tools):
+    s = make_spec(tmp_path, opm_pdb)
+    s.data["protein"]["orientation"] = "self_assembly"
+    s.data["membrane"]["upper"] = {"POPC": 1}
+    s.data["membrane"]["lower"] = {"POPC": 3, "POPE": 1}
+    with pytest.raises(pipeline.BuildError, match="asymmetric"):
+        pipeline.build(s, log=lambda m: None)
+
+
+def test_missing_atoms_need_repair(tmp_path, opm_pdb, fake_tools, monkeypatch):
+    lines = [l for l in opm_pdb.read_text().splitlines() if not (l[17:20] == "LEU" and l[12:16].strip() == "CD2")]
+    opm_pdb.write_text("\n".join(lines) + "\n")
+    s = make_spec(tmp_path, opm_pdb)
+    s.data["protein"]["repair"] = "off"
+    with pytest.raises(pipeline.BuildError, match="missing heavy atoms"):
+        pipeline.build(s, log=lambda m: None, force=True)
+    s.data["protein"]["repair"] = "auto"
+    monkeypatch.setattr(pipeline.tools, "has_module", lambda name: False)
+    with pytest.raises(pipeline.BuildError, match="pip install pdbfixer"):
+        pipeline.build(s, log=lambda m: None, force=True)

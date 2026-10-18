@@ -16,8 +16,18 @@ protein:
   path: null               # for file (PDB format)
   chains: null             # [A, B] or null for all
   keep_hetatm: []          # HETATM residue names to keep (martinize2 must know them!)
-  orientation: opm         # opm (input is membrane-oriented) | as_is; default from source
-  membrane_center_z: 0.0   # Angstrom, membrane midplane in the input frame (0 for OPM)
+  repair: auto             # rebuild missing heavy atoms with PDBFixer (+ local OpenMM relaxation) | off
+  orientation: opm         # opm | as_is | manual | hydrophobic | self_assembly (default: opm for OPM, else as_is)
+  membrane_center_z: 0.0   # as_is: Angstrom, membrane midplane in the input frame
+  manual:                  # orientation: manual (see orientation.md); applied in this order
+    normal: null           # [x, y, z] membrane normal in the input frame (towards the non-cytoplasmic side)
+    align: null            # or ["A:10-12", "A:30-32"]: vector between selection centroids becomes the normal
+    center_point: null     # [x, y, z] Angstrom, a point on the membrane midplane (default: protein centre)
+    rotate: null           # [rx, ry, rz] degrees, extra rotation (x, then y, then z)
+    center: null           # selection put at the midplane, e.g. "A:15-35"
+    shift_z: null          # Angstrom, final shift along the normal
+  topology: positive_inside  # hydrophobic: which side is cytoplasmic (-z): positive_inside | as_found | flip
+  pore_correction: auto    # hydrophobic: lipid-facing weighting for pores/beta-barrels: auto | on | off
 
 coarse_grain:
   forcefield: martini3     # martini3 | martini22 | elnedyn22
@@ -48,6 +58,13 @@ membrane:
   lipid_padding: 3.0       # nm of membrane around the protein (auto box)
   water_padding: 2.5       # nm of water above/below the protein (auto box)
   min_box_z: 10.0          # nm
+
+self_assembly:             # only for protein.orientation: self_assembly (symmetric membranes only)
+  lipid_count: auto        # or a number; auto covers the box area at membrane.apl
+  water_per_lipid: 25      # CG water beads per lipid (1 bead = 4 waters)
+  run_ns: 1000             # length of step7_self_assembly
+  restrain_protein: true   # backbone restraints during assembly
+  align: hydrophobic       # initial alignment: hydrophobic (TM axis along z) | as_is
 
 solvent:
   water: W
@@ -80,9 +97,10 @@ simulation:
   mdbuddy.lock.json        tool versions, input + parameter SHA-256s, every command run
   CITATIONS.md
   00_input/input.pdb       downloaded / copied structure
-  01_clean/                cleaned structure + clean_report.json (dropped atoms, gaps)
+  01_clean/                cleaned structure + clean_report.json (dropped atoms, gaps, rebuilt residues)
+  01_orient/               protein_oriented.pdb, orient_report.json, orientation_view.html
   02_cg/                   martinize2 inputs/outputs, martinize2_cmd.sh, martinize2.log
-  03_membrane/             coby_build.py (re-runnable), coby.log, system.gro/pdb
+  03_membrane/             coby_build.py (re-runnable), coby.log, system.gro/pdb (+ lipid templates for self-assembly)
   gromacs/                 the folder to copy to the cluster
     step5_input.gro/.pdb, topol.top, toppar/, index.ndx (System, Protein, MEMBRANE, SOLU_MEMB, SOLVENT, BB),
     step6.0 (soft-core) and step6.1 _minimization.mdp, step6.2-6.7_equilibration.mdp, step7_production.mdp,

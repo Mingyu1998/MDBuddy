@@ -8,6 +8,7 @@ from __future__ import annotations
 
 import json
 import shutil
+import subprocess
 import sys
 import tempfile
 import urllib.request
@@ -57,6 +58,15 @@ def check_coby() -> Check:
     v = tools.module_version("COBY", "COBY")
     if v is None:
         return Check("COBY", "missing", True, None, "builds membrane, inserts protein, solvates", "pip install COBY")
+    # COBY imports modules it does not declare as dependencies (e.g. matplotlib in 1.0.15),
+    # so check that it really imports, in a separate interpreter like a build does.
+    proc = subprocess.run([sys.executable, "-c", "import COBY"], stdout=subprocess.PIPE,
+                          stderr=subprocess.STDOUT, text=True)
+    if proc.returncode != 0:
+        last = (proc.stdout or "").strip().splitlines()[-1:] or ["import failed"]
+        missing = last[0].split("'")[1] if "No module named" in last[0] else None
+        return Check("COBY", "missing", True, v, f"installed but `import COBY` fails: {last[0]}",
+                     f"pip install {missing}" if missing else "reinstall COBY in this environment")
     tested = lipids.database()["sources"]["coby"].split()[-1]
     if v != tested:
         return Check("COBY", "warn", True, v, "builds membrane, inserts protein, solvates",
@@ -66,7 +76,7 @@ def check_coby() -> Check:
 
 
 def check_martinize2() -> Check:
-    exe = shutil.which("martinize2")
+    exe = tools.find_program("martinize2")
     if not exe:
         return Check("martinize2", "missing", True, None, "coarse-grains the protein",
                      "pip install vermouth  (provides the martinize2 command)")
@@ -146,6 +156,8 @@ def run_checks(network: bool = False) -> list[Check]:
         check_dssp(),
         check_gmx(),
         check_module("mdtraj", None, False, "pip install mdtraj", "optional DSSP backend"),
+        check_module("pdbfixer", None, False, "pip install pdbfixer",
+                     "rebuilds missing side-chain atoms (needed for most crystal structures)"),
         check_cache(),
     ]
     if network:

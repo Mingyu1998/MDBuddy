@@ -23,12 +23,20 @@ REFS = {
                 "Behavior. ACS Cent. Sci. doi:10.1021/acscentsci.5c00755",
     "sterols": "Borges-Araujo et al. (2023) Martini 3 coarse-grained force field for cholesterol. "
                "J. Chem. Theory Comput. 19, 7387-7404. doi:10.1021/acs.jctc.3c00547",
+    "openmm": "Eastman et al. (2024) OpenMM 8: Molecular Dynamics Simulation with Machine Learning Potentials. "
+              "J. Phys. Chem. B 128, 109-116. doi:10.1021/acs.jpcb.3c06662 (PDBFixer is part of OpenMM)",
+    "wimley_white": "Wimley, Creamer & White (1996) Solvation energies of amino acid side chains and backbone in a "
+                    "family of host-guest pentapeptides. Biochemistry 35, 5109-5124. doi:10.1021/bi9600153",
+    "self_assembly": "Scott et al. (2008) Coarse-grained MD simulations of membrane protein-bilayer self-assembly. "
+                     "Structure 16, 621-630. doi:10.1016/j.str.2008.01.014",
+    "memprotmd": "Stansfeld et al. (2015) MemProtMD: automated insertion of membrane protein structures into "
+                 "explicit lipid membranes. Structure 23, 1350-1361. doi:10.1016/j.str.2015.05.006",
     "gromacs": "Abraham et al. (2015) GROMACS: High performance molecular simulations through multi-level "
                "parallelism from laptops to supercomputers. SoftwareX 1-2, 19-25. doi:10.1016/j.softx.2015.06.001",
 }
 
 
-def for_spec(spec) -> list[str]:
+def for_spec(spec, used: frozenset = frozenset()) -> list[str]:
     keys = []
     ff = spec.cg["forcefield"]
     if ff == "martini3":
@@ -47,13 +55,19 @@ def for_spec(spec) -> list[str]:
     keys.append("coby")
     if spec.protein["source"] == "opm":
         keys.append("opm")
+    if "pdbfixer" in used:
+        keys.append("openmm")
+    if spec.protein["orientation"] == "hydrophobic":
+        keys.append("wimley_white")
+    if spec.protein["orientation"] == "self_assembly":
+        keys += ["self_assembly", "memprotmd"]
     keys.append("gromacs")
     return [REFS[k] for k in keys]
 
 
-def markdown(spec) -> str:
+def markdown(spec, used: frozenset = frozenset()) -> str:
     lines = [f"# References for {spec.name}", "",
              "Please cite the tools and parameters this system was built with",
              "(check each entry against the publisher's page before submission):", ""]
-    lines += [f"- {r}" for r in for_spec(spec)]
+    lines += [f"- {r}" for r in for_spec(spec, used)]
     return "\n".join(lines) + "\n"

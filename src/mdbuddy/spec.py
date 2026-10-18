@@ -28,7 +28,8 @@ FORCEFIELDS = {
 }
 PROTEIN_MODELS = ("elastic", "go", "none")
 SOURCES = ("opm", "rcsb", "file")
-ORIENTATIONS = ("opm", "as_is")
+ORIENTATIONS = ("opm", "as_is", "manual", "hydrophobic", "self_assembly")
+TOPOLOGY_RULES = ("positive_inside", "as_found", "flip")
 POSRES = ("none", "backbone", "all")
 TC_GROUP_CHOICES = (["Protein", "MEMBRANE", "SOLVENT"], ["SOLU_MEMB", "SOLVENT"], ["System"])
 COMM_GROUP_CHOICES = (["SOLU_MEMB", "SOLVENT"], ["System"])
@@ -44,8 +45,14 @@ DEFAULTS: dict[str, Any] = {
         "path": None,
         "chains": None,
         "keep_hetatm": [],
+        "repair": "auto",  # rebuild missing heavy atoms with PDBFixer: auto | off
         "orientation": None,  # filled from source: opm -> "opm", else "as_is"
-        "membrane_center_z": 0.0,  # Angstrom, in the input frame
+        "membrane_center_z": 0.0,  # Angstrom, in the input frame (orientation: as_is)
+        # orientation: manual (applied in this order; all optional)
+        "manual": {"normal": None, "center_point": None, "align": None, "rotate": None,
+                   "center": None, "shift_z": None},
+        "topology": "positive_inside",  # orientation: hydrophobic -> which side is cytoplasmic (-z)
+        "pore_correction": "auto",  # orientation: hydrophobic -> lipid-facing weighting (beta-barrels)
     },
     "coarse_grain": {
         "forcefield": "martini3",
@@ -73,6 +80,13 @@ DEFAULTS: dict[str, Any] = {
         "lipid_padding": 3.0,
         "water_padding": 2.5,
         "min_box_z": 10.0,
+    },
+    "self_assembly": {  # protein.orientation: self_assembly
+        "lipid_count": "auto",  # or a number; auto fills the box area at membrane.apl
+        "water_per_lipid": 25,  # CG water beads per lipid (Martini W = 4 waters)
+        "run_ns": 1000,  # length of the self-assembly run
+        "restrain_protein": True,  # backbone restraints during self-assembly (protein stays put)
+        "align": "hydrophobic",  # initial protein alignment: hydrophobic | as_is
     },
     "solvent": {
         "water": "W",
@@ -212,8 +226,32 @@ def _validate(d: dict, problems: list[str]) -> None:
         problems.append(f"protein.id is required for source '{p['source']}'")
     elif p["source"] == "file" and not p["path"]:
         problems.append("protein.path is required for source 'file'")
+    if p["repair"] not in ("auto", "off"):
+        problems.append("protein.repair must be 'auto' (rebuild missing heavy atoms with PDBFixer) or 'off'")
     if p["orientation"] not in ORIENTATIONS:
         problems.append(f"protein.orientation must be one of {ORIENTATIONS}")
+    if p["topology"] not in TOPOLOGY_RULES:
+        problems.append(f"protein.topology must be one of {TOPOLOGY_RULES}")
+    if p["pore_correction"] not in ("auto", "on", "off"):
+        problems.append("protein.pore_correction must be auto, on or off")
+    man = p["manual"]
+    if p["orientation"] == "manual":
+        if not any(v is not None for v in man.values()):
+            problems.append("protein.orientation: manual needs at least one of protein.manual.normal, "
+                            "center_point, align, rotate, center, shift_z (or use `mdbuddy orient view`)")
+        for key, n in (("normal", 3), ("center_point", 3), ("rotate", 3), ("align", 2)):
+            v = man[key]
+            if v is not None and (not isinstance(v, list) or len(v) != n):
+                problems.append(f"protein.manual.{key} must be a list of {n} values")
+        if man["normal"] is not None and man["align"] is not None:
+            problems.append("protein.manual: use either normal or align, not both")
+    sa = d["self_assembly"]
+    if sa["lipid_count"] != "auto" and (not isinstance(sa["lipid_count"], int) or sa["lipid_count"] < 20):
+        problems.append("self_assembly.lipid_count must be 'auto' or an integer >= 20")
+    if not isinstance(sa["water_per_lipid"], (int, float)) or sa["water_per_lipid"] < 5:
+        problems.append("self_assembly.water_per_lipid must be >= 5")
+    if sa["align"] not in ("hydrophobic", "as_is"):
+        problems.append("self_assembly.align must be 'hydrophobic' or 'as_is'")
     if p["chains"] is not None and not isinstance(p["chains"], list):
         problems.append("protein.chains must be a list of chain IDs or null")
 
@@ -322,7 +360,9 @@ protein:
   id: {pdb_id}           # PDB ID for opm/rcsb
   # path: my_protein.pdb # for source: file
   chains: null           # e.g. [A, B]; null keeps all chains
-  # orientation: as_is   # required for non-OPM input; then set membrane_center_z (Angstrom)
+  # orientation: opm     # opm | as_is | manual | hydrophobic | self_assembly
+  #   no OPM entry?  hydrophobic = educated guess from exposed hydrophobicity,
+  #   manual = you place it (`mdbuddy orient view protein.pdb` helps), self_assembly = let lipids find it
 
 coarse_grain:
   forcefield: martini3   # martini3 | martini22 | elnedyn22

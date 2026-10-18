@@ -6,7 +6,7 @@ import shutil
 from pathlib import Path
 
 from . import topology
-from .tools import resolve_dssp
+from .tools import find_program, resolve_dssp
 
 
 class MartinizeError(RuntimeError):
@@ -34,7 +34,7 @@ def merge_args(spec, chains: list[str]) -> list[str]:
 def build_command(spec, in_pdb: str, chains: list[str], dssp: list[str]) -> list[str]:
     cg = spec.cg
     cmd = [
-        "martinize2",
+        find_program("martinize2") or "martinize2",
         "-f", in_pdb,
         "-x", "cg.pdb",
         "-o", "cg.top",
@@ -73,6 +73,11 @@ def run(spec, lock, entry, clean_pdb: Path, chains: list[str], work: Path, toppa
     if not cg_pdb.exists() or not cg_top.exists():
         raise MartinizeError("martinize2 finished but cg.pdb / cg.top are missing; see martinize2.log")
 
+    nan_beads = [l[12:26].strip() for l in cg_pdb.read_text().splitlines()
+                 if l.startswith(("ATOM", "HETATM")) and "nan" in l[30:54].lower()]
+    if nan_beads:
+        raise MartinizeError(f"martinize2 wrote nan coordinates for {len(nan_beads)} bead(s) (e.g. {nan_beads[:3]}): "
+                             "their atoms are missing from the input. Keep protein.repair: auto so they are rebuilt.")
     molecules = topology.read_molecules(cg_top)
     itps = [inc for inc in topology.read_includes(cg_top) if not inc.startswith("martini")]
     if not molecules:

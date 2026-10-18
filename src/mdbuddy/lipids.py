@@ -358,3 +358,79 @@ def report_markdown() -> str:
         "",
     ]
     return "\n".join(out)
+
+
+# --- self-assembly suitability ----------------------------------------------------------------
+
+# Molecules that do not self-assemble into a bilayer on coarse-grained timescales (huge,
+# cation-bridged sugar head groups, slow lateral dynamics) or need a pre-built leaflet.
+NO_SELF_ASSEMBLY = {
+    "LPS": "lipopolysaccharide", "LIPA": "lipid A", "RAMP": "Re-LPS / lipid A + Kdo2", "REMP": "Re-LPS",
+    "LOS": "lipooligosaccharide", "KDO": "Kdo sugars", "OANT": "O-antigen", "PGN": "peptidoglycan",
+    "GM1": "ganglioside GM1", "GM3": "ganglioside GM3", "DPG1": "ganglioside GM1", "DPG3": "ganglioside GM3",
+}
+NON_BILAYER_CLASSES = {"hydrocarbons", "triglycerides", "fattyacids", "monoglycerides", "diglycerides", "Glycerols"}
+_PE_CLASSES = {"PE", "EE", "LE"}
+
+
+def _fraction(composition: dict, names) -> float:
+    total = sum(float(v) for v in composition.values())
+    return sum(float(composition[n]) for n in composition if n in names) / total if total else 0.0
+
+
+def self_assembly_check(upper: dict, lower: dict, lib: str, temperature: float) -> LipidCheck:
+    """Can this membrane be made by self-assembly? Errors stop the build, warnings are reported."""
+    r = LipidCheck()
+    if dict(upper) != dict(lower):
+        r.errors.append("self-assembly cannot make an asymmetric bilayer: lipids end up in both leaflets at random. "
+                        "Self-assemble a symmetric membrane to find the protein's position, then rebuild the "
+                        "asymmetric membrane with COBY (`mdbuddy selfassembly check` writes the orientation).")
+    comp = dict(upper)
+    lib_data = library(lib)
+    for name in comp:
+        key = name.upper()
+        for bad, what in NO_SELF_ASSEMBLY.items():
+            if key == bad or key.startswith(bad):
+                r.errors.append(f"{name} ({what}) does not self-assemble into a bilayer on CG timescales "
+                                "(large, cation-bridged head groups and very slow dynamics). Build that leaflet "
+                                "with COBY instead (orientation: manual/hydrophobic) and use self-assembly only "
+                                "with simple glycerophospholipids to find the protein's position.")
+    classes = {n: (lib_data.get(n) or {}).get("class") for n in comp}
+    non_bilayer = _fraction(comp, {n for n, c in classes.items() if c in NON_BILAYER_CLASSES})
+    if non_bilayer > 0.5:
+        r.errors.append(f"{non_bilayer:.0%} of the lipids are non-bilayer formers (glycerides, fatty acids, "
+                        "hydrocarbons); they will not assemble into a bilayer")
+    elif non_bilayer > 0.1:
+        r.warnings.append(f"{non_bilayer:.0%} non-bilayer lipids (glycerides/fatty acids/hydrocarbons) may form "
+                          "droplets or partition into the bilayer core")
+    lyso = _fraction(comp, {n for n, c in classes.items() if c == "Lysophospholipids"})
+    if lyso > 0.1:
+        r.warnings.append(f"{lyso:.0%} lysolipids: single-tailed lipids favour micelles; assembly may stall")
+    pe = _fraction(comp, {n for n, c in classes.items() if c in _PE_CLASSES})
+    if pe > 0.5:
+        r.warnings.append(f"{pe:.0%} PE: cone-shaped PE favours non-lamellar phases; mix in PC/PG if the bilayer "
+                          "does not form")
+    chol = _fraction(comp, {n for n, c in classes.items() if c == "sterol"})
+    if chol > 0.4:
+        r.warnings.append(f"{chol:.0%} cholesterol is above what a bilayer readily accommodates during assembly")
+    cl = _fraction(comp, {n for n, c in classes.items() if c == "CL"})
+    if cl > 0.25:
+        r.warnings.append(f"{cl:.0%} cardiolipin (2- each): strongly charged assemblies can stall; keep it <= ~20%")
+    pips = [n for n in comp if classes.get(n) == "Phosphatidylinositols" and (lib_data[n].get("charge") or 0) < -1]
+    if pips:
+        r.warnings.append(f"{', '.join(pips)}: phosphoinositides will be found in both leaflets after assembly")
+    saturated = _fraction(comp, {n for n in comp if _all_saturated(lib_data.get(n))})
+    if saturated > 0.5 and temperature < 320:
+        r.warnings.append(f"{saturated:.0%} saturated lipids at {temperature:g} K: assemble above their phase "
+                          "transition (DPPC-based self-assembly is usually run at 323 K)")
+    r.warnings.append("self-assembly gives a symmetric bilayer with randomly mixed lipids; check that it formed "
+                      "with `mdbuddy selfassembly check` before using the system")
+    return r
+
+
+def _all_saturated(entry: Optional[dict]) -> bool:
+    import re
+    if not entry or not entry.get("chemistry"):
+        return False
+    unsat = re.findall(r":(\d+)", entry["chemistry"])
+    return bool(unsat) and all(u == "0" for u in unsat)

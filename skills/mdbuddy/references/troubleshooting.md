@@ -13,6 +13,31 @@ message says which, and points to the log).
 - **gaps**: reported, not fixed. Model missing loops before MDBuddy if they matter.
 - **"no OPM bilayer REMARK"** with `orientation: opm`: the file is probably not oriented.
 
+## clean (missing atoms)
+- **"residues with missing heavy atoms"**: crystal structures often lack side-chain atoms. martinize2
+  cannot place a bead without atoms (it writes `nan`), so MDBuddy rebuilds them with PDBFixer and
+  relaxes only the rebuilt atoms with OpenMM (`01_clean/repair_pdbfixer.py`). Install with
+  `pip install pdbfixer`. Missing *residues* (gaps) are never built.
+
+## orient
+- **hydrophobic: "not a transmembrane protein"**: no hydrophobic belt was found. The protein may be
+  peripheral or soluble, or a wide single β-barrel (VDAC-like, a known failure). Use `manual` (with
+  the viewer) or `self_assembly`.
+- **"orientation is poorly defined"** (spread > 20°): check `01_orient/orientation_view.html`. Large
+  soluble domains can bias the simple model.
+- **in/out uncertain** (similar Lys/Arg counts): confirm the topology from biology, then use
+  `topology: flip` if needed.
+- **viewer shows nothing**: it loads 3Dmol.js from cdn.jsdelivr.net, so it needs internet.
+
+## self-assembly
+- **refused**: asymmetric leaflets, LPS/lipid A, gangliosides and mostly non-bilayer lipids cannot
+  self-assemble. Self-assemble a simple symmetric bilayer to find the position, then rebuild with COBY.
+- **`selfassembly check`: no complete bilayer**: extend the run (`gmx convert-tpr -s step7_self_assembly.tpr
+  -extend 500000 -o next.tpr`), raise the temperature for saturated lipids, or reduce PE/cholesterol.
+  A vesicle or bilayer stack is not usable. Rebuild with a different seed.
+- **protein does not span the bilayer**: inspect the trajectory. It may be peripheral, or the bilayer
+  formed beside it.
+
 ## forcefield
 - **checksum mismatch**: the download or `ff_dir` copy differs from the pinned file.
   Do not bypass it. If the user really wants a different version, use `extra_itps`.

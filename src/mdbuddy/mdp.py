@@ -32,6 +32,7 @@ class Stage:
     pcoupl: Optional[str]
     gen_vel: bool = False
     softcore: bool = False
+    pcoupltype: str = "semiisotropic"
 
 
 EQUILIBRATION_STANDARD = (
@@ -53,7 +54,31 @@ def production_stage(production_ns: float) -> Stage:
                  "Parrinello-Rahman")
 
 
+def self_assembly_stages(spec) -> list[Stage]:
+    """Protein + randomly placed lipids + water: minimise, short equilibration, then a long run.
+
+    Isotropic pressure coupling because the bilayer orientation is not known until it forms;
+    C-rescale gives a correct ensemble and copes with the large volume change of assembly.
+    The protein backbone stays restrained (if self_assembly.restrain_protein) so the lipids
+    assemble around a fixed protein, as in the Sansom-lab self-assembly protocol.
+    """
+    sa = spec.data["self_assembly"]
+    fc = float(spec.cg["posres_force"]) if sa["restrain_protein"] else None
+    run = int(round(float(sa["run_ns"]) * 1000.0 / PROD_DT))
+    return [
+        Stage("step6.0_minimization", "Soft-core energy minimisation", "steep", 5000, None, 1000.0, None,
+              softcore=True),
+        Stage("step6.1_minimization", "Energy minimisation", "steep", 5000, None, 1000.0, None),
+        Stage("step6.2_equilibration", "NPT (isotropic), dt 10 fs", "md", 50000, 0.010, 1000.0, "C-rescale",
+              gen_vel=True, pcoupltype="isotropic"),
+        Stage("step7_self_assembly", f"Self-assembly, {float(sa['run_ns']):g} ns", "md", run, PROD_DT, fc,
+              "C-rescale", pcoupltype="isotropic"),
+    ]
+
+
 def stages(spec) -> list[Stage]:
+    if spec.protein["orientation"] == "self_assembly":
+        return self_assembly_stages(spec)
     return [*EQUILIBRATION_STANDARD, production_stage(float(spec.sim["production_ns"]))]
 
 
@@ -172,14 +197,23 @@ def render(stage: Stage, spec, posres_enabled: bool) -> str:
         if stage.pcoupl == "Parrinello-Rahman":
             tau_p, why = 12.0, "ps; Parrinello-Rahman is more stable with a large tau-p"
         else:
-            tau_p, why = 4.0, "ps; C-rescale relaxes the box quickly during equilibration"
-        pc: list[Row] = [
-            ("pcoupl", stage.pcoupl),
-            ("pcoupltype", "semiisotropic", "x/y and z coupled separately for a bilayer"),
-            ("tau-p", tau_p, why),
-            ("compressibility", "3e-4 3e-4", "bar^-1, Martini standard"),
-            ("ref-p", f"{pressure:g} {pressure:g}", "bar"),
-        ]
+            tau_p, why = 4.0, "ps; C-rescale: correct ensemble, robust to large volume changes"
+        if stage.pcoupltype == "isotropic":
+            pc: list[Row] = [
+                ("pcoupl", stage.pcoupl),
+                ("pcoupltype", "isotropic", "no bilayer yet: its orientation is decided by the assembly"),
+                ("tau-p", tau_p, why),
+                ("compressibility", "3e-4", "bar^-1, Martini standard"),
+                ("ref-p", f"{pressure:g}", "bar"),
+            ]
+        else:
+            pc = [
+                ("pcoupl", stage.pcoupl),
+                ("pcoupltype", "semiisotropic", "x/y and z coupled separately for a bilayer"),
+                ("tau-p", tau_p, why),
+                ("compressibility", "3e-4 3e-4", "bar^-1, Martini standard"),
+                ("ref-p", f"{pressure:g} {pressure:g}", "bar"),
+            ]
         if restrained:
             pc.append(("refcoord-scaling", "com", "scale restraint reference with the box"))
         lines += _block("Pressure coupling", pc)

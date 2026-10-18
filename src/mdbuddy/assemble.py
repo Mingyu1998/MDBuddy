@@ -144,7 +144,7 @@ def validate(gro_path: Path, molecules, info: topology.TopologyInfo) -> dict:
     if abs(charge) > 1e-3:
         warnings.append(f"system net charge is {charge:+.3f} e (expected 0)")
     return {"errors": errors, "warnings": warnings, "atoms": len(atoms), "net_charge": round(charge, 4),
-            "box_nm": box}
+            "box_nm": box[:3]}
 
 
 RUN_SH = """#!/bin/bash
@@ -256,7 +256,7 @@ def assemble(spec, coby_dir: Path, gmx_dir: Path, ff_includes: list[str], protei
                            + f", {st.nsteps} steps |" for st in stage_list)
     (gmx_dir / "README.md").write_text(README.format(
         name=spec.name, ff=spec.cg["forcefield"], model=spec.cg["model"],
-        box=" x ".join(f"{v:g}" for v in report["box_nm"]), atoms=report["atoms"],
+        box=" x ".join(f"{v:g}" for v in report["box_nm"][:3]), atoms=report["atoms"],
         charge=f"{report['net_charge']:+g}", molecules=mol_lines, stage_rows=stage_rows))
 
     outputs = [gmx_dir / "step5_input.gro", top, gmx_dir / "index.ndx", run_sh,

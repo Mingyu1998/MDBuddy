@@ -22,19 +22,29 @@ def make_atom(record, name, resname, chain, resid, x, y, z, altloc="", element="
 
 @pytest.fixture
 def opm_pdb(tmp_path: Path) -> Path:
-    """Two-chain toy 'membrane protein' in OPM style (membrane centre at z=0)."""
+    """Two-chain toy 'membrane protein' in OPM style (membrane centre at z=0), complete heavy atoms."""
+    from mdbuddy.prepare import HEAVY_ATOMS
+
+    def residue(chain, resid, resname, x0, z, skip=()):
+        out = []
+        for k, name in enumerate(("N", "CA", "C", "O") + HEAVY_ATOMS[resname]):
+            if name not in skip:
+                out.append(make_atom("ATOM", name, resname, chain, resid, x0 + 0.3 * k, 0.0, z,
+                                     element=name[0]))
+        return out
+
     atoms = []
     for chain, x0 in (("A", 0.0), ("B", 10.0)):
         for i, resname in enumerate(("ALA", "LEU", "LYS"), start=1):
             z = -5.0 + 3.8 * (i - 1)
-            atoms.append(make_atom("ATOM", "N", resname, chain, i, x0, 0.0, z - 1.0, element="N"))
-            atoms.append(make_atom("ATOM", "CA", resname, chain, i, x0, 0.0, z, element="C"))
+            atoms += residue(chain, i, resname, x0, z, skip=("CB",) if resname == "LYS" else ())
             atoms.append(make_atom("ATOM", "H", resname, chain, i, x0, 1.0, z, element="H"))
         # altloc pair on the last CB
         atoms.append(make_atom("ATOM", "CB", "LYS", chain, 3, x0 + 1, 0, 3.0, altloc="A", element="C"))
         atoms.append(make_atom("ATOM", "CB", "LYS", chain, 3, x0 + 1.2, 0, 3.0, altloc="B", element="C"))
     # a gap in chain B: residue 10 far away
-    atoms.append(make_atom("ATOM", "CA", "GLY", "B", 10, 30.0, 0.0, 0.0, element="C"))
+    for k, name in enumerate(("N", "CA", "C", "O")):
+        atoms.append(make_atom("ATOM", name, "GLY", "B", 10, 30.0 + 0.3 * k, 0.0, 0.0, element=name[0]))
     atoms.append(make_atom("HETATM", "O", "HOH", "W", 1, 5.0, 5.0, 20.0, element="O"))
     atoms.append(make_atom("HETATM", "C1", "RET", "A", 300, 1.0, 1.0, 1.0, element="C"))
     atoms.append(make_atom("HETATM", "O", "DUM", "", 400, 0.0, 0.0, 16.2, element="O"))
@@ -71,9 +81,21 @@ print("INFO done")
 '''
 
 FAKE_COBY = r'''
-"""Stand-in for COBY: protein + 4 POPC + water + ions, neutral."""
+"""Stand-in for COBY: protein + POPC (membrane or flooded) + water + ions, neutral."""
+def _write(prefix, atoms, box, mols):
+    with open(prefix + ".gro", "w") as fh:
+        fh.write("fake\n%d\n" % len(atoms))
+        for i, (ri, rn, an) in enumerate(atoms, 1):
+            fh.write("%5d%-5s%5s%5d%8.3f%8.3f%8.3f\n" % (ri, rn, an, i, 1.0, 1.0, 1.0))
+        fh.write("%10.5f%10.5f%10.5f\n" % tuple(box))
+
+
 def COBY(**kw):
     import json
+    if "protein" not in kw:  # lipid template build (self-assembly)
+        _write(kw["out_sys"], [(1, "POPC", "NC3"), (1, "POPC", "PO4"), (2, "POPC", "NC3"), (2, "POPC", "PO4")],
+               kw["box"], [])
+        return
     json.dump(kw, open("coby_kwargs.json", "w"))
     prot = kw["protein"].split()[0][len("file:"):]
     beads = [l for l in open(prot) if l.startswith("ATOM")]
@@ -82,10 +104,13 @@ def COBY(**kw):
     atoms = [(1, l[17:20], "BB") for l in beads]
     r = 1
     mols = [(m, 1) for m in moltypes]
-    for _ in range(4):
+    nlip = 4
+    if "flooding" in kw:
+        nlip = sum(int(t.split(":")[2]) for t in kw["flooding"].split() if t.startswith("solute:"))
+    for _ in range(nlip):
         r += 1
         atoms += [(r, "POPC", "NC3"), (r, "POPC", "PO4")]
-    mols.append(("POPC", 4))
+    mols.append(("POPC", nlip))
     for _ in range(10):
         r += 1
         atoms.append((r, "W", "W"))
@@ -97,17 +122,12 @@ def COBY(**kw):
         r += 1
         atoms.append((r, "CL", "CL"))
     mols += [("NA", 2), ("CL", 2 + nlys)]
-    with open("system.gro", "w") as fh:
-        fh.write("fake\n%d\n" % len(atoms))
-        for i, (ri, rn, an) in enumerate(atoms, 1):
-            fh.write("%5d%-5s%5s%5d%8.3f%8.3f%8.3f\n" % (ri, rn, an, i, 1.0, 1.0, 1.0))
-        b = kw["box"]
-        fh.write("%10.5f%10.5f%10.5f\n" % tuple(b))
-    with open("coby_topol.top", "w") as fh:
+    _write(kw["out_sys"], atoms, kw["box"], mols)
+    with open(kw["out_top"], "w") as fh:
         fh.write("[ system ]\nfake\n\n[ molecules ]\n")
         for n, c in mols:
             fh.write("%s %d\n" % (n, c))
-    open("coby.log", "w").write("fake COBY\n")
+    open(kw["out_log"], "w").write("fake COBY\n")
 '''
 
 FF_FILES = {

@@ -8,6 +8,8 @@ import os
 import re
 import shutil
 import subprocess
+import sys
+from pathlib import Path
 from typing import Optional
 
 GMX_CANDIDATES = ("gmx", "gmx_mpi", "gmx_d", "gmx_mpi_d")
@@ -27,6 +29,15 @@ def _run(cmd: list[str], timeout: float = 30.0) -> str:
         return proc.stdout or ""
     except (OSError, subprocess.SubprocessError):
         return ""
+
+
+def find_program(name: str) -> Optional[str]:
+    """Find an executable on PATH or next to the running Python (an un-activated venv/conda env)."""
+    found = shutil.which(name)
+    if found:
+        return found
+    candidate = Path(sys.executable).parent / name
+    return str(candidate) if candidate.exists() and os.access(candidate, os.X_OK) else None
 
 
 def find_gmx() -> Optional[str]:

@@ -11,43 +11,62 @@ download, parameter file and command is recorded with checksums, so the same spe
 rebuilds the same system.
 
 ```
-PDB / OPM ──► clean ──► martinize2 ──► COBY (bilayer + insertion + solvent + ions) ──► GROMACS inputs ──► grompp check
+PDB / OPM / file ──► clean (+ rebuild missing atoms) ──► orient ──► martinize2 ──► COBY ──► GROMACS inputs ──► grompp check
+                                                          │
+                     OPM frame · hydrophobic guess · manual (viewer) · lipid self-assembly
 ```
 
-Scope of v0.1: **membrane proteins from existing structures (OPM / RCSB / file),
-Martini 3 and Martini 2.2, GROMACS.** Structure prediction (co-folding) input,
-soluble proteins and other engines are planned.
+Scope: **membrane proteins from existing structures, including engineered or predicted ones without
+OPM data. Martini 3 (2025 lipidome) and Martini 2.2, GROMACS.** Co-folding input, soluble proteins
+and other engines are planned.
 
-## Two ways to use it
+## Works with any AI agent
 
-### 1. As a Claude Code skill (recommended)
+MDBuddy is a skill (open [Agent Skills](https://agentskills.io) `SKILL.md` format), an MCP server and a
+CLI, so it works in Claude Code, OpenAI Codex, Gemini CLI, Cursor, VS Code/Copilot and other agents:
 
-The skill (`skills/mdbuddy/SKILL.md`) has the agent check your environment,
-ask for the decisions that matter (force field, protein model, lipids per leaflet,
-salt, temperature) with sensible defaults, write the spec, run the build stage by
-stage, explain warnings such as missing loops, and report what was built.
-
-Install as a plugin from this repository:
-
-```
-/plugin marketplace add Mingyu1998/MDBuddy
-/plugin install mdbuddy@mdbuddy
+```bash
+pip install -e ".[build]"                 # from a clone of this repository
+mdbuddy skill install --agent all         # Claude Code, Codex, Gemini CLI skill folders
+mdbuddy mcp-config codex                  # MCP snippet for codex | claude | gemini | cursor | vscode | claude-desktop
 ```
 
-or copy `skills/mdbuddy` into `~/.claude/skills/`. Then ask, for example:
+Claude Code users can also install the plugin: `/plugin marketplace add Mingyu1998/MDBuddy`, then
+`/plugin install mdbuddy@mdbuddy`. Agents that read `AGENTS.md` find their instructions there. Details
+for each agent are in [`docs/agents.md`](docs/agents.md). Then ask, for example:
 
 > Build KcsA (1BL8) in a POPC:CHOL 7:3 bilayer with Martini 3 and 150 mM NaCl for GROMACS.
 
-### 2. As a plain command-line tool
+> My designed channel (design.pdb) has no OPM entry. Place it in a POPE:POPG 3:1 membrane.
+
+The skill has the agent check your environment, agree the decisions that matter with you (sensible
+defaults), write the spec, run the build stage by stage, explain warnings such as missing loops or
+uncertain orientations, and report what was built.
+
+## Or as a plain command-line tool
 
 ```bash
-pip install -e ".[build]"         # mdbuddy + vermouth (martinize2) + COBY
+pip install -e ".[build]"         # mdbuddy + martinize2, COBY, mdtraj, PDBFixer
 mdbuddy doctor                    # what is installed / missing, with install commands
 mdbuddy init kcsa --pdb-id 1bl8   # commented spec template
 mdbuddy validate kcsa.yaml        # every setting, defaults filled in
 mdbuddy build kcsa.yaml           # -> kcsa/gromacs/
 cd kcsa/gromacs && ./run.sh
 ```
+
+## Proteins without OPM data
+
+| `protein.orientation` | How |
+|---|---|
+| `hydrophobic` | implicit-membrane scan of exposed hydrophobicity plus the positive-inside rule. Checked on 14 OPM structures: 13 placed, normal within 6° for 11 |
+| `manual` | `mdbuddy orient view protein.pdb` opens an interactive viewer (sliders against the hydrophobic slab) that prints the spec lines; or align residues/rotate/shift in the spec |
+| `self_assembly` | protein + randomly placed lipids + water, the bilayer forms in a ~1 µs run. Then `mdbuddy selfassembly check` gives the orientation for a clean (also asymmetric) COBY rebuild. MDBuddy refuses lipids that cannot self-assemble (LPS, lipid A, gangliosides, asymmetric leaflets) |
+
+```bash
+mdbuddy orient guess design.pdb --html view.html
+```
+
+Method, benchmark and limitations: [`skills/mdbuddy/references/orientation.md`](skills/mdbuddy/references/orientation.md).
 
 ## Requirements
 
@@ -59,6 +78,9 @@ cd kcsa/gromacs && ./run.sh
 | vermouth (martinize2) | coarse-graining | `pip install vermouth` |
 | COBY (tested 1.0.15) | membrane, insertion, solvation | `pip install COBY` |
 | DSSP 2.2.1/3.0.0 **or** mdtraj | secondary structure | `pip install mdtraj` or `conda install -c salilab dssp` |
+| PDBFixer (OpenMM) | rebuilding missing side-chain atoms (most crystal structures) | `pip install pdbfixer` |
+| matplotlib | imported by COBY 1.0.15 but not installed with it | `pip install matplotlib` |
+| numpy (scipy optional) | orientation and self-assembly analysis | installed with COBY/vermouth |
 | GROMACS ≥ 2021 | final `grompp` check and running | `conda install -c conda-forge gromacs` / `module load gromacs` |
 
 MDBuddy never installs anything itself.
@@ -138,9 +160,13 @@ they run anywhere without the real tools.
 
 ## Status
 
-v0.1.0. The pipeline has been tested end-to-end only with stand-in tools so far. The first
-real builds (KcsA with Martini 3 and Martini 2.2) are next. Please open an issue with
-the `mdbuddy.lock.json` of any build that fails.
+v0.2.0. Tested end-to-end with the real tools (martinize2 0.15.0, COBY 1.0.15, PDBFixer/OpenMM 8):
+- **KcsA (OPM):** Martini 3 / POPC, 20 incomplete residues rebuilt.
+- **Bacteriorhodopsin:** randomly rotated, placed with `hydrophobic` (normal recovered within 0.7°).
+- **KcsA self-assembly soup:** POPC, analysed on a synthetic assembled frame.
+
+GROMACS itself (grompp/mdrun) has not been run in the development environment yet. Please open an
+issue with the `mdbuddy.lock.json` of any build that fails.
 
 ## Citing
 
