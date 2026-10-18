@@ -54,7 +54,7 @@ def cmd_build(args) -> int:
         return 1
     if args.from_stage == "fetch" and not args.skip_doctor:
         checks = doctor.run_checks()
-        if not doctor.ready(checks):
+        if not doctor.ready(checks, needs_martinize=s.has_atomistic_protein):
             print(doctor.report(checks), file=sys.stderr)
             return 1
     try:

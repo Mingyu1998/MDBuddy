@@ -15,7 +15,8 @@ The same tools are available over MCP: `mdbuddy mcp` (setup: `docs/agents.md`).
 
 - `src/mdbuddy/`: the pipeline. Stages in `pipeline.py` (`STAGES`), one module per stage:
   `fetch`, `prepare` (clean + PDBFixer repair), `orient` (OPM/manual/hydrophobic/self-assembly start),
-  `forcefields`, `martinize`, `membrane` (COBY; also the self-assembly soup), `assemble` (GROMACS folder,
+  `forcefields`, `martinize` (+ `cgprotein` for pre-coarse-grained `cg_proteins`), `membrane` (COBY,
+  incl. the `coby:` passthrough; also the self-assembly soup), `assemble` (GROMACS folder,
   validation), `mdp`. Also `lipids` (names across Martini versions), `selfassembly` (analysis),
   `viewer` (HTML placement viewer), `mcp_server` (stdlib MCP server), `cli`.
 - `skills/mdbuddy/`: the agent skill (SKILL.md + references), canonical copy. After editing it run

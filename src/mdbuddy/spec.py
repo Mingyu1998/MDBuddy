@@ -27,11 +27,17 @@ FORCEFIELDS = {
                   "elastic": {"force": 500.0, "lower": 0.0, "upper": 0.9}},
 }
 PROTEIN_MODELS = ("elastic", "go", "none")
-SOURCES = ("opm", "rcsb", "file")
+SOURCES = ("opm", "rcsb", "file", "none")
 ORIENTATIONS = ("opm", "as_is", "manual", "hydrophobic", "self_assembly")
 TOPOLOGY_RULES = ("positive_inside", "as_found", "flip")
 POSRES = ("none", "backbone", "all")
-TC_GROUP_CHOICES = (["Protein", "MEMBRANE", "SOLVENT"], ["SOLU_MEMB", "SOLVENT"], ["System"])
+TC_GROUP_CHOICES = (["Protein", "MEMBRANE", "SOLVENT"], ["SOLU_MEMB", "SOLVENT"], ["MEMBRANE", "SOLVENT"], ["System"])
+CG_PROTEIN_KEYS = {"structure", "topology", "itps", "moleculetypes", "placement", "cx", "cy", "cz", "rx", "ry", "rz",
+                   "coby_args"}
+# COBY arguments MDBuddy generates itself; coby.kwargs may not override them
+COBY_RESERVED = {"box", "box_type", "protein", "membrane", "solvation", "itp_input", "out_sys", "out_top", "out_log",
+                 "sn", "randseed", "params"}
+NON_RECURSIVE = ("lipids", "lipid_apl", "kwargs")
 COMM_GROUP_CHOICES = (["SOLU_MEMB", "SOLVENT"], ["System"])
 
 DEFAULTS: dict[str, Any] = {
@@ -75,11 +81,24 @@ DEFAULTS: dict[str, Any] = {
         "apl": 0.6,
         "upper_apl": None,
         "lower_apl": None,
-        "box": "auto",
+        "box": "auto",  # auto | [x, y, z] nm | from_structure (box of the first cg_proteins structure)
+        "cz": 0.0,  # nm: membrane midplane offset from the box centre along z
+        "lipid_apl": {},  # per-lipid area per lipid (nm^2), e.g. {POPE: 0.62}; tunes local lipid density
         "box_type": "rectangular",
         "lipid_padding": 3.0,
         "water_padding": 2.5,
         "min_box_z": 10.0,
+    },
+    # Pre-coarse-grained proteins (e.g. protein islands from earlier simulations), inserted as given:
+    # [{structure, topology | itps + moleculetypes, placement: keep | center, cx..rz, coby_args}]
+    "cg_proteins": [],
+    # Direct COBY control, all recorded: extra sub-arguments, raw membrane strings, other COBY keywords
+    "coby": {
+        "membrane_args": "",  # appended to the generated membrane argument (e.g. "hole:circle:...")
+        "membranes": [],  # full raw COBY membrane strings; replace the generated membrane (several allowed)
+        "protein_args": "",  # appended to the atomistic protein's COBY argument
+        "solvation_args": "",  # appended to the solvation argument
+        "kwargs": {},  # any other COBY keyword argument (e.g. import_library, molecule_import, flooding)
     },
     "self_assembly": {  # protein.orientation: self_assembly
         "lipid_count": "auto",  # or a number; auto fills the box area at membrane.apl
@@ -127,7 +146,7 @@ def _merge(defaults: dict, user: dict, path: str, problems: list[str]) -> dict:
         if key not in defaults:
             problems.append(f"unknown key '{path}{key}'")
             continue
-        if isinstance(defaults[key], dict) and key not in ("lipids",) and isinstance(value, dict):
+        if isinstance(defaults[key], dict) and key not in NON_RECURSIVE and isinstance(value, dict):
             out[key] = _merge(defaults[key], value, f"{path}{key}.", problems)
         else:
             out[key] = value
@@ -185,12 +204,32 @@ class Spec:
         }
 
     def lipid_names(self) -> list[str]:
+        """Lipids of the generated membrane plus those named in raw coby.membranes strings."""
         names: list[str] = []
-        for comp in self.leaflets().values():
-            for lipid in comp:
-                if lipid not in names:
-                    names.append(lipid)
+        if not self.data["coby"]["membranes"]:
+            for comp in self.leaflets().values():
+                for lipid in comp:
+                    if lipid not in names:
+                        names.append(lipid)
+        for raw in self.data["coby"]["membranes"]:
+            for tok in str(raw).split():
+                parts = tok.split(":")
+                name = None
+                if parts[0].lower() == "lipid" and len(parts) > 1:
+                    name = parts[2 + parts[1:].index("name")] if "name" in parts[1:-1] else parts[1]
+                elif parts[0].lower() == "lipid_extra" and "name" in parts[1:-1]:
+                    name = parts[2 + parts[1:].index("name")]
+                if name and name not in names:
+                    names.append(name)
         return names
+
+    @property
+    def has_atomistic_protein(self) -> bool:
+        return self.protein["source"] != "none"
+
+    @property
+    def cg_proteins(self) -> list[dict]:
+        return self.data["cg_proteins"]
 
     def output_dir(self, base: Optional[Path] = None) -> Path:
         out = self.data["output_dir"] or self.name
@@ -226,6 +265,54 @@ def _validate(d: dict, problems: list[str]) -> None:
         problems.append(f"protein.id is required for source '{p['source']}'")
     elif p["source"] == "file" and not p["path"]:
         problems.append("protein.path is required for source 'file'")
+    cgp = d["cg_proteins"]
+    if not isinstance(cgp, list):
+        problems.append("cg_proteins must be a list")
+        cgp = []
+    for i, e in enumerate(cgp):
+        where = f"cg_proteins[{i}]"
+        if not isinstance(e, dict) or not e.get("structure"):
+            problems.append(f"{where}: needs 'structure' (a CG .pdb or .gro)")
+            continue
+        unknown = set(e) - CG_PROTEIN_KEYS
+        if unknown:
+            problems.append(f"{where}: unknown key(s) {sorted(unknown)}")
+        if not e.get("topology") and not (e.get("itps") and e.get("moleculetypes")):
+            problems.append(f"{where}: give 'topology' (a .top with [ molecules ]) or both 'itps' and 'moleculetypes'")
+        if e.get("moleculetypes") is not None and not all(
+                isinstance(m, list) and len(m) == 2 and isinstance(m[1], int) for m in e["moleculetypes"]):
+            problems.append(f"{where}.moleculetypes must be a list of [name, count] in structure order")
+        if e.get("placement", "keep") not in ("keep", "center"):
+            problems.append(f"{where}.placement must be 'keep' (file coordinates) or 'center'")
+    if p["source"] == "none":
+        if p["orientation"] == "self_assembly":
+            problems.append("self-assembly needs an atomistic protein (protein.source opm/rcsb/file)")
+    if cgp and p["orientation"] == "self_assembly":
+        problems.append("cg_proteins cannot be combined with self-assembly yet")
+    if d["membrane"]["box"] == "auto" and p["source"] == "none" and not cgp:
+        problems.append("a membrane-only system needs an explicit membrane.box: [x, y, z]")
+    if d["membrane"]["box"] == "auto" and (p["source"] != "none") + len(cgp) > 1:
+        problems.append("membrane.box: auto sizes the box around one protein; with more than one protein "
+                        "set membrane.box to [x, y, z] or from_structure")
+    if d["membrane"]["box"] == "from_structure" and not cgp:
+        problems.append("membrane.box: from_structure needs cg_proteins (it uses the first structure's box)")
+    la = d["membrane"]["lipid_apl"]
+    if not isinstance(la, dict) or not all(isinstance(v, (int, float)) and v > 0 for v in la.values()):
+        problems.append("membrane.lipid_apl must map lipid names to areas per lipid in nm^2")
+    c = d["coby"]
+    for key in ("membrane_args", "protein_args", "solvation_args"):
+        if not isinstance(c[key], str):
+            problems.append(f"coby.{key} must be a string of COBY sub-arguments")
+    if not isinstance(c["membranes"], list) or not all(isinstance(m, str) for m in c["membranes"]):
+        problems.append("coby.membranes must be a list of COBY membrane strings")
+    if not isinstance(c["kwargs"], dict):
+        problems.append("coby.kwargs must be a mapping of COBY keyword arguments")
+    else:
+        # COBY also treats any keyword starting with prot/memb/solv as protein/membrane/solvation
+        clash = sorted(k for k in c["kwargs"] if k in COBY_RESERVED or k.startswith(("prot", "memb", "solv")))
+        if clash:
+            problems.append(f"coby.kwargs may not set {clash}: MDBuddy generates them (use membrane.*, "
+                            "coby.membranes, coby.*_args or the spec instead)")
     if p["repair"] not in ("auto", "off"):
         problems.append("protein.repair must be 'auto' (rebuild missing heavy atoms with PDBFixer) or 'off'")
     if p["orientation"] not in ORIENTATIONS:
@@ -279,10 +366,10 @@ def _validate(d: dict, problems: list[str]) -> None:
             if not isinstance(ratio, (int, float)) or ratio <= 0:
                 problems.append(f"membrane.{leaflet}.{lipid}: ratio must be a positive number")
     box = m["box"]
-    if box != "auto":
+    if box not in ("auto", "from_structure"):
         if (not isinstance(box, list) or len(box) != 3
                 or not all(isinstance(v, (int, float)) and v > 0 for v in box)):
-            problems.append("membrane.box must be 'auto' or [x, y, z] in nm")
+            problems.append("membrane.box must be 'auto', 'from_structure' or [x, y, z] in nm")
     if m["box_type"] not in ("rectangular",):
         problems.append("membrane.box_type: only 'rectangular' is supported for membranes right now")
     for key in ("apl", "lipid_padding", "water_padding"):
@@ -334,6 +421,15 @@ def from_dict(user: dict, source_path: Optional[Path] = None) -> Spec:
         data["coarse_grain"]["elastic"] = elastic
     if isinstance(data["protein"]["id"], str):
         data["protein"]["id"] = data["protein"]["id"].lower()
+    for e in data["cg_proteins"] if isinstance(data["cg_proteins"], list) else []:
+        if isinstance(e, dict):
+            e.setdefault("placement", "keep")
+            for k in ("cx", "cy", "cz", "rx", "ry", "rz"):
+                e.setdefault(k, 0.0)
+            e.setdefault("coby_args", "")
+    no_protein = data["protein"]["source"] == "none" and not data["cg_proteins"]
+    if no_protein and "coupling_groups" not in (user.get("simulation") or {}):
+        data["simulation"]["coupling_groups"] = ["MEMBRANE", "SOLVENT"]
 
     _validate(data, problems)
     if problems:

@@ -81,7 +81,7 @@ print("INFO done")
 '''
 
 FAKE_COBY = r'''
-"""Stand-in for COBY: protein + POPC (membrane or flooded) + water + ions, neutral."""
+"""Stand-in for COBY: proteins (pdb/gro, names kept) + POPC (membrane or flooded) + water + ions, neutral."""
 def _write(prefix, atoms, box, mols):
     with open(prefix + ".gro", "w") as fh:
         fh.write("fake\n%d\n" % len(atoms))
@@ -90,20 +90,32 @@ def _write(prefix, atoms, box, mols):
         fh.write("%10.5f%10.5f%10.5f\n" % tuple(box))
 
 
+def _beads(path):
+    """(resname, name) of every bead in a pdb or gro."""
+    lines = open(path).read().splitlines()
+    if path.endswith(".gro"):
+        return [(l[5:10].strip(), l[10:15].strip()) for l in lines[2:2 + int(lines[1])]]
+    return [(l[17:20].strip(), l[12:16].strip()) for l in lines if l.startswith("ATOM")]
+
+
 def COBY(**kw):
     import json
-    if "protein" not in kw:  # lipid template build (self-assembly)
+    if "solvation" not in kw:  # lipid template build (self-assembly)
         _write(kw["out_sys"], [(1, "POPC", "NC3"), (1, "POPC", "PO4"), (2, "POPC", "NC3"), (2, "POPC", "PO4")],
                kw["box"], [])
         return
     json.dump(kw, open("coby_kwargs.json", "w"))
-    prot = kw["protein"].split()[0][len("file:"):]
-    beads = [l for l in open(prot) if l.startswith("ATOM")]
-    moltypes = [t.split(":")[1] for t in kw["protein"].split() if t.startswith("moleculetypes:")]
-    nlys = sum(1 for l in beads if l[17:20] == "LYS")
-    atoms = [(1, l[17:20], "BB") for l in beads]
-    r = 1
-    mols = [(m, 1) for m in moltypes]
+    proteins = kw.get("protein", [])
+    proteins = [proteins] if isinstance(proteins, str) else proteins
+    atoms, mols, nlys, r = [], [], 0, 0
+    for prot in proteins:
+        beads = _beads(prot.split()[0][len("file:"):])
+        nlys += sum(1 for rn, _ in beads if rn == "LYS")
+        r += 1
+        atoms += [(r, rn, an) for rn, an in beads]
+        for t in prot.split():
+            if t.startswith("moleculetypes:"):
+                mols.append((t.split(":")[1], int(t.split(":")[2])))
     nlip = 4
     if "flooding" in kw:
         nlip = sum(int(t.split(":")[2]) for t in kw["flooding"].split() if t.startswith("solute:"))

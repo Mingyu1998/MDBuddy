@@ -1,0 +1,29 @@
+# Gram-negative cell envelope, Martini 2: inner membrane and an LPS outer membrane in one box,
+# written as raw COBY membrane strings (cz in nm from the box centre).
+# LPS is not shipped by MDBuddy or COBY: give its itp (forcefield_files.extra_itps) and a
+# single-molecule structure for COBY (coby.kwargs.molecule_import). Martini 2 phospholipid itps
+# come from cgmartini.nl. File paths are relative to this spec; MDBuddy copies them into the build.
+mdbuddy: 1
+name: envelope_m22
+protein:
+  source: none
+cg_proteins: []           # add pre-coarse-grained OMPs / IM proteins here (placement: keep)
+coarse_grain:
+  forcefield: martini22
+forcefield_files:
+  extra_itps:
+    - itp/martini_v2.0_lipids_all_201506.itp
+    - itp/martini_v2_LPS.itp          # defines REMP (your LPS model)
+membrane:
+  box: [30, 30, 40]
+coby:
+  membranes:
+    - "leaflet:both lipid:POPE:8 lipid:POPG:2 apl:0.6 cz:-10"
+    - "leaflet:upper lipid:REMP:1 apl:1.6 leaflet:lower lipid:POPE:9 lipid:POPG:1 apl:0.6 cz:10"
+  kwargs:
+    molecule_import:
+      # bead numbers are for your structure file: the head-group end goes up
+      - "file:structures/REMP_single.gro moleculetype:REMP library_types:lipid alignment:principal upbead:res:1:bead:1"
+simulation:
+  temperature: 310
+  production_ns: 1000

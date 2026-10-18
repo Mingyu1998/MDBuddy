@@ -1,0 +1,19 @@
+# A large membrane-only patch (no protein) with a lipid domain: the bulk membrane has a circular
+# hole and a second membrane of a different composition fills it (COBY hole/patch shapes; cx, cy
+# and radius in nm, relative to the box centre). Lipid density is tuned per lipid with apl (nm^2).
+# MDBuddy adds the matching COBY params: to each known lipid (here LTF, CHOL: default).
+mdbuddy: 1
+name: patch_m3
+protein:
+  source: none
+coarse_grain:
+  forcefield: martini3
+membrane:
+  box: [50, 50, 14]       # nm; required when there is no protein
+coby:
+  membranes:
+    - "lipid:POPC:6 lipid:POPE:3 lipid:CHOL:1 apl:0.62 hole:circle:cx:0:cy:0:radius:10"
+    - "lipid:DPPC:5 lipid:CHOL:5:apl:0.4 apl:0.55 patch:circle:cx:0:cy:0:radius:10"
+simulation:
+  temperature: 310
+  production_ns: 500      # tc groups default to [MEMBRANE, SOLVENT] without a protein

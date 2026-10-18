@@ -49,15 +49,17 @@ def for_spec(spec, used: frozenset = frozenset()) -> list[str]:
         keys += ["martini22", "martini2_lipids"]
         if ff == "elnedyn22":
             keys.append("elnedyn")
-    keys.append("martinize2")
-    if spec.cg["model"] == "go":
+    atomistic = spec.protein["source"] != "none"
+    if atomistic:
+        keys.append("martinize2")
+    if atomistic and spec.cg["model"] == "go":
         keys.append("go")
     keys.append("coby")
     if spec.protein["source"] == "opm":
         keys.append("opm")
     if "pdbfixer" in used:
         keys.append("openmm")
-    if spec.protein["orientation"] == "hydrophobic":
+    if atomistic and spec.protein["orientation"] == "hydrophobic":
         keys.append("wimley_white")
     if spec.protein["orientation"] == "self_assembly":
         keys += ["self_assembly", "memprotmd"]
