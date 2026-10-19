@@ -3,7 +3,7 @@ import textwrap
 
 import pytest
 
-from mdbuddy import assemble, martinize, mdp, membrane, prepare, spec, topology
+from mdbuddy import assemble, cgprotein, martinize, mdp, membrane, prepare, spec, topology
 from mdbuddy.structure import Atom, opm_half_thickness, read_pdb
 
 
@@ -497,3 +497,185 @@ def test_run_sh_quotes_survive_the_template(tmp_path):
     assert "\\n" not in text.replace("\n", "")  # no stray escapes left either
     for line in text.splitlines():
         assert line.count("'") % 2 == 0, f"unbalanced quote: {line!r}"
+
+
+# --- stiff bonds vs the time step ------------------------------------------
+
+STIFF_ITP = """
+[ moleculetype ]
+STIFF 1
+[ atoms ]
+1 P5 1 ALA BB 1 0.0
+2 P5 1 ALA SC1 2 0.0
+[ bonds ]
+1 2 1 0.350 150000
+"""
+
+SOFT_ITP = STIFF_ITP.replace("150000", "1250").replace("STIFF", "SOFT")
+
+
+def test_fastest_bond_matches_gromacs_formula(tmp_path):
+    """GROMACS estimates 2*pi*sqrt(mu/k); for two 72 amu beads at k = 150000 kJ/mol/nm^2 it
+    prints 9.7e-02 ps, which is what a real OMP island itp hit at a 20 fs step."""
+    p = tmp_path / "stiff.itp"
+    p.write_text(STIFF_ITP)
+    info = topology.parse(p)
+    mt = info.moleculetypes["STIFF"]
+    assert len(mt.bonds) == 1 and mt.atom_types == ["P5", "P5"]
+    i, j, k, period = topology.fastest_bond(mt, {"P5": 72.0})
+    assert (i, j, k) == (1, 2, 150000.0)
+    assert abs(period - 0.0973) < 5e-4          # ps, as grompp reports it
+    assert abs(period / 5 * 1000 - 19.5) < 0.1  # max safe time step, fs
+    # a normal Martini bond is nowhere near the limit
+    p2 = tmp_path / "soft.itp"
+    p2.write_text(SOFT_ITP)
+    _, _, _, soft_period = topology.fastest_bond(
+        topology.parse(p2).moleculetypes["SOFT"], {"P5": 72.0})
+    assert soft_period / 5 * 1000 > 100  # fs
+
+
+def test_stiff_bond_warning(tmp_path):
+    p = tmp_path / "stiff.itp"
+    p.write_text(STIFF_ITP)
+    info = topology.parse(p)
+    mols = [("STIFF", 1)]
+    sim = {"timestep_fs": 20.0, "output_ps": 500.0}
+    msg = cgprotein.stiff_bond_warning(info, mols, sim, {"P5": 72.0})
+    assert msg and "150000" in msg and "19.5 fs" in msg
+    # it suggests a step that is both safe AND valid for this output_ps
+    assert "simulation.timestep_fs: 10" in msg
+    # silent once the step is small enough
+    assert cgprotein.stiff_bond_warning(info, mols, {**sim, "timestep_fs": 10.0}, {"P5": 72.0}) is None
+    # silent for an ordinary Martini bond
+    p2 = tmp_path / "soft.itp"
+    p2.write_text(SOFT_ITP)
+    assert cgprotein.stiff_bond_warning(topology.parse(p2), [("SOFT", 1)], sim, {"P5": 72.0}) is None
+    # and for a molecule with no numeric bonds at all
+    assert cgprotein.stiff_bond_warning(info, [("NOPE", 1)], sim) is None
+
+
+def test_suggest_timestep_divides_output_ps():
+    # 500 ps of output: 100 steps at 10 fs = 1 ps divides it; 15 fs (1.5 ps) does not
+    assert cgprotein.suggest_timestep(19.5, 500.0) == 10.0
+    assert cgprotein.suggest_timestep(19.5, 300.0) == 15.0
+    assert cgprotein.suggest_timestep(100.0, 500.0) == 20.0
+    assert cgprotein.suggest_timestep(0.5, 500.0) is None
+
+
+def test_timestep_fs_caps_the_ladder_keeping_durations():
+    base = {x.name: x for x in mdp.stages(mkspec())}
+    capped = {x.name: x for x in mdp.stages(mkspec(simulation={"timestep_fs": 10}))}
+    for name, st in base.items():
+        c = capped[name]
+        if st.dt is None:
+            assert c.dt is None
+            continue
+        assert c.dt == min(st.dt, 0.010)
+        # the stage still covers the same amount of simulated time
+        assert abs(c.nsteps * c.dt - st.nsteps * st.dt) < 1e-6, name
+    assert capped["step7_production"].dt == 0.010
+    assert capped["step6.2_equilibration"].dt == 0.002  # already below the cap, untouched
+    # titles (mdp header, folder README) name the dt actually used
+    assert capped["step6.6_equilibration"].title == "NPT, dt 10 fs"
+    assert capped["step6.7_equilibration"].title == "NPT, dt 10 fs, 5 ns"
+    assert capped["step6.3_equilibration"].title == base["step6.3_equilibration"].title
+    # output interval follows the new dt, so it is still 500 ps
+    prod = mdp_params(mdp.render(capped["step7_production"],
+                                 mkspec(simulation={"timestep_fs": 10}), posres_enabled=False))
+    assert prod["dt"] == "0.01" and prod["nstenergy"] == "50000"
+
+
+def test_timestep_fs_validation():
+    for bad in (0.5, 41, "20"):
+        with pytest.raises(spec.SpecError, match="timestep_fs"):
+            mkspec(simulation={"timestep_fs": bad})
+    # output_ps must still be a whole number of 100-step intervals at the chosen dt
+    with pytest.raises(spec.SpecError, match="output_ps"):
+        mkspec(simulation={"timestep_fs": 15})          # 500 ps / 1.5 ps is not an integer
+    assert mkspec(simulation={"timestep_fs": 15, "output_ps": 300}).sim["timestep_fs"] == 15
+
+
+# --- user-supplied force-field files ---------------------------------------
+
+def _m2_registry(tmp_path, monkeypatch):
+    """A tiny stand-in for the pinned Martini 2 set, served from local files."""
+    import hashlib
+    from mdbuddy import forcefields
+    d = tmp_path / "pinned"
+    d.mkdir(exist_ok=True)
+    files = []
+    for name, body, role, key in (
+            ("martini_v2.2.itp", "[ defaults ]\n1 1\n\n[ atomtypes ]\nP5 72.0 0.000 A 0.0 0.0\n", "core", ""),
+            ("martini_v2.0_ions.itp", "[ moleculetype ]\nNA 1\n[ atoms ]\n1 P5 1 ION NA 1 1.0\n", "core", ""),
+            ("martini_v2.0_POPE_02.itp",
+             "[ moleculetype ]\nPOPE 1\n[ atoms ]\n1 P5 1 POPE PO4 1 0.0\n", "optional", "POPE"),
+            ("martini_v2.0_POPG_02.itp",
+             "[ moleculetype ]\nPOPG 1\n[ atoms ]\n1 P5 1 POPG PO4 1 0.0\n", "optional", "POPG")):
+        p = d / name
+        p.write_text(body)
+        files.append(forcefields.FFFile(name, p.as_uri(),
+                                        hashlib.sha256(p.read_bytes()).hexdigest(), role, key))
+    monkeypatch.setitem(forcefields.REGISTRY, "martini2", files)
+    monkeypatch.setenv("MDBUDDY_CACHE", str(tmp_path / "cache"))
+    return d
+
+
+def test_extra_itp_supersedes_the_pinned_lipid_file(tmp_path, monkeypatch):
+    """The cgmartini martini_v2.0_lipids_all file defines POPE and POPG as well as LPS, so
+    adding it used to define those moleculetypes twice and stop the build."""
+    from mdbuddy import forcefields
+    _m2_registry(tmp_path, monkeypatch)
+    mine = tmp_path / "my_lipids.itp"
+    mine.write_text("[ moleculetype ]\nPOPE 1\n[ atoms ]\n1 P5 1 POPE PO4 1 0.0\n"
+                    "[ moleculetype ]\nREMP 1\n[ atoms ]\n1 P5 1 REMP PO1 1 0.0\n")
+    s = mkspec(coarse_grain={"forcefield": "martini22"},
+               membrane={"lipids": {"POPE": 9, "POPG": 1}},
+               forcefield_files={"extra_itps": [str(mine)]})
+    notes = []
+    records = forcefields.install_forcefield(s, tmp_path / "toppar", log=notes.append)
+    names = [r["file"] for r in records]
+    assert "martini_v2.0_POPE_02.itp" not in names   # superseded by my_lipids.itp
+    assert "martini_v2.0_POPG_02.itp" in names       # my file does not define POPG
+    assert "my_lipids.itp" in names
+    assert any("POPE comes from your my_lipids.itp" in n for n in notes)
+    # no moleculetype ends up defined twice
+    info = topology.TopologyInfo()
+    for n in names:
+        topology.parse(tmp_path / "toppar" / n, info=info)
+    assert info.duplicates == []
+
+
+def test_replace_a_pinned_forcefield_file(tmp_path, monkeypatch):
+    """forcefield_files.replace: a modified core force field (e.g. a modified-LJ martini_v2.2
+    for an accelerated LPS model) in the same include position, recorded as unpinned."""
+    from mdbuddy import forcefields
+    _m2_registry(tmp_path, monkeypatch)
+    mod = tmp_path / "martini_v2.2_modlj2.itp"
+    mod.write_text("[ defaults ]\n1 1\n\n[ atomtypes ]\nP5 72.0 0.000 A 0.0 0.0\n"
+                   "RQa 72.0 0.000 A 0.0 0.0\n")
+    s = mkspec(coarse_grain={"forcefield": "martini22"},
+               membrane={"lipids": {"POPE": 1}},
+               forcefield_files={"replace": {"martini_v2.2.itp": str(mod)}})
+    records = forcefields.install_forcefield(s, tmp_path / "toppar")
+    core = records[0]
+    assert core["file"] == "martini_v2.2.itp"        # same name and include position
+    assert core["source"].startswith("replace:")
+    assert core["pinned"] is False and core["replaces_pinned_sha256"]
+    assert core["sha256"] != core["replaces_pinned_sha256"]
+    # the file really is the user's one
+    assert "RQa" in (tmp_path / "toppar" / "martini_v2.2.itp").read_text()
+
+
+def test_replace_rejects_bad_targets(tmp_path, monkeypatch):
+    from mdbuddy import forcefields
+    _m2_registry(tmp_path, monkeypatch)
+    mod = tmp_path / "mod.itp"
+    mod.write_text("[ defaults ]\n1 1\n")
+    s = mkspec(coarse_grain={"forcefield": "martini22"}, membrane={"lipids": {"POPE": 1}},
+               forcefield_files={"replace": {"not_a_pinned_name.itp": str(mod)}})
+    with pytest.raises(forcefields.ForceFieldError, match="not a pinned file name"):
+        forcefields.install_forcefield(s, tmp_path / "toppar")
+    s2 = mkspec(coarse_grain={"forcefield": "martini22"}, membrane={"lipids": {"POPE": 1}},
+                forcefield_files={"replace": {"martini_v2.2.itp": str(tmp_path / "nope.itp")}})
+    with pytest.raises(forcefields.ForceFieldError, match="file not found"):
+        forcefields.install_forcefield(s2, tmp_path / "toppar")

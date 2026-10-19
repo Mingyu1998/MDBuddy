@@ -15,5 +15,10 @@ coby:
     - "lipid:POPC:6 lipid:POPE:3 lipid:CHOL:1 apl:0.62 hole:circle:cx:0:cy:0:radius:10"
     - "lipid:DPPC:5 lipid:CHOL:5:apl:0.4 apl:0.55 patch:circle:cx:0:cy:0:radius:10"
 simulation:
+  # 310 K leaves a DPPC/CHOL domain very ordered (DPPC alone is near its transition); raise it to
+  # 323 K if you want the domain fluid. Checked on this patch: the hole/patch boundary starts as a
+  # mathematically sharp step and roughens to ~0.9 nm (about one lipid) within 175 ps, then stops
+  # widening, so the domain is stable. The apl values above are ~8% above the equilibrium area at
+  # 310 K, so the box still contracts ~4% in x/y (and grows ~15% in z) over the first 0.5 ns.
   temperature: 310
   production_ns: 500      # tc groups default to [MEMBRANE, SOLVENT] without a protein

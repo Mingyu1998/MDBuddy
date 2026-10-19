@@ -3,6 +3,8 @@
 # LPS is not shipped by MDBuddy or COBY: give its itp (forcefield_files.extra_itps) and a
 # single-molecule structure for COBY (coby.kwargs.molecule_import). Martini 2 phospholipid itps
 # come from cgmartini.nl. File paths are relative to this spec; MDBuddy copies them into the build.
+# The cgmartini martini_v2.0_lipids_all file also defines POPE and POPG, so MDBuddy drops its own
+# pinned copies of those two and says so at the forcefield stage.
 mdbuddy: 1
 name: envelope_m22
 protein:
@@ -23,7 +25,10 @@ coby:
   kwargs:
     molecule_import:
       # bead numbers are for your structure file: the head-group end goes up
-      - "file:structures/REMP_single.gro moleculetype:REMP library_types:lipid alignment:principal upbead:res:1:bead:1"
+      # COBY counts residues AND beads from 0, and res defaults to 0, so for a one-residue
+      # lipid give bead numbers only: these are the five outer sugar beads of a 42-bead Re-LPS
+      # (S06-S10, beads 38-42 when counting from 1), which must end up on the +z side.
+      - "file:structures/REMP_single.gro moleculetype:REMP library_types:lipid alignment:principal upbead:bead:37 upbead:bead:38 upbead:bead:39 upbead:bead:40 upbead:bead:41"
 simulation:
   temperature: 310
   production_ns: 1000

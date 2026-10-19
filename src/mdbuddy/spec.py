@@ -40,7 +40,7 @@ CG_PROTEIN_KEYS = {"structure", "topology", "itps", "moleculetypes", "placement"
 # COBY arguments MDBuddy generates itself; coby.kwargs may not override them
 COBY_RESERVED = {"box", "box_type", "protein", "membrane", "solvation", "itp_input", "out_sys", "out_top", "out_log",
                  "sn", "randseed", "params"}
-NON_RECURSIVE = ("lipids", "lipid_apl", "kwargs")
+NON_RECURSIVE = ("lipids", "lipid_apl", "kwargs", "replace")
 COMM_GROUP_CHOICES = (["SOLU_MEMB", "SOLVENT"], ["System"])
 
 DEFAULTS: dict[str, Any] = {
@@ -120,6 +120,10 @@ DEFAULTS: dict[str, Any] = {
         "martini3_lipids": "lipidome",
         "optional": [],
         "extra_itps": [],
+        # {pinned file name: path} - use a deliberately different version of a pinned file, in
+        # the same include position (e.g. a modified-LJ martini_v2.2.itp). Unverified: the lock
+        # records it as unpinned next to the checksum it replaces.
+        "replace": {},
         "ff_dir": None,
     },
     "simulation": {
@@ -127,6 +131,10 @@ DEFAULTS: dict[str, Any] = {
         "pressure": 1.0,
         "production_ns": 1000.0,
         "equilibration": "standard",
+        # Production time step (fs). 20 is the Martini standard. Lower it when a supplied
+        # topology has bonds too stiff for 20 fs (cg_proteins reports the safe maximum);
+        # the equilibration ramp is capped at this value too, keeping each stage's duration.
+        "timestep_fs": 20.0,
         "output_ps": 500.0,
         "coupling_groups": ["Protein", "MEMBRANE", "SOLVENT"],
         "comm_groups": ["SOLU_MEMB", "SOLVENT"],
@@ -385,6 +393,11 @@ def _validate(d: dict, problems: list[str]) -> None:
     if not isinstance(s["salt_molarity"], (int, float)) or s["salt_molarity"] < 0:
         problems.append("solvent.salt_molarity must be >= 0")
 
+    rep = d["forcefield_files"]["replace"]
+    if not isinstance(rep, dict) or not all(isinstance(k, str) and isinstance(v, str)
+                                            for k, v in rep.items()):
+        problems.append("forcefield_files.replace must be a map of {pinned file name: path}")
+
     if sim["equilibration"] not in ("standard",):
         problems.append("simulation.equilibration: only 'standard' is available")
     if not isinstance(sim["production_ns"], (int, float)) or sim["production_ns"] <= 0:
@@ -395,11 +408,17 @@ def _validate(d: dict, problems: list[str]) -> None:
     if sim["comm_groups"] not in COMM_GROUP_CHOICES:
         problems.append("simulation.comm_groups must be one of "
                         + ", ".join("[" + ", ".join(g) + "]" for g in COMM_GROUP_CHOICES))
+    ts = sim["timestep_fs"]
+    if not isinstance(ts, (int, float)) or not 1.0 <= ts <= 40.0:
+        problems.append("simulation.timestep_fs must be between 1 and 40 fs (Martini standard: 20)")
+        ts = 20.0
     out_ps = sim["output_ps"]
-    # production dt is 20 fs and energies are computed every 100 steps -> multiples of 2 ps
+    # energies are computed every 100 steps, so the output interval must be a multiple of that
+    step_ps = 100 * float(ts) / 1000.0
     if (not isinstance(out_ps, (int, float)) or out_ps <= 0
-            or abs(out_ps / 2.0 - round(out_ps / 2.0)) > 1e-9):
-        problems.append("simulation.output_ps must be a positive multiple of 2 ps")
+            or abs(out_ps / step_ps - round(out_ps / step_ps)) > 1e-9):
+        problems.append(f"simulation.output_ps must be a positive multiple of {step_ps:g} ps "
+                        f"(100 steps at timestep_fs = {float(ts):g})")
 
 
 def from_dict(user: dict, source_path: Optional[Path] = None) -> Spec:

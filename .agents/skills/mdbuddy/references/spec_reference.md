@@ -105,6 +105,12 @@ forcefield_files:
                            # A lipid MDBuddy does not know (e.g. LPS) is accepted when one of these defines it
                            # AND coby.kwargs gives COBY its structure (molecule_import ... library_types:lipid,
                            # or import_library); MDBuddy then cannot check its naming beyond the atom-name check.
+  replace: {}              # {pinned file name: path} - use a deliberately DIFFERENT version of a
+                           # pinned file, in the same include position. For a modified core force
+                           # field (e.g. a modified-LJ martini_v2.2.itp for an accelerated LPS
+                           # model), where extra_itps would give you two [ defaults ] sections and
+                           # duplicate atomtypes. The checksum is not verified: the lock records the
+                           # file as unpinned, with the pinned checksum it stands in for.
   ff_dir: null             # folder with copies of the pinned files (offline use; checksums still verified)
 
 simulation:
@@ -112,7 +118,12 @@ simulation:
   pressure: 1.0            # bar
   production_ns: 1000
   equilibration: standard  # see decisions.md
-  output_ps: 500           # production output interval (xtc, energies, log); multiple of 2 ps
+  timestep_fs: 20          # production time step; the equilibration ramp is capped at it too.
+                           # Lower it when a cg_proteins topology uses stiff bonds instead of
+                           # constraints (the build reports the safe maximum); every stage keeps
+                           # its duration, so nsteps goes up.
+  output_ps: 500           # production output interval (xtc, energies, log); a whole number of
+                           # 100-step intervals (2 ps at the default 20 fs)
   coupling_groups: [Protein, MEMBRANE, SOLVENT]   # tc-grps; or [SOLU_MEMB, SOLVENT], [MEMBRANE, SOLVENT]
                            #   (default when there is no protein) or [System]
   comm_groups: [SOLU_MEMB, SOLVENT]  # comm-grps; or [System]

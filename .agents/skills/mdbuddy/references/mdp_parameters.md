@@ -106,6 +106,28 @@ to clean up COBY's packing without soft-core.
 |---|---|---|---|
 | refcoord-scaling (EM) | (not written) | all | only matters with pressure coupling, so dropped from EM |
 
+## Time step
+
+20 fs for production and the top of the equilibration ramp: the Martini standard, and what the lab
+files use. `simulation.timestep_fs` lowers it. `mdp.cap_timestep` then clamps every MD stage and
+scales `nsteps` so each stage covers the same simulated time, and the production output interval
+follows the new step, so `output_ps` stays what you asked for.
+
+It has to be lowered when a supplied topology has bonds stiffer than 20 fs can integrate. grompp
+estimates each bond's oscillational period as `2*pi*sqrt(mu/k)` and *warns* when it is shorter than
+five time steps - a warning, not a note, so it fails a `-maxwarn 0` build. A real OMP island itp
+with harmonic backbone bonds at `k = 150000 kJ/mol/nm2` (where martinize2 writes `[ constraints ]`)
+has a period of 0.097 ps, i.e. a 19.5 fs ceiling, and failed at 20 fs. MDBuddy computes this at the
+`cg_proteins` stage and says so before grompp does, suggesting a step that is both safe and still
+divides `output_ps`:
+
+```
+WARNING OMPF bond 1-2 has k = 150000 kJ/mol/nm2, an oscillational period of 0.097 ps, so GROMACS
+wants a time step <= 19.5 fs but simulation.timestep_fs is 20. grompp will warn and the -maxwarn 0
+check will fail. Either set simulation.timestep_fs: 10, or rebuild the itps with [ constraints ]
+for the backbone as martinize2 does.
+```
+
 ## Martini 2 (martini22 / elnedyn22)
 
 The mdp files are the same for Martini 2 and Martini 3, apart from `-DFLEXIBLE` above. That is
