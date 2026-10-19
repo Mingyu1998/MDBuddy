@@ -225,14 +225,34 @@ def test_mdp_martini_nonbonded_in_every_stage():
             assert obsolete not in p
 
 
+def test_mdp_never_enables_free_energy():
+    """mdrun cannot do free-energy perturbation with restricted bending angles, which Martini 3
+    proteins (martinize2 backbone) and several lipids use: grompp accepts `free-energy = yes`,
+    then mdrun stops with "Function type Restricted Angles does not support ... free energy".
+    No generated stage may switch it on. Only step6.0 relaxes constraints into harmonic bonds.
+    """
+    fep_keys = ("free-energy", "free_energy", "couple-moltype", "couple_moltype",
+                "init-lambda", "init_lambda", "sc-alpha", "sc_alpha")
+    for s in (mkspec(), mkspec(protein={"source": "file", "path": "p.pdb",
+                                        "orientation": "self_assembly"})):
+        flexible = []
+        for st in mdp.stages(s):
+            p = mdp_params(mdp.render(st, s, posres_enabled=True))
+            for key in fep_keys:
+                assert key not in p, f"{st.name} sets {key}"
+            if "-DFLEXIBLE" in p["define"]:
+                flexible.append(st.name)
+        assert flexible == ["step6.0_minimization"]
+
+
 def test_mdp_stage_details():
     s = mkspec()
     st = {x.name: x for x in mdp.stages(s)}
-    soft = mdp_params(mdp.render(st["step6.0_minimization"], s, posres_enabled=True))
-    assert soft["define"] == "-DPOSRES -DPOSRES_FC=1000 -DFLEXIBLE"
-    assert soft["free-energy"] == "yes" and soft["couple-moltype"] == "system"
+    flex = mdp_params(mdp.render(st["step6.0_minimization"], s, posres_enabled=True))
+    assert flex["define"] == "-DPOSRES -DPOSRES_FC=1000 -DFLEXIBLE"
+    assert flex["comm-mode"] == "none"  # no COM removal in a minimisation
     em = mdp_params(mdp.render(st["step6.1_minimization"], s, posres_enabled=False))
-    assert em["define"] == "-DFLEXIBLE" and "free-energy" not in em and "tcoupl" not in em
+    assert em["define"] == "" and "tcoupl" not in em
     eq = mdp_params(mdp.render(st["step6.2_equilibration"], s, posres_enabled=True))
     assert eq["define"] == "-DPOSRES -DPOSRES_FC=1000"
     assert eq["tc-grps"] == "Protein MEMBRANE SOLVENT" and eq["ref-t"] == "310 310 310"

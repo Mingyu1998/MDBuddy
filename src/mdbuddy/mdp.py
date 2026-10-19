@@ -7,9 +7,9 @@ epsilon_r = 15 / epsilon_rf = 0, 1.1 nm cut-offs, v-rescale, semi-isotropic
 pressure coupling. Every line and every deviation from the lab files is
 explained in skills/mdbuddy/references/mdp_parameters.md.
 
-Protocol: soft-core minimisation -> minimisation -> NPT equilibration with a
-growing time step and shrinking backbone restraints (as in CHARMM-GUI Martini
-Maker) -> NPT production.
+Protocol: minimisation with flexible bonds -> minimisation with constraints ->
+NPT equilibration with a growing time step and shrinking backbone restraints
+(as in CHARMM-GUI Martini Maker) -> NPT production.
 """
 
 from __future__ import annotations
@@ -31,14 +31,14 @@ class Stage:
     posres_fc: Optional[float]  # kJ/mol/nm^2, None = no restraints
     pcoupl: Optional[str]
     gen_vel: bool = False
-    softcore: bool = False
+    flexible: bool = False  # -DFLEXIBLE: harmonic bonds instead of constraints
     pcoupltype: str = "semiisotropic"
 
 
 EQUILIBRATION_STANDARD = (
-    Stage("step6.0_minimization", "Soft-core energy minimisation", "steep", 5000, None, 1000.0, None,
-          softcore=True),
-    Stage("step6.1_minimization", "Energy minimisation", "steep", 5000, None, 1000.0, None),
+    Stage("step6.0_minimization", "Energy minimisation, flexible bonds", "steep", 5000, None, 1000.0,
+          None, flexible=True),
+    Stage("step6.1_minimization", "Energy minimisation, constraints", "steep", 5000, None, 1000.0, None),
     Stage("step6.2_equilibration", "NPT, dt 2 fs", "md", 25000, 0.002, 1000.0, "C-rescale", gen_vel=True),
     Stage("step6.3_equilibration", "NPT, dt 5 fs", "md", 25000, 0.005, 500.0, "C-rescale"),
     Stage("step6.4_equilibration", "NPT, dt 10 fs", "md", 25000, 0.010, 250.0, "C-rescale"),
@@ -66,9 +66,10 @@ def self_assembly_stages(spec) -> list[Stage]:
     fc = float(spec.cg["posres_force"]) if sa["restrain_protein"] else None
     run = int(round(float(sa["run_ns"]) * 1000.0 / PROD_DT))
     return [
-        Stage("step6.0_minimization", "Soft-core energy minimisation", "steep", 5000, None, 1000.0, None,
-              softcore=True),
-        Stage("step6.1_minimization", "Energy minimisation", "steep", 5000, None, 1000.0, None),
+        Stage("step6.0_minimization", "Energy minimisation, flexible bonds", "steep", 5000, None, 1000.0,
+              None, flexible=True),
+        Stage("step6.1_minimization", "Energy minimisation, constraints", "steep", 5000, None, 1000.0,
+              None),
         Stage("step6.2_equilibration", "NPT (isotropic), dt 10 fs", "md", 50000, 0.010, 1000.0, "C-rescale",
               gen_vel=True, pcoupltype="isotropic"),
         Stage("step7_self_assembly", f"Self-assembly, {float(sa['run_ns']):g} ns", "md", run, PROD_DT, fc,
@@ -124,16 +125,18 @@ def render(stage: Stage, spec, posres_enabled: bool) -> str:
     defines = []
     if restrained:
         defines += ["-DPOSRES", f"-DPOSRES_FC={stage.posres_fc:g}"]
-    if is_em:
+    if stage.flexible:
         defines.append("-DFLEXIBLE")
     run: list[Row] = [("define", " ".join(defines),
                        ("backbone restraints" if restrained else "")
-                       + ("; " if restrained and is_em else "")
-                       + ("harmonic bonds instead of constraints for EM" if is_em else ""))]
+                       + ("; " if restrained and stage.flexible else "")
+                       + ("harmonic bonds instead of constraints" if stage.flexible else ""))]
     run += [("integrator", stage.integrator, "steepest descent" if is_em else "leap-frog"),
             ("nsteps", stage.nsteps, _duration(stage))]
     if is_em:
-        run += [("emtol", 1000.0, "stop when Fmax < 1000 kJ/mol/nm"), ("emstep", 0.01, "initial step, nm")]
+        run += [("emtol", 1000.0, "stop when Fmax < 1000 kJ/mol/nm"), ("emstep", 0.01, "initial step, nm"),
+                ("comm-mode", "none", "nothing to remove in a minimisation; silences grompp's "
+                                      "restraints + COM note")]
     else:
         run += [("dt", stage.dt, f"{stage.dt * 1000:g} fs"),
                 ("nstcomm", 100, "remove centre-of-mass motion every 100 steps"),
@@ -172,20 +175,6 @@ def render(stage: Stage, spec, posres_enabled: bool) -> str:
         ("vdw-modifier", "Potential-shift", "LJ shifted to zero at the cut-off"),
         ("rvdw", 1.1, "nm"),
     ])
-
-    if stage.softcore:
-        lines += _block("Soft-core minimisation: removes bead overlaps left by system building", [
-            ("free-energy", "yes"),
-            ("init-lambda", 0.01, "1% of the way to fully decoupled: interactions on, soft-cored"),
-            ("sc-alpha", 4),
-            ("sc-power", 2),
-            ("sc-coul", "yes", "soft-core for Coulomb too"),
-            ("nstdhdl", 0, "no dH/dl output"),
-            ("couple-moltype", "system", "special value: couple all molecule types"),
-            ("couple-lambda0", "vdw-q", "state A: all interactions on"),
-            ("couple-lambda1", "none", "state B: all interactions off"),
-            ("couple-intramol", "yes", "also soft-core intramolecular pairs (avoids pair-list errors)"),
-        ])
 
     if not is_em:
         lines += _block("Temperature coupling", [

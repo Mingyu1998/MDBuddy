@@ -355,7 +355,7 @@ def place_protein(spec, clean_pdb: Path, work: Path, log: Callable[[str], None])
 
 
 def grompp_check_stages(gmx_dir: Path) -> list[str]:
-    """One mdp of each kind: soft-core EM, first MD stage (gen-vel), and the final run."""
+    """One mdp of each kind: the first EM, the first MD stage (gen-vel), and the final run."""
     names = sorted(p.stem for p in gmx_dir.glob("step*.mdp") if not p.stem.endswith(".mdout"))
     md = [n for n in names if not n.endswith("minimization")]
     return list(dict.fromkeys([names[0], md[0], md[-1]])) if md else names[:1]

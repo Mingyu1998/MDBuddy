@@ -67,8 +67,8 @@ a height of protein height + 2 × `water_padding` (2.5 nm), at least `min_box_z`
 
 | Step | Integrator | dt | Backbone restraint (kJ/mol/nm²) | Steps |
 |---|---|---|---|---|
-| 6.0 | steepest descent, soft-core, -DFLEXIBLE | – | 1000 | 5000 |
-| 6.1 | steepest descent, -DFLEXIBLE | – | 1000 | 5000 |
+| 6.0 | steepest descent, -DFLEXIBLE (harmonic bonds) | – | 1000 | 5000 |
+| 6.1 | steepest descent, constraints | – | 1000 | 5000 |
 | 6.2 | md, C-rescale, gen-vel | 2 fs | 1000 | 25 000 (50 ps) |
 | 6.3 | md, C-rescale | 5 fs | 500 | 25 000 |
 | 6.4 | md, C-rescale | 10 fs | 250 | 25 000 |

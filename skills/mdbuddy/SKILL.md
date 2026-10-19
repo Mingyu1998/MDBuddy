@@ -126,7 +126,7 @@ The build prints a summary after each stage. Act on it:
 - **gromacs**: report bead count and net charge (should be 0). Any validation error
   (atom count, atom names, undefined molecule) stops the build. Read the message, fix
   the spec, and resume.
-- **check**: `gmx grompp` with `-maxwarn 0` on the soft-core minimisation, the first NPT stage and
+- **check**: `gmx grompp` with `-maxwarn 0` on the first minimisation, the first NPT stage and
   production. If it fails, read `gromacs/.check/grompp_<stage>.log` and explain the error.
 
 Resume after fixing a later stage instead of rebuilding everything:

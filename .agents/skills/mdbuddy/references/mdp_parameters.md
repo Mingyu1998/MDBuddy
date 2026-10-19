@@ -13,8 +13,8 @@ apply to Martini.
 
 | MDBuddy stage | Lab equivalent | Notes |
 |---|---|---|
-| step6.0_minimization: soft-core EM | EM | Lab soft-core settings kept. Overlaps from COBY packing are removed safely |
-| step6.1_minimization: plain EM | none | Finishes minimisation with full (non-soft-core) interactions. CHARMM-GUI does the same |
+| step6.0_minimization: EM, `-DFLEXIBLE` | EM | Constraints replaced by stiff harmonic bonds, so a freshly packed system relaxes without LINCS trouble. The lab file's soft-core block is **not** used, see below |
+| step6.1_minimization: EM, constraints | none | Repeats minimisation with the constraints the MD stages actually use. CHARMM-GUI does the same |
 | step6.2–6.6_equilibration: NPT, dt 2→20 fs, restraints 1000→50 | NVT + NPT-eq | Short time-step ramp, so a freshly built system does not blow up at 20 fs |
 | step6.7_equilibration: NPT, 20 fs, 5 ns, restraints 10 | NPT-eq (5 ns, 20 fs) | Same length and time step as the lab NPT equilibration |
 | step7_production: NPT, Parrinello-Rahman | prod | Same as lab file |
@@ -28,7 +28,9 @@ not generate velocities.
 | Parameter | MDBuddy | Lab | Why |
 |---|---|---|---|
 | title | (not written) | set | **changed**: obsolete in current GROMACS; grompp ignores it with a note |
-| define (EM) | `-DPOSRES -DPOSRES_FC=1000 -DFLEXIBLE` | `;-DFLEXIBLE` (commented) | **fix**: the Martini 3 cholesterol itp says *"Add define=-DFLEXIBLE to select harmonic bonds for minimization purposes"*. Backbone restraints keep the protein in its OPM position |
+| define (step6.0) | `-DPOSRES -DPOSRES_FC=1000 -DFLEXIBLE` | `;-DFLEXIBLE` (commented) | **fix**: the Martini 3 cholesterol itp says *"Add define=-DFLEXIBLE to select harmonic bonds for minimization purposes"*; martinize2 writes the same `#ifdef FLEXIBLE` block for the protein. Backbone restraints keep the protein in its OPM position |
+| define (step6.1) | `-DPOSRES -DPOSRES_FC=1000` | — | **changed**: no `-DFLEXIBLE`, so the second EM runs with the constraints the MD stages use |
+| comm-mode (EM) | `none` | (not set) | **changed**: with the GROMACS default (`Linear`) grompp emits a note about removing COM motion while position restraints are on. A minimisation has no COM motion to remove, so the note is pure noise |
 | define (eq) | `-DPOSRES -DPOSRES_FC=<1000…10>` | `;-DPOSRE_BB` (commented) | martinize2 writes `#ifdef POSRES` with a `POSRES_FC` force constant, not `POSRE_BB` |
 | define (prod) | empty | empty | same |
 | integrator | steep / md | steep / md | same |
@@ -74,14 +76,30 @@ not generate velocities.
 | rvdw | 1.1 | 1.1 | same |
 | coulomb-modifier | (not written) | commented out | same; must not be used with reaction-field |
 
-## Soft-core minimisation (step6.0 only)
+## Why there is no soft-core minimisation
 
-All taken from the lab EM file:
-`free-energy = yes`, `init-lambda = 0.01`, `sc-alpha = 4`, `sc-power = 2`, `sc-coul = yes`, `nstdhdl = 0`,
-`couple-moltype = system` (GROMACS special value: all molecule types), `couple-lambda0 = vdw-q`,
-`couple-lambda1 = none`, `couple-intramol = yes` (with `no`, every intramolecular pair of a large protein becomes an
-explicit pair, which causes the "perturbed non-bonded pair interaction beyond pair list cutoff" error the lab file
-mentions).
+The lab EM file minimises with a soft-core free-energy setup
+(`free-energy = yes`, `init-lambda = 0.01`, `sc-alpha = 4`, `sc-power = 2`, `sc-coul = yes`,
+`couple-moltype = system`, `couple-lambda0 = vdw-q`, `couple-lambda1 = none`, `couple-intramol = yes`)
+to push apart overlapping beads. **MDBuddy does not write those lines**, because GROMACS cannot run them
+for a Martini 3 protein system:
+
+```
+Fatal error:
+Function type Restricted Angles does not support currentely free energy calculations
+```
+
+Martini 3 uses restricted bending angles (angle function type 10) for the protein backbone — martinize2
+writes ~840 of them for KcsA — and for several lipids. `grompp` accepts `free-energy = yes` anyway and
+writes a `.tpr`; `mdrun` then refuses it. Checked on GROMACS 2021.4: the error appears whatever is
+coupled (`couple-moltype = system` or a single molecule type) and with `couple-intramol = no`, so there
+is no setting that makes it work. The lab file predates Martini 3 proteins.
+
+Instead, step6.0 minimises with `-DFLEXIBLE`, which turns the constraints in the protein and sterol itps
+into stiff harmonic bonds, and step6.1 repeats the minimisation with the constraints restored. On the
+KcsA/POPC test system step6.0 converged to Fmax < 1000 kJ/mol/nm in 2709 steps
+(E_pot = -2.68e5 kJ/mol) and step6.1 was already converged (Fmax = 172 kJ/mol/nm), so the pair is enough
+to clean up COBY's packing without soft-core.
 
 | Parameter | MDBuddy | Lab | Why |
 |---|---|---|---|
