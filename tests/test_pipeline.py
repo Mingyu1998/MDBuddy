@@ -58,8 +58,13 @@ def test_full_build_with_stand_in_tools(tmp_path, opm_pdb, fake_tools):
     assert lock["inputs"][0]["sha256"]
     assert (out / "spec.resolved.yaml").exists() and (out / "CITATIONS.md").exists()
     assert any("gap" in line for line in logs)
+    # the grompp check ran (against the stand-in gmx) on one mdp of each kind
     check = lock["stages"][-1]["notes"][0]["grompp"]
-    assert check.startswith("not run")
+    assert check == ("passed with 0 warnings for step6.0_minimization, "
+                     "step6.2_equilibration, step7_production")
+    calls = (gmx / ".check" / "gmx_args.txt").read_text().splitlines()
+    assert len(calls) == 3 and all("-maxwarn 0" in c for c in calls)
+    assert not (gmx / ".check" / "check.tpr").exists()  # cleaned up
 
 
 def test_resume_from_stage(tmp_path, opm_pdb, fake_tools):

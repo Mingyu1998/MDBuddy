@@ -142,6 +142,26 @@ def COBY(**kw):
     open(kw["out_log"], "w").write("fake COBY\n")
 '''
 
+FAKE_GMX = r'''#!{python}
+"""Stand-in for gmx: accepts the grompp check so the tests never touch a real GROMACS.
+
+Without this a real gmx on PATH would run grompp on the toy force field above and fail.
+"""
+import sys
+args = sys.argv[1:]
+if args[:1] == ["--version"]:
+    print("GROMACS version: 2021.4-fake")
+    sys.exit(0)
+if args[:1] != ["grompp"]:
+    sys.exit("fake gmx: only --version and grompp are implemented, got %s" % " ".join(args))
+for flag in ("-o", "-po"):
+    if flag in args:
+        open(args[args.index(flag) + 1], "w").write("fake\n")
+open("gmx_args.txt", "a").write(" ".join(args) + "\n")
+print("fake grompp: ok")
+'''
+
+
 FF_FILES = {
     "martini_v3.0.0.itp": """
         [ defaults ]
@@ -189,9 +209,10 @@ def fake_tools(tmp_path: Path, monkeypatch):
 
     bindir = tmp_path / "bin"
     bindir.mkdir()
-    exe = bindir / "martinize2"
-    exe.write_text(FAKE_MARTINIZE.replace("{python}", sys.executable))
-    exe.chmod(exe.stat().st_mode | stat.S_IEXEC)
+    for name, script in (("martinize2", FAKE_MARTINIZE), ("gmx", FAKE_GMX)):
+        exe = bindir / name
+        exe.write_text(script.replace("{python}", sys.executable))
+        exe.chmod(exe.stat().st_mode | stat.S_IEXEC)
     monkeypatch.setenv("PATH", f"{bindir}{os.pathsep}{os.environ['PATH']}")
 
     pydir = tmp_path / "py"

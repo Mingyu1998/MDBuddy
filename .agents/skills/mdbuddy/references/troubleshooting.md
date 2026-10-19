@@ -83,3 +83,14 @@ message says which, and points to the log).
 - Read `gromacs/.check/grompp_<stage>.log`. Common causes: GROMACS < 2021 (no
   C-rescale), a duplicated moleculetype from an `extra_itps` file, or `#include` of a
   file that also defines `[ defaults ]`.
+
+## running (mdrun)
+- **`Software inconsistency error: Looks like we have set affinity for more threads than we
+  have (8 > 6)!`**, followed by `Aborted (core dumped)`, right at the start of `mdrun`.
+  GROMACS's own thread-pinning on a machine whose CPU topology it misreads; nothing to do with
+  the generated inputs. Seen with GROMACS 2021.4 on a 36-thread (18-core) workstation that
+  `nproc`, `lscpu` and `Cpus_allowed_list` all report correctly. It only happens when mdrun
+  chooses the thread count itself, so give it one:
+  `MDRUN_FLAGS="-nt 16" ./run.sh`, or `MDRUN_FLAGS="-pin off" ./run.sh`.
+  Worth setting `MDRUN_FLAGS` anyway: on a small CG system more threads is often slower
+  (18968 beads ran at 5446 ns/day on 16 threads and 4807 on 32).

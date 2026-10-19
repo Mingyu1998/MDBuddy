@@ -106,7 +106,7 @@ the box. The box is sized as follows:
 - **z:** room for the protein, the lipids and `self_assembly.water_per_lipid` CG waters per lipid
   (default 25 beads ≈ 100 waters).
 
-**Protocol.** Soft-core EM → EM → 0.5 ns isotropic NPT (10 fs) → `step7_self_assembly` (20 fs,
+**Protocol.** EM (-DFLEXIBLE) → EM (constraints) → 0.5 ns isotropic NPT (10 fs) → `step7_self_assembly` (20 fs,
 isotropic C-rescale, `self_assembly.run_ns`, default 1 µs).
 - The protein backbone is restrained throughout (`self_assembly.restrain_protein`), so the lipids
   assemble around a fixed protein.

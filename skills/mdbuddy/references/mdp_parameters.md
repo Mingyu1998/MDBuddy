@@ -13,8 +13,8 @@ apply to Martini.
 
 | MDBuddy stage | Lab equivalent | Notes |
 |---|---|---|
-| step6.0_minimization: soft-core EM | EM | Lab soft-core settings kept. Overlaps from COBY packing are removed safely |
-| step6.1_minimization: plain EM | none | Finishes minimisation with full (non-soft-core) interactions. CHARMM-GUI does the same |
+| step6.0_minimization: EM, `-DFLEXIBLE` | EM | Constraints replaced by stiff harmonic bonds, so a freshly packed system relaxes without LINCS trouble. The lab file's soft-core block is **not** used, see below |
+| step6.1_minimization: EM, constraints | none | Repeats minimisation with the constraints the MD stages actually use. CHARMM-GUI does the same |
 | step6.2–6.6_equilibration: NPT, dt 2→20 fs, restraints 1000→50 | NVT + NPT-eq | Short time-step ramp, so a freshly built system does not blow up at 20 fs |
 | step6.7_equilibration: NPT, 20 fs, 5 ns, restraints 10 | NPT-eq (5 ns, 20 fs) | Same length and time step as the lab NPT equilibration |
 | step7_production: NPT, Parrinello-Rahman | prod | Same as lab file |
@@ -28,7 +28,10 @@ not generate velocities.
 | Parameter | MDBuddy | Lab | Why |
 |---|---|---|---|
 | title | (not written) | set | **changed**: obsolete in current GROMACS; grompp ignores it with a note |
-| define (EM) | `-DPOSRES -DPOSRES_FC=1000 -DFLEXIBLE` | `;-DFLEXIBLE` (commented) | **fix**: the Martini 3 cholesterol itp says *"Add define=-DFLEXIBLE to select harmonic bonds for minimization purposes"*. Backbone restraints keep the protein in its OPM position |
+| define (step6.0) | `-DPOSRES -DPOSRES_FC=1000 -DFLEXIBLE` | `;-DFLEXIBLE` (commented) | **fix**: the Martini 3 cholesterol itp says *"Add define=-DFLEXIBLE to select harmonic bonds for minimization purposes"*; martinize2 writes the same `#ifdef FLEXIBLE` block for the protein. Backbone restraints keep the protein in its OPM position |
+| define (step6.1) | `-DPOSRES -DPOSRES_FC=1000` | — | **changed**: no `-DFLEXIBLE`, so the second EM runs with the constraints the MD stages use |
+| define (EM, Martini 2) | `-DPOSRES -DPOSRES_FC=1000` | — | **changed**: no `-DFLEXIBLE` at all. No Martini 2 itp has an `#ifdef FLEXIBLE` block, and grompp counts an unused `-D` macro as a *warning*, which fails MDBuddy's own `-maxwarn 0` check. MDBuddy writes `-DFLEXIBLE` only when an included itp defines it, so step6.0 and step6.1 become the same minimisation run twice for Martini 2 (harmless; the second converges in one step) |
+| comm-mode (EM) | `none` | (not set) | **changed**: with the GROMACS default (`Linear`) grompp emits a note about removing COM motion while position restraints are on. A minimisation has no COM motion to remove, so the note is pure noise |
 | define (eq) | `-DPOSRES -DPOSRES_FC=<1000…10>` | `;-DPOSRE_BB` (commented) | martinize2 writes `#ifdef POSRES` with a `POSRES_FC` force constant, not `POSRE_BB` |
 | define (prod) | empty | empty | same |
 | integrator | steep / md | steep / md | same |
@@ -74,18 +77,55 @@ not generate velocities.
 | rvdw | 1.1 | 1.1 | same |
 | coulomb-modifier | (not written) | commented out | same; must not be used with reaction-field |
 
-## Soft-core minimisation (step6.0 only)
+## Why there is no soft-core minimisation
 
-All taken from the lab EM file:
-`free-energy = yes`, `init-lambda = 0.01`, `sc-alpha = 4`, `sc-power = 2`, `sc-coul = yes`, `nstdhdl = 0`,
-`couple-moltype = system` (GROMACS special value: all molecule types), `couple-lambda0 = vdw-q`,
-`couple-lambda1 = none`, `couple-intramol = yes` (with `no`, every intramolecular pair of a large protein becomes an
-explicit pair, which causes the "perturbed non-bonded pair interaction beyond pair list cutoff" error the lab file
-mentions).
+The lab EM file minimises with a soft-core free-energy setup
+(`free-energy = yes`, `init-lambda = 0.01`, `sc-alpha = 4`, `sc-power = 2`, `sc-coul = yes`,
+`couple-moltype = system`, `couple-lambda0 = vdw-q`, `couple-lambda1 = none`, `couple-intramol = yes`)
+to push apart overlapping beads. **MDBuddy does not write those lines**, because GROMACS cannot run them
+for a Martini 3 protein system:
+
+```
+Fatal error:
+Function type Restricted Angles does not support currentely free energy calculations
+```
+
+Martini 3 uses restricted bending angles (angle function type 10) for the protein backbone — martinize2
+writes ~840 of them for KcsA — and for several lipids. `grompp` accepts `free-energy = yes` anyway and
+writes a `.tpr`; `mdrun` then refuses it. Checked on GROMACS 2021.4: the error appears whatever is
+coupled (`couple-moltype = system` or a single molecule type) and with `couple-intramol = no`, so there
+is no setting that makes it work. The lab file predates Martini 3 proteins.
+
+Instead, step6.0 minimises with `-DFLEXIBLE`, which turns the constraints in the protein and sterol itps
+into stiff harmonic bonds, and step6.1 repeats the minimisation with the constraints restored. On the
+KcsA/POPC test system step6.0 converged to Fmax < 1000 kJ/mol/nm in 2709 steps
+(E_pot = -2.68e5 kJ/mol) and step6.1 was already converged (Fmax = 172 kJ/mol/nm), so the pair is enough
+to clean up COBY's packing without soft-core.
 
 | Parameter | MDBuddy | Lab | Why |
 |---|---|---|---|
 | refcoord-scaling (EM) | (not written) | all | only matters with pressure coupling, so dropped from EM |
+
+## Martini 2 (martini22 / elnedyn22)
+
+The mdp files are the same for Martini 2 and Martini 3, apart from `-DFLEXIBLE` above. That is
+deliberate: the cut-offs and reaction-field settings MDBuddy writes
+(`coulombtype = reaction-field`, `rcoulomb = rvdw = 1.1`, `epsilon_r = 15`, `epsilon_rf = 0`,
+Verlet lists, `vdw-modifier = Potential-shift`) are the "new-rf" set that de Jong et al.
+(Comput. Phys. Commun. 2016) derived **for Martini 2**, as the validated replacement for the old
+group-cut-off/shifted-potential scheme that Martini 2 was originally published with. They carry
+over to Martini 3 unchanged. `epsilon_r = 15` assumes standard (non-polarisable) water; with
+polarisable water it must be 2.5.
+
+The 20 fs production time step is the Martini 2 standard and is also what the lab's
+`CGMD_NPT_production.mdp` uses. Checked on GROMACS 2021.4 for both `martini22` and `elnedyn22`:
+EM converges and the first NPT stage runs with no LINCS warnings (constraint RMS deviation
+~1e-8), so the step-size ramp in step6.2-6.6 is enough to reach it safely.
+
+Ion names: COBY 1.0.15 and the Martini 2 ion file MDBuddy pins (from COBY's
+`M2_BacterialMembrane` tutorial) both call the ions `NA` and `CL`, so no renaming happens. The
+cgmartini.nl `martini_v2.0_ions.itp` calls them `NA+` and `CL-` instead; `assemble.MOLECULE_ALIASES`
+only renames a molecule the parameter files do not define into one they do, so either file works.
 
 ## Temperature coupling
 

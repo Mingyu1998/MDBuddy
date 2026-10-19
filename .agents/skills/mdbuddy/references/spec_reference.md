@@ -134,7 +134,7 @@ simulation:
                            (+ lipid templates for self-assembly)
   gromacs/                 the folder to copy to the cluster
     step5_input.gro/.pdb, topol.top, toppar/, index.ndx (System, Protein, MEMBRANE, SOLU_MEMB, SOLVENT, BB),
-    step6.0 (soft-core) and step6.1 _minimization.mdp, step6.2-6.7_equilibration.mdp, step7_production.mdp,
+    step6.0 (-DFLEXIBLE) and step6.1 _minimization.mdp, step6.2-6.7_equilibration.mdp, step7_production.mdp,
     run.sh, README.md
 ```
 

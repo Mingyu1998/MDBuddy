@@ -87,7 +87,11 @@ For Martini 3, MDBuddy pins the 2025 lipidome (default; `forcefield_files.martin
 release2021` selects the 2021 lipids) and cholesterol. For **Martini 2**, only POPE and POPG are
 both pinned and buildable by COBY. Other Martini 2 lipid itps (POPC, ...) must come from the
 user via `forcefield_files.extra_itps`, and COBY 1.0.15 has no Martini 2 cardiolipin,
-cholesterol or PIP definitions. Say this up front when the user picks Martini 2.
+cholesterol or PIP definitions. Say this up front when the user picks Martini 2. MDBuddy passes martinize2's
+`-noscfix` for `martini22` and `elnedyn22` (they do not define the side-chain corrections that
+martinize2 applies by default) and leaves `-DFLEXIBLE` out of the minimisation mdps, because no
+Martini 2 itp defines a FLEXIBLE block; step6.0 and step6.1 are then the same minimisation twice.
+Both are automatic, but say so if the user compares the files with a Martini 3 build.
 
 ## Step 3: Write and validate the spec
 
@@ -126,7 +130,7 @@ The build prints a summary after each stage. Act on it:
 - **gromacs**: report bead count and net charge (should be 0). Any validation error
   (atom count, atom names, undefined molecule) stops the build. Read the message, fix
   the spec, and resume.
-- **check**: `gmx grompp` with `-maxwarn 0` on the soft-core minimisation, the first NPT stage and
+- **check**: `gmx grompp` with `-maxwarn 0` on the first minimisation, the first NPT stage and
   production. If it fails, read `gromacs/.check/grompp_<stage>.log` and explain the error.
 
 Resume after fixing a later stage instead of rebuilding everything:
@@ -151,7 +155,11 @@ Finish with:
    (from `gromacs/topol.top`), box, beads, net charge.
 2. Where the files are: `<output>/gromacs/` (`run.sh` runs everything, and
    `README.md` lists the stages).
-3. How to run: `cd <output>/gromacs && MDRUN_FLAGS="-nt 16" ./run.sh`.
+3. How to run: `cd <output>/gromacs && MDRUN_FLAGS="-nt 16" ./run.sh`. `run.sh` takes an
+   optional first (start) and second (end) stage, both included, so the user can run part of
+   the ladder: `./run.sh step6.3` from a stage to the end, `./run.sh step6.0 step6.7` to
+   equilibrate and stop before production, `./run.sh '' step6.7` for the same written as
+   "up to". Names may be shortened to a unique prefix; an unknown name is an error.
 4. Reproducibility: `spec.resolved.yaml` plus `mdbuddy.lock.json` (tool versions,
    input and parameter checksums, every command) rebuild the same system.
 5. `CITATIONS.md`: remind them to cite Martini, martinize2, COBY, OPM and, when used, OpenMM/PDBFixer,

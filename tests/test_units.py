@@ -225,14 +225,88 @@ def test_mdp_martini_nonbonded_in_every_stage():
             assert obsolete not in p
 
 
+def test_mdp_flexible_only_when_an_itp_defines_it():
+    """grompp warns about a -D macro nothing uses, which fails the build's own -maxwarn 0.
+
+    The Martini 2 force fields have no #ifdef FLEXIBLE block anywhere, so step6.0 must not
+    write -DFLEXIBLE for them.
+    """
+    s = mkspec()
+    st = {x.name: x for x in mdp.stages(s)}
+    with_flex = mdp_params(mdp.render(st["step6.0_minimization"], s, True, flexible_available=True))
+    without = mdp_params(mdp.render(st["step6.0_minimization"], s, True, flexible_available=False))
+    assert "-DFLEXIBLE" in with_flex["define"]
+    assert without["define"] == "-DPOSRES -DPOSRES_FC=1000"
+    # the rest of the stage is unchanged
+    assert without["integrator"] == "steep" and without["comm-mode"] == "none"
+    # and the description stops claiming flexible bonds (both EM stages become the same run)
+    assert mdp.title(st["step6.0_minimization"]) == "Energy minimisation, flexible bonds"
+    assert mdp.title(st["step6.0_minimization"], False) == "Energy minimisation"
+    assert mdp.title(st["step6.1_minimization"], False) == "Energy minimisation"
+    assert mdp.title(st["step6.2_equilibration"], False) == "NPT, dt 2 fs"
+
+
+def test_martinize_noscfix_only_for_martini2():
+    """martinize2 >= 0.11 applies side-chain corrections by default; martini22 and elnedyn22
+    do not define them and warn, which stops the run at -maxwarn 0."""
+    for ff, expected in (("martini3", False), ("martini22", True), ("elnedyn22", True)):
+        cmd = martinize.build_command(mkspec(coarse_grain={"forcefield": ff}), "in.pdb", ["A"], [])
+        assert ("-noscfix" in cmd) is expected, ff
+
+
+def test_ion_alias_follows_the_parameter_files(tmp_path):
+    """Rename COBY's ion names only when the itps define the other spelling."""
+    gmx = tmp_path / "g"
+    (gmx / "toppar").mkdir(parents=True)
+    aliases = assemble.MOLECULE_ALIASES["martini2"]
+
+    def itp_with(*moltypes):
+        (gmx / "toppar" / "ions.itp").write_text(
+            "".join(f"[ moleculetype ]\n{m} 1\n[ atoms ]\n1 Qd 1 ION {m} 1 1.0\n" for m in moltypes))
+        return ["toppar/ions.itp"]
+
+    # COBY's and the pinned itp's spelling agree: nothing to do
+    assert assemble.alias_renames(aliases, ["NA", "CL", "W"], gmx, itp_with("NA", "CL")) == {}
+    # cgmartini.nl spelling in the itp, COBY's spelling in the topology: no rename either,
+    # because the alias points the other way (NA+ -> NA) and NA is not defined
+    assert assemble.alias_renames(aliases, ["NA", "CL"], gmx, itp_with("NA+", "CL-")) == {}
+    # COBY naming the ions NA+/CL- against an itp that defines NA/CL: rename
+    assert assemble.alias_renames(aliases, ["NA+", "CL-"], gmx,
+                                  itp_with("NA", "CL")) == {"NA+": "NA", "CL-": "CL"}
+    # both spellings defined: leave COBY's alone
+    assert assemble.alias_renames(aliases, ["NA+"], gmx, itp_with("NA", "NA+")) == {}
+    # Martini 3 has no aliases at all
+    assert assemble.alias_renames({}, ["NA", "CL"], gmx, itp_with("NA", "CL")) == {}
+
+
+def test_mdp_never_enables_free_energy():
+    """mdrun cannot do free-energy perturbation with restricted bending angles, which Martini 3
+    proteins (martinize2 backbone) and several lipids use: grompp accepts `free-energy = yes`,
+    then mdrun stops with "Function type Restricted Angles does not support ... free energy".
+    No generated stage may switch it on. Only step6.0 relaxes constraints into harmonic bonds.
+    """
+    fep_keys = ("free-energy", "free_energy", "couple-moltype", "couple_moltype",
+                "init-lambda", "init_lambda", "sc-alpha", "sc_alpha")
+    for s in (mkspec(), mkspec(protein={"source": "file", "path": "p.pdb",
+                                        "orientation": "self_assembly"})):
+        flexible = []
+        for st in mdp.stages(s):
+            p = mdp_params(mdp.render(st, s, posres_enabled=True))
+            for key in fep_keys:
+                assert key not in p, f"{st.name} sets {key}"
+            if "-DFLEXIBLE" in p["define"]:
+                flexible.append(st.name)
+        assert flexible == ["step6.0_minimization"]
+
+
 def test_mdp_stage_details():
     s = mkspec()
     st = {x.name: x for x in mdp.stages(s)}
-    soft = mdp_params(mdp.render(st["step6.0_minimization"], s, posres_enabled=True))
-    assert soft["define"] == "-DPOSRES -DPOSRES_FC=1000 -DFLEXIBLE"
-    assert soft["free-energy"] == "yes" and soft["couple-moltype"] == "system"
+    flex = mdp_params(mdp.render(st["step6.0_minimization"], s, posres_enabled=True))
+    assert flex["define"] == "-DPOSRES -DPOSRES_FC=1000 -DFLEXIBLE"
+    assert flex["comm-mode"] == "none"  # no COM removal in a minimisation
     em = mdp_params(mdp.render(st["step6.1_minimization"], s, posres_enabled=False))
-    assert em["define"] == "-DFLEXIBLE" and "free-energy" not in em and "tcoupl" not in em
+    assert em["define"] == "" and "tcoupl" not in em
     eq = mdp_params(mdp.render(st["step6.2_equilibration"], s, posres_enabled=True))
     assert eq["define"] == "-DPOSRES -DPOSRES_FC=1000"
     assert eq["tc-grps"] == "Protein MEMBRANE SOLVENT" and eq["ref-t"] == "310 310 310"
@@ -318,3 +392,108 @@ def test_doctor_reports_missing_required(monkeypatch):
     missing = {c["name"] for c in data["checks"] if c["status"] == "missing"}
     assert {"martinize2", "COBY", "vermouth", "dssp"} <= missing
     assert all(c["fix"] for c in data["checks"] if c["status"] == "missing")
+
+
+# --- run.sh -----------------------------------------------------------------
+
+RUN_SH_STAGES = ["step6.0_minimization", "step6.1_minimization",
+                 "step6.2_equilibration", "step6.7_equilibration", "step7_production"]
+
+
+def run_the_runner(tmp_path, *args):
+    """Execute a generated run.sh against a gmx that only records its arguments.
+
+    Returns (returncode, stages mdrun was asked for, [(stage, -c input)] grompp saw, stderr).
+    """
+    import os
+    import stat
+    import subprocess
+
+    d = tmp_path / "gmx_dir"
+    d.mkdir(exist_ok=True)
+    (d / "run.sh").write_text(assemble.RUN_SH.format(
+        name="toy", maxwarn=0, stages=" ".join(RUN_SH_STAGES)))
+    (d / "run.sh").chmod(0o755)
+    bindir = tmp_path / "runbin"
+    bindir.mkdir(exist_ok=True)
+    stub = bindir / "gmx"
+    stub.write_text('#!/bin/bash\necho "$@" >> "$RUNLOG"\n')
+    stub.chmod(stub.stat().st_mode | stat.S_IEXEC)
+    log = d / "calls.txt"
+    log.unlink(missing_ok=True)
+    env = {**os.environ, "PATH": f"{bindir}{os.pathsep}{os.environ['PATH']}", "RUNLOG": str(log)}
+    proc = subprocess.run(["bash", str(d / "run.sh"), *args], cwd=d, env=env,
+                          stdout=subprocess.PIPE, stderr=subprocess.PIPE, text=True)
+    mdruns, grompps = [], []
+    for line in (log.read_text().splitlines() if log.exists() else []):
+        f = line.split()
+        if f[0] == "mdrun":
+            mdruns.append(f[f.index("-deffnm") + 1])
+        else:
+            grompps.append((f[f.index("-f") + 1].removesuffix(".mdp"), f[f.index("-c") + 1]))
+    return proc.returncode, mdruns, grompps, proc.stderr
+
+
+def test_run_sh_stage_range(tmp_path):
+    # no arguments: every stage, each starting from the previous one's output
+    rc, ran, grompps, _ = run_the_runner(tmp_path)
+    assert rc == 0 and ran == RUN_SH_STAGES
+    assert [c for _, c in grompps] == ["step5_input.gro"] + [f"{s}.gro" for s in RUN_SH_STAGES[:-1]]
+
+    # one argument: from that stage to the end, continuing from the stage before it
+    rc, ran, grompps, _ = run_the_runner(tmp_path, "step6.2")
+    assert rc == 0 and ran == RUN_SH_STAGES[2:]
+    assert grompps[0] == ("step6.2_equilibration", "step6.1_minimization.gro")
+
+    # two arguments: inclusive range, so production is left out
+    rc, ran, _, _ = run_the_runner(tmp_path, "step6.0", "step6.7")
+    assert rc == 0 and ran == RUN_SH_STAGES[:-1]
+
+    # empty start means "up to"
+    rc, ran, _, _ = run_the_runner(tmp_path, "", "step6.1")
+    assert rc == 0 and ran == RUN_SH_STAGES[:2]
+
+    # a single stage
+    rc, ran, _, _ = run_the_runner(tmp_path, "step7", "step7")
+    assert rc == 0 and ran == ["step7_production"]
+
+
+def test_run_sh_rejects_bad_stage_range(tmp_path):
+    rc, ran, _, err = run_the_runner(tmp_path, "step9")
+    assert rc != 0 and ran == [] and "no stage matches 'step9'" in err
+
+    rc, ran, _, err = run_the_runner(tmp_path, "", "nonsense")
+    assert rc != 0 and ran == [] and "no stage matches 'nonsense'" in err
+
+    rc, ran, _, err = run_the_runner(tmp_path, "step7", "step6.0")
+    assert rc != 0 and ran == [] and "comes after" in err
+
+
+def test_readme_run_examples_name_real_stages(tmp_path):
+    """run.sh errors on a stage name that does not exist, so the README's examples must come
+    from the ladder in hand: a self-assembly build has no step6.7."""
+    for data, last, before in (
+            ({"name": "t", "protein": {"source": "opm", "id": "1bl8"}},
+             "step7_production", "step6.7_equilibration"),
+            ({"name": "t", "protein": {"source": "opm", "id": "1bl8",
+                                       "orientation": "self_assembly"}},
+             "step7_self_assembly", "step6.2_equilibration")):
+        s = spec.from_dict(data)
+        stage_list = mdp.stages(s)
+        text = assemble.run_examples(stage_list)
+        names = {st.name for st in stage_list}
+        assert f"./run.sh {last}" in text and f"./run.sh '' {before}" in text
+        # every stage name the examples mention is really in the ladder
+        for line in text.splitlines():
+            for word in line.split("#")[0].split():
+                if word.startswith("step"):
+                    assert word in names, f"{word} is not a stage of this build"
+
+
+def test_run_sh_quotes_survive_the_template(tmp_path):
+    """RUN_SH is a \"\"\"...\"\"\" literal, so a \\n in it would become a real newline in the
+    generated script. Every line of the script must stay on its own line."""
+    text = assemble.RUN_SH.format(name="t", maxwarn=0, stages="step6.0_minimization step7_production")
+    assert "\\n" not in text.replace("\n", "")  # no stray escapes left either
+    for line in text.splitlines():
+        assert line.count("'") % 2 == 0, f"unbalanced quote: {line!r}"

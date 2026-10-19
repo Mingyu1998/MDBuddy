@@ -1,0 +1,15 @@
+# Same protein and membrane as kcsa_bacterial_m22.yaml, but ElNeDyn 2.2.
+# ElNeDyn is Martini 2.2 plus its own elastic network (ef 500, el 0.0, eu 0.9 by default).
+mdbuddy: 1
+name: kcsa_bacterial_eln22
+protein:
+  source: opm
+  id: 1bl8
+coarse_grain:
+  forcefield: elnedyn22
+  model: elastic
+membrane:
+  lipids: {POPE: 3, POPG: 1}
+simulation:
+  temperature: 310
+  production_ns: 1000
