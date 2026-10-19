@@ -225,6 +225,60 @@ def test_mdp_martini_nonbonded_in_every_stage():
             assert obsolete not in p
 
 
+def test_mdp_flexible_only_when_an_itp_defines_it():
+    """grompp warns about a -D macro nothing uses, which fails the build's own -maxwarn 0.
+
+    The Martini 2 force fields have no #ifdef FLEXIBLE block anywhere, so step6.0 must not
+    write -DFLEXIBLE for them.
+    """
+    s = mkspec()
+    st = {x.name: x for x in mdp.stages(s)}
+    with_flex = mdp_params(mdp.render(st["step6.0_minimization"], s, True, flexible_available=True))
+    without = mdp_params(mdp.render(st["step6.0_minimization"], s, True, flexible_available=False))
+    assert "-DFLEXIBLE" in with_flex["define"]
+    assert without["define"] == "-DPOSRES -DPOSRES_FC=1000"
+    # the rest of the stage is unchanged
+    assert without["integrator"] == "steep" and without["comm-mode"] == "none"
+    # and the description stops claiming flexible bonds (both EM stages become the same run)
+    assert mdp.title(st["step6.0_minimization"]) == "Energy minimisation, flexible bonds"
+    assert mdp.title(st["step6.0_minimization"], False) == "Energy minimisation"
+    assert mdp.title(st["step6.1_minimization"], False) == "Energy minimisation"
+    assert mdp.title(st["step6.2_equilibration"], False) == "NPT, dt 2 fs"
+
+
+def test_martinize_noscfix_only_for_martini2():
+    """martinize2 >= 0.11 applies side-chain corrections by default; martini22 and elnedyn22
+    do not define them and warn, which stops the run at -maxwarn 0."""
+    for ff, expected in (("martini3", False), ("martini22", True), ("elnedyn22", True)):
+        cmd = martinize.build_command(mkspec(coarse_grain={"forcefield": ff}), "in.pdb", ["A"], [])
+        assert ("-noscfix" in cmd) is expected, ff
+
+
+def test_ion_alias_follows_the_parameter_files(tmp_path):
+    """Rename COBY's ion names only when the itps define the other spelling."""
+    gmx = tmp_path / "g"
+    (gmx / "toppar").mkdir(parents=True)
+    aliases = assemble.MOLECULE_ALIASES["martini2"]
+
+    def itp_with(*moltypes):
+        (gmx / "toppar" / "ions.itp").write_text(
+            "".join(f"[ moleculetype ]\n{m} 1\n[ atoms ]\n1 Qd 1 ION {m} 1 1.0\n" for m in moltypes))
+        return ["toppar/ions.itp"]
+
+    # COBY's and the pinned itp's spelling agree: nothing to do
+    assert assemble.alias_renames(aliases, ["NA", "CL", "W"], gmx, itp_with("NA", "CL")) == {}
+    # cgmartini.nl spelling in the itp, COBY's spelling in the topology: no rename either,
+    # because the alias points the other way (NA+ -> NA) and NA is not defined
+    assert assemble.alias_renames(aliases, ["NA", "CL"], gmx, itp_with("NA+", "CL-")) == {}
+    # COBY naming the ions NA+/CL- against an itp that defines NA/CL: rename
+    assert assemble.alias_renames(aliases, ["NA+", "CL-"], gmx,
+                                  itp_with("NA", "CL")) == {"NA+": "NA", "CL-": "CL"}
+    # both spellings defined: leave COBY's alone
+    assert assemble.alias_renames(aliases, ["NA+"], gmx, itp_with("NA", "NA+")) == {}
+    # Martini 3 has no aliases at all
+    assert assemble.alias_renames({}, ["NA", "CL"], gmx, itp_with("NA", "CL")) == {}
+
+
 def test_mdp_never_enables_free_energy():
     """mdrun cannot do free-energy perturbation with restricted bending angles, which Martini 3
     proteins (martinize2 backbone) and several lipids use: grompp accepts `free-energy = yes`,

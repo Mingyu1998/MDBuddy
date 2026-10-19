@@ -47,6 +47,10 @@ def build_command(spec, in_pdb: str, chains: list[str], dssp: list[str]) -> list
         "-maxwarn", str(cg["maxwarn"]),
     ]
     cmd += dssp
+    if not spec.ff_info["scfix"]:
+        # martinize2 >= 0.11 applies side-chain corrections by default; the Martini 2 force
+        # fields do not define them, and the resulting warning stops the run at -maxwarn 0
+        cmd.append("-noscfix")
     if cg["model"] == "elastic":
         e = cg["elastic"]
         cmd += ["-elastic", "-ef", f"{e['force']:g}", "-el", f"{e['lower']:g}", "-eu", f"{e['upper']:g}"]

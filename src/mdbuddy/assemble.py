@@ -24,6 +24,25 @@ class AssembleError(RuntimeError):
     pass
 
 
+def alias_renames(aliases: dict, names, gmx_dir: Path, includes: list[str]) -> dict[str, str]:
+    """Which of COBY's molecule names have to be renamed to match the parameter files.
+
+    The two Martini 2 ion files in circulation disagree: COBY 1.0.15 and the copy MDBuddy
+    pins (COBY's M2_BacterialMembrane tutorial) call the ions NA/CL, while the cgmartini.nl
+    martini_v2.0_ions.itp calls them NA+/CL-. So only rename a name the parameter files do
+    not define into one they do; with either file the other spelling is left alone.
+    """
+    candidates = {n: aliases[n] for n in set(names) if n in aliases}
+    if not candidates:
+        return {}
+    info = topology.TopologyInfo()
+    for inc in includes:
+        if (gmx_dir / inc).exists():
+            topology.parse(gmx_dir / inc, info=info)
+    return {n: a for n, a in candidates.items()
+            if n not in info.moleculetypes and a in info.moleculetypes}
+
+
 def classify(spec, protein_moltypes: list[str], name: str) -> str:
     if name in protein_moltypes:
         return "Protein"
@@ -237,11 +256,12 @@ def assemble(spec, coby_dir: Path, gmx_dir: Path, ff_includes: list[str], protei
         shutil.copyfile(coby_dir / "system.pdb", gmx_dir / "step5_input.pdb")
 
     family = "martini3" if spec.cg["forcefield"] == "martini3" else "martini2"
-    aliases = MOLECULE_ALIASES.get(family, {})
-    raw = topology.read_molecules(coby_dir / "coby_topol.top")
-    molecules = topology.merge_consecutive((aliases.get(n, n), c) for n, c in raw)
-
     includes = [f"toppar/{f}" for f in ff_includes] + [f"toppar/{f}" for f in protein_itps]
+    raw = topology.read_molecules(coby_dir / "coby_topol.top")
+    ion_renames = alias_renames(MOLECULE_ALIASES.get(family, {}), [n for n, _ in raw],
+                                gmx_dir, includes)
+    molecules = topology.merge_consecutive((ion_renames.get(n, n), c) for n, c in raw)
+
     defines = ["GO_VIRT"] if spec.cg["model"] == "go" else []
     top = gmx_dir / "topol.top"
     topology.write_top(top, includes, molecules, spec.name, defines=defines,
@@ -263,9 +283,14 @@ def assemble(spec, coby_dir: Path, gmx_dir: Path, ff_includes: list[str], protei
                 raise AssembleError(f"index group {g} is empty; change simulation.{key}")
 
     posres = spec.cg["position_restraints"] != "none" and bool(protein_moltypes)
+    # -DFLEXIBLE only helps where an itp defines an #ifdef FLEXIBLE block (Martini 3 proteins
+    # and sterols do, Martini 2 does not). grompp warns about an unused -D macro, so writing it
+    # blindly fails the -maxwarn 0 check.
+    flexible = any("FLEXIBLE" in (gmx_dir / inc).read_text() for inc in includes
+                   if (gmx_dir / inc).exists())
     stage_list = mdp.stages(spec)
     for st in stage_list:
-        (gmx_dir / f"{st.name}.mdp").write_text(mdp.render(st, spec, posres))
+        (gmx_dir / f"{st.name}.mdp").write_text(mdp.render(st, spec, posres, flexible))
 
     run_sh = gmx_dir / "run.sh"
     run_sh.write_text(RUN_SH.format(name=spec.name, maxwarn=spec.sim["gromacs_maxwarn"],
@@ -273,7 +298,7 @@ def assemble(spec, coby_dir: Path, gmx_dir: Path, ff_includes: list[str], protei
     run_sh.chmod(0o755)
 
     mol_lines = "\n".join(f"- {n}: {c}" for n, c in molecules)
-    stage_rows = "\n".join(f"| {st.name}.mdp | {st.title}"
+    stage_rows = "\n".join(f"| {st.name}.mdp | {mdp.title(st, flexible)}"
                            + (f", backbone restraints {st.posres_fc:g} kJ/mol/nm²" if posres and st.posres_fc else "")
                            + f", {st.nsteps} steps |" for st in stage_list)
     (gmx_dir / "README.md").write_text(README.format(

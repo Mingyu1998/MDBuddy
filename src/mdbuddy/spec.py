@@ -19,11 +19,14 @@ SPEC_VERSION = 1
 
 FORCEFIELDS = {
     # name in spec -> martinize2 -ff, COBY parameter library, elastic defaults
-    "martini3": {"martinize_ff": "martini3001", "coby_params": "default",
+    # scfix: whether the force field defines the side-chain angle/torsion corrections that
+    # martinize2 >= 0.11 applies by default. Only Martini 3 does; the Martini 2 force fields
+    # need -noscfix or martinize2 warns and (with -maxwarn 0) writes nothing.
+    "martini3": {"martinize_ff": "martini3001", "coby_params": "default", "scfix": True,
                  "elastic": {"force": 700.0, "lower": 0.5, "upper": 0.9}},
-    "martini22": {"martinize_ff": "martini22", "coby_params": "M2",
+    "martini22": {"martinize_ff": "martini22", "coby_params": "M2", "scfix": False,
                   "elastic": {"force": 500.0, "lower": 0.5, "upper": 0.9}},
-    "elnedyn22": {"martinize_ff": "elnedyn22", "coby_params": "M2",
+    "elnedyn22": {"martinize_ff": "elnedyn22", "coby_params": "M2", "scfix": False,
                   "elastic": {"force": 500.0, "lower": 0.0, "upper": 0.9}},
 }
 PROTEIN_MODELS = ("elastic", "go", "none")

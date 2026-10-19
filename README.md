@@ -186,9 +186,13 @@ v0.3.0. Tested end-to-end with the real tools (martinize2 0.15.0, COBY 1.0.15, P
 - **CG protein islands** (10 pre-coarse-grained rods kept in place, 0.0 nm displacement) in POPE/POPG/TOCL;
   a membrane-only 20 nm patch with a DPPC/CHOL domain (hole + patch); a custom lipid imported with
   `molecule_import`. COBY only, no martinize2.
+- **GoMartini 3** (KcsA, asymmetric PC/PE/PS/CHOL bilayer), **Martini 2.2** and **ElNeDyn 2.2**
+  (KcsA, POPE/POPG): built, `grompp -maxwarn 0`, minimised and run through the first NPT stage.
 
-GROMACS itself (grompp/mdrun) has not been run in the development environment yet. Please open an
-issue with the `mdbuddy.lock.json` of any build that fails.
+Checked against GROMACS 2021.4: every example above passes `gmx grompp -maxwarn 0` and runs through
+minimisation and the start of equilibration; `kcsa_popc_m3` has been run through the whole
+minimisation → equilibration ladder plus production. Please open an issue with the
+`mdbuddy.lock.json` of any build that fails.
 
 ## Citing
 
