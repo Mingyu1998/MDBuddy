@@ -575,6 +575,10 @@ def test_timestep_fs_caps_the_ladder_keeping_durations():
         assert abs(c.nsteps * c.dt - st.nsteps * st.dt) < 1e-6, name
     assert capped["step7_production"].dt == 0.010
     assert capped["step6.2_equilibration"].dt == 0.002  # already below the cap, untouched
+    # titles (mdp header, folder README) name the dt actually used
+    assert capped["step6.6_equilibration"].title == "NPT, dt 10 fs"
+    assert capped["step6.7_equilibration"].title == "NPT, dt 10 fs, 5 ns"
+    assert capped["step6.3_equilibration"].title == base["step6.3_equilibration"].title
     # output interval follows the new dt, so it is still 500 ps
     prod = mdp_params(mdp.render(capped["step7_production"],
                                  mkspec(simulation={"timestep_fs": 10}), posres_enabled=False))

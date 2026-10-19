@@ -14,6 +14,7 @@ NPT equilibration with a growing time step and shrinking backbone restraints
 
 from __future__ import annotations
 
+import re
 from dataclasses import dataclass, replace
 from typing import Optional
 
@@ -63,7 +64,10 @@ def cap_timestep(stage_list: list[Stage], dt_max: float) -> list[Stage]:
     out = []
     for st in stage_list:
         if st.dt is not None and st.dt > dt_max + 1e-12:
-            out.append(replace(st, dt=dt_max, nsteps=int(round(st.nsteps * st.dt / dt_max))))
+            # the title goes into the mdp header and the folder README, so it must name the new dt
+            title = re.sub(r"dt [\d.]+ fs", f"dt {dt_max * 1000:g} fs", st.title)
+            out.append(replace(st, dt=dt_max, nsteps=int(round(st.nsteps * st.dt / dt_max)),
+                               title=title))
         else:
             out.append(st)
     return out
