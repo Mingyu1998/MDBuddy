@@ -187,7 +187,7 @@ stages=({stages})
 index_of() {{  # first stage whose name starts with $1, or an error
     local pat=$1 i
     for i in "${{!stages[@]}}"; do
-        if [[ "${{stages[$i]}}" == "$pat"* ]]; then printf '%s\n' "$i"; return 0; fi
+        if [[ "${{stages[$i]}}" == "$pat"* ]]; then echo "$i"; return 0; fi
     done
     echo "run.sh: no stage matches '$pat'. Stages: ${{stages[*]}}" >&2
     return 1
@@ -232,9 +232,7 @@ Molecules:
 ```bash
 ./run.sh                      # everything, in order
 MDRUN_FLAGS="-nt 8" ./run.sh  # pass flags to mdrun
-./run.sh step7                # only production (after equilibration)
-./run.sh step6.0 step6.7      # minimisation + equilibration, stop before production
-./run.sh '' step6.7           # same, written as "up to step6.7"
+{run_examples}
 ```
 
 | File | Purpose |
@@ -246,6 +244,25 @@ MDRUN_FLAGS="-nt 8" ./run.sh  # pass flags to mdrun
 
 Rebuild from scratch: `mdbuddy build ../spec.resolved.yaml`
 """
+
+
+def run_examples(stage_list) -> str:
+    """The `./run.sh` lines for this build's README, using stages this ladder really has.
+
+    The ladders differ: a normal build ends step6.7_equilibration + step7_production, a
+    self-assembly build ends step6.2_equilibration + step7_self_assembly. Naming a stage that
+    does not exist is an error in run.sh, so the examples cannot be hard-coded.
+    """
+    names = [st.name for st in stage_list]
+    last = names[-1]
+    rows = [(f"./run.sh {last}", f"only the last stage (after the rest)")]
+    if len(names) > 1:
+        before = names[-2]
+        rows.append((f"./run.sh {names[0]} {before}",
+                     f"everything up to {before}, leaving {last}"))
+        rows.append(("./run.sh '' " + before, 'the same, written as "up to"'))
+    width = max(len(cmd) for cmd, _ in rows) + 2
+    return "\n".join(f"{cmd:<{width}}# {why}" for cmd, why in rows)
 
 
 def assemble(spec, coby_dir: Path, gmx_dir: Path, ff_includes: list[str], protein_itps: list[str],
@@ -302,6 +319,7 @@ def assemble(spec, coby_dir: Path, gmx_dir: Path, ff_includes: list[str], protei
                            + (f", backbone restraints {st.posres_fc:g} kJ/mol/nm²" if posres and st.posres_fc else "")
                            + f", {st.nsteps} steps |" for st in stage_list)
     (gmx_dir / "README.md").write_text(README.format(
+        run_examples=run_examples(stage_list),
         name=spec.name, ff=spec.cg["forcefield"], model=spec.cg["model"],
         box=" x ".join(f"{v:g}" for v in report["box_nm"][:3]), atoms=report["atoms"],
         charge=f"{report['net_charge']:+g}", molecules=mol_lines, stage_rows=stage_rows))

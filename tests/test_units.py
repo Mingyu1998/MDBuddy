@@ -467,3 +467,33 @@ def test_run_sh_rejects_bad_stage_range(tmp_path):
 
     rc, ran, _, err = run_the_runner(tmp_path, "step7", "step6.0")
     assert rc != 0 and ran == [] and "comes after" in err
+
+
+def test_readme_run_examples_name_real_stages(tmp_path):
+    """run.sh errors on a stage name that does not exist, so the README's examples must come
+    from the ladder in hand: a self-assembly build has no step6.7."""
+    for data, last, before in (
+            ({"name": "t", "protein": {"source": "opm", "id": "1bl8"}},
+             "step7_production", "step6.7_equilibration"),
+            ({"name": "t", "protein": {"source": "opm", "id": "1bl8",
+                                       "orientation": "self_assembly"}},
+             "step7_self_assembly", "step6.2_equilibration")):
+        s = spec.from_dict(data)
+        stage_list = mdp.stages(s)
+        text = assemble.run_examples(stage_list)
+        names = {st.name for st in stage_list}
+        assert f"./run.sh {last}" in text and f"./run.sh '' {before}" in text
+        # every stage name the examples mention is really in the ladder
+        for line in text.splitlines():
+            for word in line.split("#")[0].split():
+                if word.startswith("step"):
+                    assert word in names, f"{word} is not a stage of this build"
+
+
+def test_run_sh_quotes_survive_the_template(tmp_path):
+    """RUN_SH is a \"\"\"...\"\"\" literal, so a \\n in it would become a real newline in the
+    generated script. Every line of the script must stay on its own line."""
+    text = assemble.RUN_SH.format(name="t", maxwarn=0, stages="step6.0_minimization step7_production")
+    assert "\\n" not in text.replace("\n", "")  # no stray escapes left either
+    for line in text.splitlines():
+        assert line.count("'") % 2 == 0, f"unbalanced quote: {line!r}"
