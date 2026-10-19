@@ -81,11 +81,14 @@ simulation), and for membranes built to a precise design:
 | `membrane.lipid_apl: {LIPID: nm²}` | per-lipid area per lipid, to tune lipid density |
 | `coby.membranes: [...]` | raw COBY membrane strings: several membranes (inner + outer, with `cz`), domains via hole + patch |
 | `coby.kwargs` | other COBY keywords (`import_library`, `molecule_import`, `flooding`, ...). Referenced files are copied into the build and checksummed |
-| custom lipids (e.g. LPS) | accepted when your itp (`forcefield_files.extra_itps`) defines them and `coby.kwargs` gives COBY their structure |
+| custom lipids (e.g. LPS) | accepted when your itp (`forcefield_files.extra_itps`) defines them and `coby.kwargs` gives COBY their structure. A lipid file that also defines a lipid MDBuddy pins (POPE, POPG) wins over the pinned copy |
+| `forcefield_files.replace: {file: path}` | a deliberately different version of a *pinned* file, in the same include position: a modified-LJ force field, extra bead types. `extra_itps` cannot do this (two `[ defaults ]` sections). The lock records it as unpinned |
+| `simulation.timestep_fs` | below Martini's 20 fs when a supplied topology has bonds too stiff to integrate at it. The build computes the safe maximum and says so; each stage keeps its duration |
 
 Examples: [`examples/protein_islands_m3.yaml`](examples/protein_islands_m3.yaml),
 [`examples/membrane_patch_m3.yaml`](examples/membrane_patch_m3.yaml),
-[`examples/cell_envelope_m22.yaml`](examples/cell_envelope_m22.yaml).
+[`examples/cell_envelope_m22.yaml`](examples/cell_envelope_m22.yaml),
+[`examples/outer_membrane_fast_lps_m22.yaml`](examples/outer_membrane_fast_lps_m22.yaml).
 
 ## Requirements
 
@@ -179,20 +182,26 @@ they run anywhere without the real tools.
 
 ## Status
 
-v0.3.0. Tested end-to-end with the real tools (martinize2 0.15.0, COBY 1.0.15, PDBFixer/OpenMM 8):
-- **KcsA (OPM):** Martini 3 / POPC, 20 incomplete residues rebuilt.
-- **Bacteriorhodopsin:** randomly rotated, placed with `hydrophobic` (normal recovered within 0.7°).
-- **KcsA self-assembly soup:** POPC, analysed on a synthetic assembled frame.
-- **CG protein islands** (10 pre-coarse-grained rods kept in place, 0.0 nm displacement) in POPE/POPG/TOCL;
-  a membrane-only 20 nm patch with a DPPC/CHOL domain (hole + patch); a custom lipid imported with
-  `molecule_import`. COBY only, no martinize2.
-- **GoMartini 3** (KcsA, asymmetric PC/PE/PS/CHOL bilayer), **Martini 2.2** and **ElNeDyn 2.2**
-  (KcsA, POPE/POPG): built, `grompp -maxwarn 0`, minimised and run through the first NPT stage.
+v0.3.0. Tested end-to-end with the real tools (martinize2 0.15.0, COBY 1.0.15, PDBFixer/OpenMM 8)
+and, for everything below, with **GROMACS 2021.4**: `gmx grompp -maxwarn 0` plus minimisation and
+at least the first NPT stage, run and checked.
 
-Checked against GROMACS 2021.4: every example above passes `gmx grompp -maxwarn 0` and runs through
-minimisation and the start of equilibration; `kcsa_popc_m3` has been run through the whole
-minimisation → equilibration ladder plus production. Please open an issue with the
-`mdbuddy.lock.json` of any build that fails.
+| System | Built from | Run |
+|---|---|---|
+| KcsA, Martini 3 / POPC | OPM 1BL8, 20 incomplete residues rebuilt | the whole ladder: EM → equilibration 6.2–6.7 → production |
+| KcsA, GoMartini 3 | asymmetric PC/PE/PS/CHOL | EM + NPT; 388 virtual sites and 807 Go contacts verified active |
+| KcsA, Martini 2.2 and ElNeDyn 2.2 | POPE/POPG | EM + NPT |
+| Bacteriorhodopsin | randomly rotated, placed with `hydrophobic` | normal recovered within 0.7° |
+| OMP island, Martini 2.2 | 119 pre-coarse-grained proteins (96 OmpF, FepA, BtuB, FhuA/E, LptD/E, 2× BAM) from an earlier simulation, kept in place in a new POPE/POPG membrane — 1.47 M beads | EM + NPT; **0.000000 nm** displacement of the islands, POSRES holding them |
+| Membrane patch with a lipid domain | 50 nm POPC/POPE/CHOL with a DPPC/CHOL circle (hole + patch) | EM + 425 ps NPT; the domain boundary roughens to ~0.9 nm in 175 ps and then holds |
+| Asymmetric outer membrane | Re-LPS outer leaflet + POPE/POPG inner, custom lipid imported into COBY | EM + NPT |
+| …the same with an accelerated Re-LPS | a modified-LJ core force field via `forcefield_files.replace` | EM + NPT |
+
+Please open an issue with the `mdbuddy.lock.json` of any build that fails.
+
+**Not yet run end to end:** the lipid self-assembly path (`step7_self_assembly`). It is built,
+checked by grompp and equilibrated, but `mdbuddy selfassembly check` has so far only been
+exercised on a synthetic assembled frame, not on a real ~µs run.
 
 ## Citing
 
