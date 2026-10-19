@@ -1,0 +1,46 @@
+# Asymmetric Gram-negative outer membrane with a *kinetically accelerated* Re-LPS: Martini 2.2
+# with a modified-LJ core force field, so the LPS head groups diffuse faster than the standard
+# parameters allow. Three user files, none of them shipped by MDBuddy:
+#
+#   martini_v2.2_modlj2.itp   replaces the pinned core force field (forcefield_files.replace).
+#                             It adds custom bead types - R* for the LPS head/sugars, M* for the
+#                             tails/glycerol - with weakened LJ, and keeps the standard types, so
+#                             everything else in the system is unchanged.
+#   remp_headlj_q0.5.itp      Re-LPS remapped onto those types with halved head charges. Check the
+#                             net charge: it drops from -6 to -3 per LPS, so the build needs about
+#                             half as many neutralising counter-ions as the standard model.
+#   martini_v2.0_lipids.itp   the phospholipids. Use the variant WITHOUT Re-LPS in it: with
+#                             martini_v2.0_lipids_all_201506.itp you would define REMP twice (once
+#                             there, once in remp_headlj_q0.5.itp) and the build would stop.
+#
+# Swap the three files for the stock martini_v2.2.itp and martini_v2.0_lipids_all_201506.itp (and
+# drop forcefield_files.replace) to get the standard, non-accelerated model for comparison.
+mdbuddy: 1
+name: om_fast_lps
+protein:
+  source: none            # add OMPs here via cg_proteins (placement: keep)
+coarse_grain:
+  forcefield: martini22
+forcefield_files:
+  replace:
+    martini_v2.2.itp: itp/martini_v2.2_modlj2.itp
+  extra_itps:
+    - itp/martini_v2.0_lipids.itp
+    - itp/remp_headlj_q0.5.itp
+membrane:
+  upper: {REMP: 1}        # Re-LPS outer leaflet
+  lower: {POPE: 9, POPG: 1}
+  box: [20, 20, 20]
+  upper_apl: 1.6          # nm^2; LPS is much wider than a phospholipid
+  lower_apl: 0.6
+solvent:
+  salt_molarity: 0.15
+simulation:
+  temperature: 310
+  production_ns: 1000
+coby:
+  kwargs:
+    molecule_import:
+      # COBY counts beads from 0: these are the outer sugar beads (S06-S10) of a 42-bead Re-LPS,
+      # and they are what tells COBY which end points out of the membrane.
+      - "file:structures/REMP_single.gro moleculetype:REMP library_types:lipid alignment:principal upbead:bead:37 upbead:bead:38 upbead:bead:39 upbead:bead:40 upbead:bead:41"

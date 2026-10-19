@@ -40,7 +40,7 @@ CG_PROTEIN_KEYS = {"structure", "topology", "itps", "moleculetypes", "placement"
 # COBY arguments MDBuddy generates itself; coby.kwargs may not override them
 COBY_RESERVED = {"box", "box_type", "protein", "membrane", "solvation", "itp_input", "out_sys", "out_top", "out_log",
                  "sn", "randseed", "params"}
-NON_RECURSIVE = ("lipids", "lipid_apl", "kwargs")
+NON_RECURSIVE = ("lipids", "lipid_apl", "kwargs", "replace")
 COMM_GROUP_CHOICES = (["SOLU_MEMB", "SOLVENT"], ["System"])
 
 DEFAULTS: dict[str, Any] = {
@@ -120,6 +120,10 @@ DEFAULTS: dict[str, Any] = {
         "martini3_lipids": "lipidome",
         "optional": [],
         "extra_itps": [],
+        # {pinned file name: path} - use a deliberately different version of a pinned file, in
+        # the same include position (e.g. a modified-LJ martini_v2.2.itp). Unverified: the lock
+        # records it as unpinned next to the checksum it replaces.
+        "replace": {},
         "ff_dir": None,
     },
     "simulation": {
@@ -388,6 +392,11 @@ def _validate(d: dict, problems: list[str]) -> None:
                         "or 'release2021' (lipids of the original Martini 3 release)")
     if not isinstance(s["salt_molarity"], (int, float)) or s["salt_molarity"] < 0:
         problems.append("solvent.salt_molarity must be >= 0")
+
+    rep = d["forcefield_files"]["replace"]
+    if not isinstance(rep, dict) or not all(isinstance(k, str) and isinstance(v, str)
+                                            for k, v in rep.items()):
+        problems.append("forcefield_files.replace must be a map of {pinned file name: path}")
 
     if sim["equilibration"] not in ("standard",):
         problems.append("simulation.equilibration: only 'standard' is available")

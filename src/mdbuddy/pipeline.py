@@ -190,7 +190,7 @@ def build(spec, from_stage: str = "fetch", until_stage: str = "check", grompp_ch
             lock.finish(entry, [out / DIRS["orient"] / "protein_oriented.pdb"], base=out)
 
         elif stage == "forcefield":
-            records = forcefields.install_forcefield(spec, toppar)
+            records = forcefields.install_forcefield(spec, toppar, log=lambda m: log(f"    {m}"))
             if spec.cg["model"] == "go":
                 main = toppar / records[0]["file"]
                 forcefields.patch_for_go(main)

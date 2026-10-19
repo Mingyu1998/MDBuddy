@@ -91,6 +91,19 @@ message says which, and points to the log).
   With `POSRES_FC = 1000` expect ~0.05 nm of thermal motion per axis plus whatever the box
   rescaling adds; a drift of nanometres means no restraints were applied.
 
+## custom lipids / user force-field files
+- **`The beads [(1, 40)] given using 'upbeads' for molecule 'X' were not found`** from COBY:
+  `upbead`/`downbead` indices are **0-based**, and `res` defaults to 0. For a single-residue
+  lipid use `upbead:bead:39` for the 40th bead, and leave `res` out.
+- **`moleculetype POPE defined twice`**: two files define it. MDBuddy drops a pinned *optional*
+  lipid file when an `extra_itps` file defines the same lipid, so this now only happens when two
+  of your own files overlap - e.g. `martini_v2.0_lipids_all_201506.itp` (which contains Re-LPS)
+  together with a separate LPS itp. Use the lipid file *without* LPS in it.
+- **a modified core force field**: use `forcefield_files.replace`, not `extra_itps`; the latter
+  appends, giving two `[ defaults ]` sections and duplicate atomtypes.
+- **`checksum mismatch ... Refusing to build with unverified parameters`**: `ff_dir` still
+  verifies the pinned checksums, so it cannot serve a modified file. Use `replace`.
+
 ## check (grompp)
 - Read `gromacs/.check/grompp_<stage>.log`. Common causes: GROMACS < 2021 (no
   C-rescale), a duplicated moleculetype from an `extra_itps` file, or `#include` of a

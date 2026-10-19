@@ -120,9 +120,18 @@ class ForceFieldError(RuntimeError):
     pass
 
 
-def _obtain(f: FFFile, dest_dir: Path, ff_dir: Optional[Path]) -> dict:
+def _obtain(f: FFFile, dest_dir: Path, ff_dir: Optional[Path],
+            replace: Optional[dict] = None) -> dict:
     dest = dest_dir / f.name
     origin = None
+    if replace and f.name in replace:
+        # forcefield_files.replace: a deliberately different version of a pinned file, kept in
+        # the same include position. Unverified by definition, so the lock records it as such
+        # together with the checksum it is standing in for.
+        src = replace[f.name]
+        shutil.copyfile(src, dest)
+        return {"file": f.name, "source": f"replace:{src}", "sha256": sha256(dest),
+                "pinned": False, "replaces_pinned_sha256": f.sha256}
     if ff_dir is not None and (ff_dir / f.name).exists():
         shutil.copyfile(ff_dir / f.name, dest)
         origin = f"ff_dir:{ff_dir / f.name}"
@@ -149,7 +158,7 @@ def _obtain(f: FFFile, dest_dir: Path, ff_dir: Optional[Path]) -> dict:
     return {"file": f.name, "source": origin, "sha256": digest, "pinned": True}
 
 
-def install_forcefield(spec, toppar: Path) -> list[dict]:
+def install_forcefield(spec, toppar: Path, log=None) -> list[dict]:
     """Copy all force-field files for ``spec`` into ``toppar``; return provenance records.
 
     The returned list is in include order: core parameter file first.
@@ -158,6 +167,19 @@ def install_forcefield(spec, toppar: Path) -> list[dict]:
     family = FAMILY[spec.cg["forcefield"]]
     wanted_optional = set(spec.ff_files["optional"])
     ff_dir = spec.resolve_path(spec.ff_files["ff_dir"]) if spec.ff_files["ff_dir"] else None
+    note = log or (lambda _m: None)
+
+    replace = {}
+    for name, path in (spec.ff_files["replace"] or {}).items():
+        src = spec.resolve_path(path)
+        if not src.exists():
+            raise ForceFieldError(f"forcefield_files.replace[{name}]: file not found: {src}")
+        if name not in {f.name for f in REGISTRY[family]} | {f.name for fs in LIPID_SETS.values() for f in fs}:
+            raise ForceFieldError(
+                f"forcefield_files.replace: {name} is not a pinned file name for {family}. "
+                f"Pinned names: {sorted(f.name for f in REGISTRY[family])}. "
+                "To add a file rather than replace one, use forcefield_files.extra_itps.")
+        replace[name] = src
     known_optional = {f.key for f in REGISTRY[family] if f.role == "optional"}
 
     # Martini 2: pull pinned lipid files automatically when the membrane uses them
@@ -168,7 +190,22 @@ def install_forcefield(spec, toppar: Path) -> list[dict]:
         raise ForceFieldError(f"forcefield_files.optional: unknown {sorted(unknown)}; "
                               f"available for {family}: {sorted(known_optional)}")
 
+    # A pinned optional lipid file would duplicate a moleculetype an extra_itps file already
+    # defines (e.g. the cgmartini martini_v2.0_lipids_all file defines POPE and POPG as well as
+    # LPS). The user's own file wins, since they asked for it by name.
+    from . import topology
+    extra_moltypes: dict[str, str] = {}
+    for extra in spec.ff_files["extra_itps"]:
+        src = spec.resolve_path(extra)
+        if src.exists():
+            for mt in topology.parse(src).moleculetypes:
+                extra_moltypes.setdefault(mt, src.name)
+
     files = [f for f in REGISTRY[family] if f.role == "core" or f.key in wanted_optional]
+    superseded = [f for f in files if f.role == "optional" and f.key in extra_moltypes]
+    for f in superseded:
+        note(f"{f.key} comes from your {extra_moltypes[f.key]}, not the pinned {f.name}")
+    files = [f for f in files if f not in superseded]
     if family == "martini3":
         from . import lipids
         lipid_set = LIPID_SETS[spec.ff_files["martini3_lipids"]]
@@ -179,7 +216,7 @@ def install_forcefield(spec, toppar: Path) -> list[dict]:
         files = files[:1] + [f for f in chosen if f.role == "core"] + files[1:] + \
             [f for f in chosen if f.role != "core"]
 
-    records = [_obtain(f, toppar, ff_dir) for f in files]
+    records = [_obtain(f, toppar, ff_dir, replace) for f in files]
 
     for extra in spec.ff_files["extra_itps"]:
         src = spec.resolve_path(extra)

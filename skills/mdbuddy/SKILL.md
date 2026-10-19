@@ -227,6 +227,16 @@ simulation, a cell-envelope model) or wants a membrane built to a precise design
   defines them and `coby.kwargs.molecule_import` (`... library_types:lipid`) or `import_library`
   gives COBY their structure. MDBuddy cannot check these beyond the atom-name validation: say so.
   The name must not already exist in COBY's library (see `references/troubleshooting.md`).
+  **COBY counts residues and beads from 0** in `upbead`/`downbead`, and `res` defaults to 0, so a
+  one-residue lipid wants `upbead:bead:<n-1>`; give several beads of the outward-facing end. If a
+  big cgmartini lipid file also defines lipids MDBuddy pins (POPE, POPG), MDBuddy drops its own
+  copies and reports which file won.
+- **A modified force field** (accelerated/modified-LJ models, extra bead types):
+  `forcefield_files.replace: {martini_v2.2.itp: path/to/yours.itp}` puts your file in the pinned
+  one's include position. `extra_itps` cannot do this - you would get two `[ defaults ]` sections
+  and duplicate atomtypes. Tell the user the lock marks it unpinned, and check the net charge of
+  any remapped molecule: an accelerated LPS may carry half the charge of the standard one, which
+  changes the counter-ion count.
 
 ## Rules
 

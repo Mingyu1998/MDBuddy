@@ -589,3 +589,89 @@ def test_timestep_fs_validation():
     with pytest.raises(spec.SpecError, match="output_ps"):
         mkspec(simulation={"timestep_fs": 15})          # 500 ps / 1.5 ps is not an integer
     assert mkspec(simulation={"timestep_fs": 15, "output_ps": 300}).sim["timestep_fs"] == 15
+
+
+# --- user-supplied force-field files ---------------------------------------
+
+def _m2_registry(tmp_path, monkeypatch):
+    """A tiny stand-in for the pinned Martini 2 set, served from local files."""
+    import hashlib
+    from mdbuddy import forcefields
+    d = tmp_path / "pinned"
+    d.mkdir(exist_ok=True)
+    files = []
+    for name, body, role, key in (
+            ("martini_v2.2.itp", "[ defaults ]\n1 1\n\n[ atomtypes ]\nP5 72.0 0.000 A 0.0 0.0\n", "core", ""),
+            ("martini_v2.0_ions.itp", "[ moleculetype ]\nNA 1\n[ atoms ]\n1 P5 1 ION NA 1 1.0\n", "core", ""),
+            ("martini_v2.0_POPE_02.itp",
+             "[ moleculetype ]\nPOPE 1\n[ atoms ]\n1 P5 1 POPE PO4 1 0.0\n", "optional", "POPE"),
+            ("martini_v2.0_POPG_02.itp",
+             "[ moleculetype ]\nPOPG 1\n[ atoms ]\n1 P5 1 POPG PO4 1 0.0\n", "optional", "POPG")):
+        p = d / name
+        p.write_text(body)
+        files.append(forcefields.FFFile(name, p.as_uri(),
+                                        hashlib.sha256(p.read_bytes()).hexdigest(), role, key))
+    monkeypatch.setitem(forcefields.REGISTRY, "martini2", files)
+    monkeypatch.setenv("MDBUDDY_CACHE", str(tmp_path / "cache"))
+    return d
+
+
+def test_extra_itp_supersedes_the_pinned_lipid_file(tmp_path, monkeypatch):
+    """The cgmartini martini_v2.0_lipids_all file defines POPE and POPG as well as LPS, so
+    adding it used to define those moleculetypes twice and stop the build."""
+    from mdbuddy import forcefields
+    _m2_registry(tmp_path, monkeypatch)
+    mine = tmp_path / "my_lipids.itp"
+    mine.write_text("[ moleculetype ]\nPOPE 1\n[ atoms ]\n1 P5 1 POPE PO4 1 0.0\n"
+                    "[ moleculetype ]\nREMP 1\n[ atoms ]\n1 P5 1 REMP PO1 1 0.0\n")
+    s = mkspec(coarse_grain={"forcefield": "martini22"},
+               membrane={"lipids": {"POPE": 9, "POPG": 1}},
+               forcefield_files={"extra_itps": [str(mine)]})
+    notes = []
+    records = forcefields.install_forcefield(s, tmp_path / "toppar", log=notes.append)
+    names = [r["file"] for r in records]
+    assert "martini_v2.0_POPE_02.itp" not in names   # superseded by my_lipids.itp
+    assert "martini_v2.0_POPG_02.itp" in names       # my file does not define POPG
+    assert "my_lipids.itp" in names
+    assert any("POPE comes from your my_lipids.itp" in n for n in notes)
+    # no moleculetype ends up defined twice
+    info = topology.TopologyInfo()
+    for n in names:
+        topology.parse(tmp_path / "toppar" / n, info=info)
+    assert info.duplicates == []
+
+
+def test_replace_a_pinned_forcefield_file(tmp_path, monkeypatch):
+    """forcefield_files.replace: a modified core force field (e.g. a modified-LJ martini_v2.2
+    for an accelerated LPS model) in the same include position, recorded as unpinned."""
+    from mdbuddy import forcefields
+    _m2_registry(tmp_path, monkeypatch)
+    mod = tmp_path / "martini_v2.2_modlj2.itp"
+    mod.write_text("[ defaults ]\n1 1\n\n[ atomtypes ]\nP5 72.0 0.000 A 0.0 0.0\n"
+                   "RQa 72.0 0.000 A 0.0 0.0\n")
+    s = mkspec(coarse_grain={"forcefield": "martini22"},
+               membrane={"lipids": {"POPE": 1}},
+               forcefield_files={"replace": {"martini_v2.2.itp": str(mod)}})
+    records = forcefields.install_forcefield(s, tmp_path / "toppar")
+    core = records[0]
+    assert core["file"] == "martini_v2.2.itp"        # same name and include position
+    assert core["source"].startswith("replace:")
+    assert core["pinned"] is False and core["replaces_pinned_sha256"]
+    assert core["sha256"] != core["replaces_pinned_sha256"]
+    # the file really is the user's one
+    assert "RQa" in (tmp_path / "toppar" / "martini_v2.2.itp").read_text()
+
+
+def test_replace_rejects_bad_targets(tmp_path, monkeypatch):
+    from mdbuddy import forcefields
+    _m2_registry(tmp_path, monkeypatch)
+    mod = tmp_path / "mod.itp"
+    mod.write_text("[ defaults ]\n1 1\n")
+    s = mkspec(coarse_grain={"forcefield": "martini22"}, membrane={"lipids": {"POPE": 1}},
+               forcefield_files={"replace": {"not_a_pinned_name.itp": str(mod)}})
+    with pytest.raises(forcefields.ForceFieldError, match="not a pinned file name"):
+        forcefields.install_forcefield(s, tmp_path / "toppar")
+    s2 = mkspec(coarse_grain={"forcefield": "martini22"}, membrane={"lipids": {"POPE": 1}},
+                forcefield_files={"replace": {"martini_v2.2.itp": str(tmp_path / "nope.itp")}})
+    with pytest.raises(forcefields.ForceFieldError, match="file not found"):
+        forcefields.install_forcefield(s2, tmp_path / "toppar")
