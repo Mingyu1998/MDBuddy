@@ -79,6 +79,18 @@ message says which, and points to the log).
 - **net charge != 0**: COBY could not neutralise (e.g. ion name not in the itps). Check
   `solvent.cation/anion`.
 
+## cg_proteins
+- **`WARNING ... oscillational period ... time step <= N fs`** at the martinize stage: the supplied
+  itps use stiff harmonic bonds where martinize2 writes `[ constraints ]`. Set
+  `simulation.timestep_fs` to the value the message suggests, or regenerate the itps with
+  constraints. Overriding it (`simulation.gromacs_maxwarn: 1`) runs a topology GROMACS considers
+  under-integrated.
+- **`placement 'keep' needs the structure's box`**: a PDB without `CRYST1` has no box, and `keep`
+  is relative to the box centre. Use a `.gro` (its box line is read), or add a CRYST1 record.
+- **the islands moved**: check the itps have an `#ifdef POSRES` block (the build warns if not).
+  With `POSRES_FC = 1000` expect ~0.05 nm of thermal motion per axis plus whatever the box
+  rescaling adds; a drift of nanometres means no restraints were applied.
+
 ## check (grompp)
 - Read `gromacs/.check/grompp_<stage>.log`. Common causes: GROMACS < 2021 (no
   C-rescale), a duplicated moleculetype from an `extra_itps` file, or `#include` of a

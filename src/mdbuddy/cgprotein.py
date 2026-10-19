@@ -13,6 +13,7 @@ checks that the bead count and bead names match the topology, and hands the stru
 
 from __future__ import annotations
 
+import math
 import shutil
 from pathlib import Path
 from typing import Optional
@@ -68,6 +69,59 @@ def write_coby_pdb(path: Path, beads, box: Optional[list[float]]) -> None:
     path.write_text("\n".join(lines) + "\n")
 
 
+def suggest_timestep(max_fs: float, output_ps: float) -> Optional[float]:
+    """Largest sensible time step at or below max_fs whose energy interval still divides output_ps.
+
+    simulation.output_ps has to be a whole number of nstcalcenergy (100) steps, so suggesting a
+    time step that does not divide it would just trade one rejected spec for another.
+    """
+    for ts in (20.0, 15.0, 10.0, 8.0, 5.0, 4.0, 2.0, 1.0):
+        if ts > max_fs:
+            continue
+        steps = output_ps / (100 * ts / 1000.0)
+        if abs(steps - round(steps)) < 1e-9:
+            return ts
+    return None
+
+
+def stiff_bond_warning(info: topology.TopologyInfo, molecules, sim,
+                       ff_masses: Optional[dict] = None) -> Optional[str]:
+    """Warn when a supplied topology's bonds are too stiff for the chosen time step.
+
+    martinize2 writes [ constraints ] for the Martini protein backbone, but hand-made itps
+    sometimes use very stiff bonds instead (e.g. 150000 kJ/mol/nm^2 in an OMP island built for
+    an earlier study). grompp then emits a *warning* about the oscillational period, which fails
+    the build's own -maxwarn 0 check, and its message does not say what to do. Say it here, with
+    the safe maximum and a time step that actually validates.
+    """
+    masses = dict(ff_masses or {})
+    masses.update(info.atomtype_masses)  # the entry's own itps win
+    worst = None
+    for name, _count in molecules:
+        mt = info.moleculetypes.get(name)
+        if mt is None:
+            continue
+        found = topology.fastest_bond(mt, masses)
+        if found and (worst is None or found[3] < worst[1][3]):
+            worst = (name, found)
+    if worst is None:
+        return None
+    name, (i, j, k, period_ps) = worst
+    timestep_fs = float(sim["timestep_fs"])
+    safe_fs = period_ps / 5.0 * 1000.0
+    if timestep_fs <= safe_fs + 1e-9:
+        return None
+    pick = suggest_timestep(safe_fs, float(sim["output_ps"]))
+    fix = (f"set simulation.timestep_fs: {pick:g}" if pick else
+           f"lower simulation.timestep_fs below {safe_fs:.1f} (and adjust simulation.output_ps "
+           "to a whole number of 100-step intervals)")
+    return (f"{name} bond {i}-{j} has k = {k:g} kJ/mol/nm2, an oscillational period of "
+            f"{period_ps:.3f} ps, so GROMACS wants a time step <= {safe_fs:.1f} fs but "
+            f"simulation.timestep_fs is {timestep_fs:g}. grompp will warn and the -maxwarn 0 "
+            f"check will fail. Either {fix}, or rebuild the itps with [ constraints ] for the "
+            "backbone as martinize2 does.")
+
+
 def box_from_structure(spec) -> list[float]:
     """Box (nm) of the first cg_proteins structure: membrane.box: from_structure."""
     first = spec.resolve_path(spec.cg_proteins[0]["structure"])
@@ -101,6 +155,12 @@ def prepare(spec, work: Path, toppar: Path, existing_itps: list[str]) -> dict:
     work.mkdir(parents=True, exist_ok=True)
     toppar.mkdir(parents=True, exist_ok=True)
     taken = {name: None for name in existing_itps}  # itp file name -> sha256 (None: not ours)
+    # bead masses from the force-field files already in toppar, for the stiff-bond check
+    ff_info = topology.TopologyInfo()
+    for name in existing_itps:
+        if (toppar / name).exists():
+            topology.parse(toppar / name, info=ff_info)
+    ff_masses = ff_info.atomtype_masses
     moltype_source: dict[str, str] = {}
     entries, all_itps, records = [], [], []
     for i, e in enumerate(spec.cg_proteins):
@@ -170,8 +230,9 @@ def prepare(spec, work: Path, toppar: Path, existing_itps: list[str]) -> dict:
                                          "rename one of them (moleculetype names must be unique in a topology)")
                 moltype_source[mt] = digest
         has_posres = any("POSRES" in p.read_text() for p in itps)
+        stiff = stiff_bond_warning(info, molecules, spec.sim, ff_masses)
         records.append({"structure": str(src), "sha256": sha256(src), "copied_to": dest.name,
-                        "posres_in_itps": has_posres,
+                        "posres_in_itps": has_posres, "stiff_bond_warning": stiff,
                         "itps": [{"file": n, "sha256": taken[n]} for n in copied],
                         "molecules": molecules, "beads": len(names), "box_nm": box[:3] if box else None,
                         "placement": e["placement"]})

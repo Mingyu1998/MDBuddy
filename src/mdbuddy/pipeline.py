@@ -233,6 +233,8 @@ def build(spec, from_stage: str = "fetch", until_stage: str = "check", grompp_ch
                     if not r["posres_in_itps"] and spec.cg["position_restraints"] != "none":
                         log(f"    NOTE its itps have no #ifdef POSRES block, so it is not restrained during "
                             "equilibration (add one if the arrangement must be held)")
+                    if r.get("stiff_bond_warning"):
+                        log(f"    WARNING {r['stiff_bond_warning']}")
             if not state["protein_molecules"] and not state["cg_molecules"]:
                 log("    no protein: membrane-only system")
             lock.finish(entry, outputs, base=out)

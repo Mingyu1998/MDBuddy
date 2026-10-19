@@ -112,7 +112,12 @@ simulation:
   pressure: 1.0            # bar
   production_ns: 1000
   equilibration: standard  # see decisions.md
-  output_ps: 500           # production output interval (xtc, energies, log); multiple of 2 ps
+  timestep_fs: 20          # production time step; the equilibration ramp is capped at it too.
+                           # Lower it when a cg_proteins topology uses stiff bonds instead of
+                           # constraints (the build reports the safe maximum); every stage keeps
+                           # its duration, so nsteps goes up.
+  output_ps: 500           # production output interval (xtc, energies, log); a whole number of
+                           # 100-step intervals (2 ps at the default 20 fs)
   coupling_groups: [Protein, MEMBRANE, SOLVENT]   # tc-grps; or [SOLU_MEMB, SOLVENT], [MEMBRANE, SOLVENT]
                            #   (default when there is no protein) or [System]
   comm_groups: [SOLU_MEMB, SOLVENT]  # comm-grps; or [System]

@@ -14,7 +14,7 @@ NPT equilibration with a growing time step and shrinking backbone restraints
 
 from __future__ import annotations
 
-from dataclasses import dataclass
+from dataclasses import dataclass, replace
 from typing import Optional
 
 PROD_DT = 0.020  # ps
@@ -48,10 +48,25 @@ EQUILIBRATION_STANDARD = (
 )
 
 
-def production_stage(production_ns: float) -> Stage:
-    nsteps = int(round(production_ns * 1000.0 / PROD_DT))
-    return Stage("step7_production", f"NPT production, {production_ns:g} ns", "md", nsteps, PROD_DT, None,
+def production_stage(production_ns: float, dt: float = PROD_DT) -> Stage:
+    nsteps = int(round(production_ns * 1000.0 / dt))
+    return Stage("step7_production", f"NPT production, {production_ns:g} ns", "md", nsteps, dt, None,
                  "Parrinello-Rahman")
+
+
+def cap_timestep(stage_list: list[Stage], dt_max: float) -> list[Stage]:
+    """Clamp every MD stage to dt_max, keeping each stage's duration (so nsteps goes up).
+
+    Martini runs at 20 fs, but a topology whose bonds are stiffer than that allows has to be
+    integrated with a smaller step (simulation.timestep_fs). Minimisations have no dt.
+    """
+    out = []
+    for st in stage_list:
+        if st.dt is not None and st.dt > dt_max + 1e-12:
+            out.append(replace(st, dt=dt_max, nsteps=int(round(st.nsteps * st.dt / dt_max))))
+        else:
+            out.append(st)
+    return out
 
 
 def self_assembly_stages(spec) -> list[Stage]:
@@ -78,16 +93,18 @@ def self_assembly_stages(spec) -> list[Stage]:
 
 
 def stages(spec) -> list[Stage]:
+    dt = float(spec.sim["timestep_fs"]) / 1000.0
     if spec.protein["orientation"] == "self_assembly":
-        return self_assembly_stages(spec)
-    return [*EQUILIBRATION_STANDARD, production_stage(float(spec.sim["production_ns"]))]
+        return cap_timestep(self_assembly_stages(spec), dt)
+    return cap_timestep([*EQUILIBRATION_STANDARD,
+                         production_stage(float(spec.sim["production_ns"]), dt)], dt)
 
 
-def production_output_steps(output_ps: float) -> int:
-    steps = int(round(output_ps / PROD_DT))
+def production_output_steps(output_ps: float, dt: float = PROD_DT) -> int:
+    steps = int(round(output_ps / dt))
     if steps <= 0 or steps % NSTCALCENERGY:
         raise ValueError(f"simulation.output_ps must be a positive multiple of "
-                         f"{NSTCALCENERGY * PROD_DT:g} ps (got {output_ps})")
+                         f"{NSTCALCENERGY * dt:g} ps (got {output_ps})")
     return steps
 
 
@@ -170,8 +187,8 @@ def render(stage: Stage, spec, posres_enabled: bool, flexible_available: bool = 
                           ("nstlog", 1000), ("nstenergy", 1000),
                           ("nstxout-compressed", 1000), ("compressed-x-precision", 1000)]
     elif stage.name.startswith("step7"):
-        n = production_output_steps(float(sim["output_ps"]))
-        every = f"every {n * PROD_DT:g} ps"
+        n = production_output_steps(float(sim["output_ps"]), stage.dt or PROD_DT)
+        every = f"every {n * (stage.dt or PROD_DT):g} ps"
         out = [("nstxout", 0, "no .trr (checkpoints are written anyway)"), ("nstvout", 0), ("nstfout", 0),
                ("nstlog", n, every), ("nstenergy", n, every),
                ("nstxout-compressed", n, every), ("compressed-x-precision", 100, "0.01 nm, enough for CG")]

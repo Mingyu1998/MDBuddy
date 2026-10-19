@@ -3,7 +3,7 @@ import textwrap
 
 import pytest
 
-from mdbuddy import assemble, martinize, mdp, membrane, prepare, spec, topology
+from mdbuddy import assemble, cgprotein, martinize, mdp, membrane, prepare, spec, topology
 from mdbuddy.structure import Atom, opm_half_thickness, read_pdb
 
 
@@ -497,3 +497,95 @@ def test_run_sh_quotes_survive_the_template(tmp_path):
     assert "\\n" not in text.replace("\n", "")  # no stray escapes left either
     for line in text.splitlines():
         assert line.count("'") % 2 == 0, f"unbalanced quote: {line!r}"
+
+
+# --- stiff bonds vs the time step ------------------------------------------
+
+STIFF_ITP = """
+[ moleculetype ]
+STIFF 1
+[ atoms ]
+1 P5 1 ALA BB 1 0.0
+2 P5 1 ALA SC1 2 0.0
+[ bonds ]
+1 2 1 0.350 150000
+"""
+
+SOFT_ITP = STIFF_ITP.replace("150000", "1250").replace("STIFF", "SOFT")
+
+
+def test_fastest_bond_matches_gromacs_formula(tmp_path):
+    """GROMACS estimates 2*pi*sqrt(mu/k); for two 72 amu beads at k = 150000 kJ/mol/nm^2 it
+    prints 9.7e-02 ps, which is what a real OMP island itp hit at a 20 fs step."""
+    p = tmp_path / "stiff.itp"
+    p.write_text(STIFF_ITP)
+    info = topology.parse(p)
+    mt = info.moleculetypes["STIFF"]
+    assert len(mt.bonds) == 1 and mt.atom_types == ["P5", "P5"]
+    i, j, k, period = topology.fastest_bond(mt, {"P5": 72.0})
+    assert (i, j, k) == (1, 2, 150000.0)
+    assert abs(period - 0.0973) < 5e-4          # ps, as grompp reports it
+    assert abs(period / 5 * 1000 - 19.5) < 0.1  # max safe time step, fs
+    # a normal Martini bond is nowhere near the limit
+    p2 = tmp_path / "soft.itp"
+    p2.write_text(SOFT_ITP)
+    _, _, _, soft_period = topology.fastest_bond(
+        topology.parse(p2).moleculetypes["SOFT"], {"P5": 72.0})
+    assert soft_period / 5 * 1000 > 100  # fs
+
+
+def test_stiff_bond_warning(tmp_path):
+    p = tmp_path / "stiff.itp"
+    p.write_text(STIFF_ITP)
+    info = topology.parse(p)
+    mols = [("STIFF", 1)]
+    sim = {"timestep_fs": 20.0, "output_ps": 500.0}
+    msg = cgprotein.stiff_bond_warning(info, mols, sim, {"P5": 72.0})
+    assert msg and "150000" in msg and "19.5 fs" in msg
+    # it suggests a step that is both safe AND valid for this output_ps
+    assert "simulation.timestep_fs: 10" in msg
+    # silent once the step is small enough
+    assert cgprotein.stiff_bond_warning(info, mols, {**sim, "timestep_fs": 10.0}, {"P5": 72.0}) is None
+    # silent for an ordinary Martini bond
+    p2 = tmp_path / "soft.itp"
+    p2.write_text(SOFT_ITP)
+    assert cgprotein.stiff_bond_warning(topology.parse(p2), [("SOFT", 1)], sim, {"P5": 72.0}) is None
+    # and for a molecule with no numeric bonds at all
+    assert cgprotein.stiff_bond_warning(info, [("NOPE", 1)], sim) is None
+
+
+def test_suggest_timestep_divides_output_ps():
+    # 500 ps of output: 100 steps at 10 fs = 1 ps divides it; 15 fs (1.5 ps) does not
+    assert cgprotein.suggest_timestep(19.5, 500.0) == 10.0
+    assert cgprotein.suggest_timestep(19.5, 300.0) == 15.0
+    assert cgprotein.suggest_timestep(100.0, 500.0) == 20.0
+    assert cgprotein.suggest_timestep(0.5, 500.0) is None
+
+
+def test_timestep_fs_caps_the_ladder_keeping_durations():
+    base = {x.name: x for x in mdp.stages(mkspec())}
+    capped = {x.name: x for x in mdp.stages(mkspec(simulation={"timestep_fs": 10}))}
+    for name, st in base.items():
+        c = capped[name]
+        if st.dt is None:
+            assert c.dt is None
+            continue
+        assert c.dt == min(st.dt, 0.010)
+        # the stage still covers the same amount of simulated time
+        assert abs(c.nsteps * c.dt - st.nsteps * st.dt) < 1e-6, name
+    assert capped["step7_production"].dt == 0.010
+    assert capped["step6.2_equilibration"].dt == 0.002  # already below the cap, untouched
+    # output interval follows the new dt, so it is still 500 ps
+    prod = mdp_params(mdp.render(capped["step7_production"],
+                                 mkspec(simulation={"timestep_fs": 10}), posres_enabled=False))
+    assert prod["dt"] == "0.01" and prod["nstenergy"] == "50000"
+
+
+def test_timestep_fs_validation():
+    for bad in (0.5, 41, "20"):
+        with pytest.raises(spec.SpecError, match="timestep_fs"):
+            mkspec(simulation={"timestep_fs": bad})
+    # output_ps must still be a whole number of 100-step intervals at the chosen dt
+    with pytest.raises(spec.SpecError, match="output_ps"):
+        mkspec(simulation={"timestep_fs": 15})          # 500 ps / 1.5 ps is not an integer
+    assert mkspec(simulation={"timestep_fs": 15, "output_ps": 300}).sim["timestep_fs"] == 15

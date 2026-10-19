@@ -7,6 +7,7 @@ It extracts per-moleculetype atom names and charges for validation.
 
 from __future__ import annotations
 
+import math
 import re
 from dataclasses import dataclass, field
 from pathlib import Path
@@ -22,6 +23,10 @@ class MoleculeType:
     atom_names: list[str] = field(default_factory=list)
     resnames: list[str] = field(default_factory=list)
     charges: list[float] = field(default_factory=list)
+    atom_types: list[str] = field(default_factory=list)
+    # (i, j, b0_nm, k_kJ_per_mol_nm2) of every funct-1 bond written with explicit numbers.
+    # Bonds given through a #define macro (most Martini 3 lipids) are not collected.
+    bonds: list[tuple[int, int, float, float]] = field(default_factory=list)
 
     @property
     def natoms(self) -> int:
@@ -38,6 +43,7 @@ class TopologyInfo:
     duplicates: list[tuple[str, str, str]] = field(default_factory=list)
     defaults_count: int = 0
     molecules: list[tuple[str, int]] = field(default_factory=list)
+    atomtype_masses: dict[str, float] = field(default_factory=dict)
     includes: list[str] = field(default_factory=list)
     missing_includes: list[str] = field(default_factory=list)
 
@@ -112,8 +118,51 @@ def _parse_file(path: Path, defines: set[str], info: TopologyInfo,
             mt.resnames.append(fields[3])
             mt.atom_names.append(fields[4])
             mt.charges.append(float(fields[6]) if len(fields) >= 7 else 0.0)
+            mt.atom_types.append(fields[1])
+        elif sec == "atomtypes" and len(fields) >= 4:
+            try:  # Martini layout: name mass charge ptype c6 c12
+                info.atomtype_masses.setdefault(fields[0], float(fields[1]))
+            except ValueError:
+                pass
+        elif sec == "bonds" and current[0] is not None and len(fields) >= 5 and fields[2] == "1":
+            try:
+                current[0].bonds.append((int(fields[0]), int(fields[1]),
+                                         float(fields[3]), float(fields[4])))
+            except ValueError:
+                pass  # a #define macro instead of numbers
         elif sec == "molecules" and len(fields) >= 2:
             info.molecules.append((fields[0], int(fields[1])))
+
+
+DEFAULT_BEAD_MASS = 72.0  # standard Martini bead; used when no [ atomtypes ] mass is known
+
+
+def fastest_bond(mt: MoleculeType, masses: dict[str, float]) -> Optional[tuple[int, int, float, float]]:
+    """(i, j, k, period_ps) of the stiffest explicit harmonic bond in a moleculetype.
+
+    The period is GROMACS's own estimate, 2*pi*sqrt(mu/k) with mu the reduced mass, which it
+    compares against 5*dt in grompp. A topology that replaces [ constraints ] with very stiff
+    bonds (some hand-made Martini protein itps use 150000 kJ/mol/nm^2 for the backbone) is then
+    only stable at a time step well below Martini's usual 20 fs, and grompp emits a *warning*,
+    which fails a -maxwarn 0 build. None if the moleculetype has no numeric funct-1 bond.
+    """
+    best = None
+    for i, j, _b0, k in mt.bonds:
+        if k <= 0:
+            continue
+        m1 = masses.get(_at(mt, i), DEFAULT_BEAD_MASS)
+        m2 = masses.get(_at(mt, j), DEFAULT_BEAD_MASS)
+        mu = m1 * m2 / (m1 + m2)
+        # mu g/mol -> kg/mol, k kJ/mol/nm^2 -> J/mol/m^2
+        period_ps = 2 * math.pi * math.sqrt((mu * 1e-3) / (k * 1e3 * 1e18)) * 1e12
+        if best is None or period_ps < best[3]:
+            best = (i, j, k, period_ps)
+    return best
+
+
+def _at(mt: MoleculeType, index: int) -> str:
+    """Atom type of a 1-based atom index, or "" if out of range."""
+    return mt.atom_types[index - 1] if 0 < index <= len(mt.atom_types) else ""
 
 
 def read_molecules(top_path: str | Path) -> list[tuple[str, int]]:
