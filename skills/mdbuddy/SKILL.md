@@ -151,7 +151,11 @@ Finish with:
    (from `gromacs/topol.top`), box, beads, net charge.
 2. Where the files are: `<output>/gromacs/` (`run.sh` runs everything, and
    `README.md` lists the stages).
-3. How to run: `cd <output>/gromacs && MDRUN_FLAGS="-nt 16" ./run.sh`.
+3. How to run: `cd <output>/gromacs && MDRUN_FLAGS="-nt 16" ./run.sh`. `run.sh` takes an
+   optional first (start) and second (end) stage, both included, so the user can run part of
+   the ladder: `./run.sh step6.3` from a stage to the end, `./run.sh step6.0 step6.7` to
+   equilibrate and stop before production, `./run.sh '' step6.7` for the same written as
+   "up to". Names may be shortened to a unique prefix; an unknown name is an error.
 4. Reproducibility: `spec.resolved.yaml` plus `mdbuddy.lock.json` (tool versions,
    input and parameter checksums, every command) rebuild the same system.
 5. `CITATIONS.md`: remind them to cite Martini, martinize2, COBY, OPM and, when used, OpenMM/PDBFixer,

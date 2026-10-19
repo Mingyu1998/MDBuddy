@@ -51,7 +51,7 @@ mdbuddy doctor                    # what is installed / missing, with install co
 mdbuddy init kcsa --pdb-id 1bl8   # commented spec template
 mdbuddy validate kcsa.yaml        # every setting, defaults filled in
 mdbuddy build kcsa.yaml           # -> kcsa/gromacs/
-cd kcsa/gromacs && ./run.sh
+cd kcsa/gromacs && ./run.sh         # or ./run.sh step6.0 step6.7 for part of the ladder
 ```
 
 ## Proteins without OPM data

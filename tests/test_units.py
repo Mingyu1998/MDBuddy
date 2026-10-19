@@ -338,3 +338,78 @@ def test_doctor_reports_missing_required(monkeypatch):
     missing = {c["name"] for c in data["checks"] if c["status"] == "missing"}
     assert {"martinize2", "COBY", "vermouth", "dssp"} <= missing
     assert all(c["fix"] for c in data["checks"] if c["status"] == "missing")
+
+
+# --- run.sh -----------------------------------------------------------------
+
+RUN_SH_STAGES = ["step6.0_minimization", "step6.1_minimization",
+                 "step6.2_equilibration", "step6.7_equilibration", "step7_production"]
+
+
+def run_the_runner(tmp_path, *args):
+    """Execute a generated run.sh against a gmx that only records its arguments.
+
+    Returns (returncode, stages mdrun was asked for, [(stage, -c input)] grompp saw, stderr).
+    """
+    import os
+    import stat
+    import subprocess
+
+    d = tmp_path / "gmx_dir"
+    d.mkdir(exist_ok=True)
+    (d / "run.sh").write_text(assemble.RUN_SH.format(
+        name="toy", maxwarn=0, stages=" ".join(RUN_SH_STAGES)))
+    (d / "run.sh").chmod(0o755)
+    bindir = tmp_path / "runbin"
+    bindir.mkdir(exist_ok=True)
+    stub = bindir / "gmx"
+    stub.write_text('#!/bin/bash\necho "$@" >> "$RUNLOG"\n')
+    stub.chmod(stub.stat().st_mode | stat.S_IEXEC)
+    log = d / "calls.txt"
+    log.unlink(missing_ok=True)
+    env = {**os.environ, "PATH": f"{bindir}{os.pathsep}{os.environ['PATH']}", "RUNLOG": str(log)}
+    proc = subprocess.run(["bash", str(d / "run.sh"), *args], cwd=d, env=env,
+                          stdout=subprocess.PIPE, stderr=subprocess.PIPE, text=True)
+    mdruns, grompps = [], []
+    for line in (log.read_text().splitlines() if log.exists() else []):
+        f = line.split()
+        if f[0] == "mdrun":
+            mdruns.append(f[f.index("-deffnm") + 1])
+        else:
+            grompps.append((f[f.index("-f") + 1].removesuffix(".mdp"), f[f.index("-c") + 1]))
+    return proc.returncode, mdruns, grompps, proc.stderr
+
+
+def test_run_sh_stage_range(tmp_path):
+    # no arguments: every stage, each starting from the previous one's output
+    rc, ran, grompps, _ = run_the_runner(tmp_path)
+    assert rc == 0 and ran == RUN_SH_STAGES
+    assert [c for _, c in grompps] == ["step5_input.gro"] + [f"{s}.gro" for s in RUN_SH_STAGES[:-1]]
+
+    # one argument: from that stage to the end, continuing from the stage before it
+    rc, ran, grompps, _ = run_the_runner(tmp_path, "step6.2")
+    assert rc == 0 and ran == RUN_SH_STAGES[2:]
+    assert grompps[0] == ("step6.2_equilibration", "step6.1_minimization.gro")
+
+    # two arguments: inclusive range, so production is left out
+    rc, ran, _, _ = run_the_runner(tmp_path, "step6.0", "step6.7")
+    assert rc == 0 and ran == RUN_SH_STAGES[:-1]
+
+    # empty start means "up to"
+    rc, ran, _, _ = run_the_runner(tmp_path, "", "step6.1")
+    assert rc == 0 and ran == RUN_SH_STAGES[:2]
+
+    # a single stage
+    rc, ran, _, _ = run_the_runner(tmp_path, "step7", "step7")
+    assert rc == 0 and ran == ["step7_production"]
+
+
+def test_run_sh_rejects_bad_stage_range(tmp_path):
+    rc, ran, _, err = run_the_runner(tmp_path, "step9")
+    assert rc != 0 and ran == [] and "no stage matches 'step9'" in err
+
+    rc, ran, _, err = run_the_runner(tmp_path, "", "nonsense")
+    assert rc != 0 and ran == [] and "no stage matches 'nonsense'" in err
+
+    rc, ran, _, err = run_the_runner(tmp_path, "step7", "step6.0")
+    assert rc != 0 and ran == [] and "comes after" in err
